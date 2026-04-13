@@ -1,0 +1,93 @@
+@model EquipmentDetailsViewModel
+@{
+    ViewData["Title"] = "设备详情";
+    bool canWrite = User.IsInRole(Roles.Admin) || User.IsInRole(Roles.DeviceAdmin);
+
+    var (badgeCss, badgeText) = Model.Status switch
+    {
+        EquipmentStatus.PendingReview => ("bg-warning text-dark", "待审核"),
+        EquipmentStatus.Idle          => ("bg-success", "闲置"),
+        EquipmentStatus.InUse         => ("bg-primary", "使用中"),
+        EquipmentStatus.Maintenance   => ("bg-danger", "维修中"),
+        EquipmentStatus.Scrapped      => ("bg-secondary", "已报废"),
+        _                             => ("bg-secondary", Model.Status.ToString())
+    };
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h4 class="mb-0">设备详情</h4>
+    <div class="d-flex gap-2">
+        @if (canWrite)
+        {
+            <a asp-action="Edit" asp-route-id="@Model.Id"
+               class="btn btn-primary btn-sm">编辑</a>
+        }
+        <a asp-action="Index" class="btn btn-outline-secondary btn-sm">返回列表</a>
+    </div>
+</div>
+
+<div class="card mb-3">
+    <div class="card-body">
+        <dl class="row mb-0">
+            <dt class="col-sm-3">设备编号</dt>
+            <dd class="col-sm-9"><code>@Model.EquipmentNo</code></dd>
+
+            <dt class="col-sm-3">设备名称</dt>
+            <dd class="col-sm-9">@Model.Name</dd>
+
+            <dt class="col-sm-3">设备分类</dt>
+            <dd class="col-sm-9">@Model.CategoryName</dd>
+
+            <dt class="col-sm-3">品牌/型号</dt>
+            <dd class="col-sm-9">@Model.BrandModel</dd>
+
+            <dt class="col-sm-3">出厂日期</dt>
+            <dd class="col-sm-9">@Model.ManufactureDate.ToString("yyyy-MM-dd")</dd>
+
+            <dt class="col-sm-3">出厂编号</dt>
+            <dd class="col-sm-9">@(Model.FactoryNo ?? "—")</dd>
+
+            <dt class="col-sm-3">购置日期</dt>
+            <dd class="col-sm-9">@(Model.PurchaseDate?.ToString("yyyy-MM-dd") ?? "—")</dd>
+
+            <dt class="col-sm-3">原值(元)</dt>
+            <dd class="col-sm-9">@(Model.OriginalValue.HasValue ? Model.OriginalValue.Value.ToString("N2") : "—")</dd>
+
+            <dt class="col-sm-3">所属单位</dt>
+            <dd class="col-sm-9">@Model.OwnedBy</dd>
+
+            <dt class="col-sm-3">状态</dt>
+            <dd class="col-sm-9"><span class="badge @badgeCss">@badgeText</span></dd>
+
+            <dt class="col-sm-3">技术参数</dt>
+            <dd class="col-sm-9 text-muted">@(Model.TechSpecs ?? "—")</dd>
+
+            <dt class="col-sm-3">备注</dt>
+            <dd class="col-sm-9 text-muted">@(Model.Remark ?? "—")</dd>
+
+            <dt class="col-sm-3">录入人</dt>
+            <dd class="col-sm-9">@Model.CreatedByName</dd>
+
+            <dt class="col-sm-3">录入时间</dt>
+            <dd class="col-sm-9 text-muted">@Model.CreatedAt.ToLocalTime().ToString("yyyy-MM-dd HH:mm")</dd>
+        </dl>
+    </div>
+</div>
+
+@if (Model.Images.Any())
+{
+    <div class="card">
+        <div class="card-header">设备图片</div>
+        <div class="card-body d-flex flex-wrap gap-2">
+            @foreach (var img in Model.Images)
+            {
+                <a href="/@img.FilePath.Replace('\\', '/')" target="_blank">
+                    <img src="/@img.FilePath.Replace('\\', '/')"
+                         class="img-thumbnail"
+                         style="width:130px;height:100px;object-fit:cover;"
+                         alt="设备图片" />
+                </a>
+            }
+        </div>
+    </div>
+}

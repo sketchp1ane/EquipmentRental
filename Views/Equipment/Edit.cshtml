@@ -1,0 +1,145 @@
+@model EditEquipmentViewModel
+@{
+    ViewData["Title"] = "编辑设备";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h4 class="mb-0">编辑设备</h4>
+    <a asp-action="Details" asp-route-id="@Model.Id"
+       class="btn btn-outline-secondary btn-sm">返回详情</a>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        @Html.ValidationSummary(true, "", new { @class = "alert alert-danger py-2 small" })
+
+        <form asp-action="Edit" method="post" enctype="multipart/form-data">
+            @Html.AntiForgeryToken()
+            <input type="hidden" asp-for="Id" />
+
+            <div class="row g-3 mb-3">
+                <div class="col-md-4">
+                    <label asp-for="EquipmentNo" class="form-label"></label>
+                    <input asp-for="EquipmentNo" class="form-control form-control-sm" />
+                    <span asp-validation-for="EquipmentNo" class="text-danger small"></span>
+                </div>
+                <div class="col-md-4">
+                    <label asp-for="Name" class="form-label"></label>
+                    <input asp-for="Name" class="form-control form-control-sm" />
+                    <span asp-validation-for="Name" class="text-danger small"></span>
+                </div>
+                <div class="col-md-4">
+                    <label asp-for="CategoryId" class="form-label"></label>
+                    <select asp-for="CategoryId" asp-items="Model.CategoryOptions"
+                            class="form-select form-select-sm">
+                        <option value="">请选择分类</option>
+                    </select>
+                    <span asp-validation-for="CategoryId" class="text-danger small"></span>
+                </div>
+            </div>
+
+            <div class="row g-3 mb-3">
+                <div class="col-md-6">
+                    <label asp-for="BrandModel" class="form-label"></label>
+                    <input asp-for="BrandModel" class="form-control form-control-sm" />
+                    <span asp-validation-for="BrandModel" class="text-danger small"></span>
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="FactoryNo" class="form-label"></label>
+                    <input asp-for="FactoryNo" class="form-control form-control-sm" />
+                    <span asp-validation-for="FactoryNo" class="text-danger small"></span>
+                </div>
+            </div>
+
+            <div class="row g-3 mb-3">
+                <div class="col-md-4">
+                    <label asp-for="ManufactureDate" class="form-label"></label>
+                    <input asp-for="ManufactureDate" type="date" class="form-control form-control-sm" />
+                    <span asp-validation-for="ManufactureDate" class="text-danger small"></span>
+                </div>
+                <div class="col-md-4">
+                    <label asp-for="PurchaseDate" class="form-label"></label>
+                    <input asp-for="PurchaseDate" type="date" class="form-control form-control-sm" />
+                    <span asp-validation-for="PurchaseDate" class="text-danger small"></span>
+                </div>
+                <div class="col-md-4">
+                    <label asp-for="OriginalValue" class="form-label"></label>
+                    <input asp-for="OriginalValue" type="number" step="0.01" min="0"
+                           class="form-control form-control-sm" />
+                    <span asp-validation-for="OriginalValue" class="text-danger small"></span>
+                </div>
+            </div>
+
+            <div class="row g-3 mb-3">
+                <div class="col-md-8">
+                    <label asp-for="OwnedBy" class="form-label"></label>
+                    <input asp-for="OwnedBy" class="form-control form-control-sm" />
+                    <span asp-validation-for="OwnedBy" class="text-danger small"></span>
+                </div>
+                <div class="col-md-4">
+                    <label asp-for="Status" class="form-label"></label>
+                    <select asp-for="Status" class="form-select form-select-sm">
+                        <option value="0">待审核</option>
+                        <option value="1">闲置</option>
+                        <option value="2">使用中</option>
+                        <option value="3">维修中</option>
+                        <option value="4">已报废</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="TechSpecs" class="form-label"></label>
+                <textarea asp-for="TechSpecs" rows="3" class="form-control form-control-sm"></textarea>
+                <span asp-validation-for="TechSpecs" class="text-danger small"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Remark" class="form-label"></label>
+                <textarea asp-for="Remark" rows="2" class="form-control form-control-sm"></textarea>
+                <span asp-validation-for="Remark" class="text-danger small"></span>
+            </div>
+
+            @if (Model.ExistingImages.Any())
+            {
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">现有图片</label>
+                    <div class="d-flex flex-wrap gap-2">
+                        @foreach (var img in Model.ExistingImages)
+                        {
+                            <div class="border rounded p-1 text-center" style="width:130px">
+                                <img src="/@img.FilePath.Replace('\\', '/')"
+                                     class="img-thumbnail"
+                                     style="width:110px;height:85px;object-fit:cover;"
+                                     alt="设备图片" />
+                                <div class="form-check mt-1">
+                                    <input class="form-check-input" type="checkbox"
+                                           name="DeleteImageIds" value="@img.Id"
+                                           id="delImg_@img.Id" />
+                                    <label class="form-check-label text-danger small"
+                                           for="delImg_@img.Id">删除</label>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                    <div class="form-text text-danger">勾选后保存即永久删除图片</div>
+                </div>
+            }
+
+            <div class="mb-4">
+                <label asp-for="Images" class="form-label">上传新图片</label>
+                <input type="file" name="Images" multiple accept=".jpg,.jpeg,.png"
+                       class="form-control form-control-sm" />
+                <div class="form-text">支持 .jpg / .jpeg / .png 格式，可多选</div>
+            </div>
+
+            <button type="submit" class="btn btn-primary">保存修改</button>
+            <a asp-action="Details" asp-route-id="@Model.Id"
+               class="btn btn-outline-secondary ms-2">取消</a>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+}

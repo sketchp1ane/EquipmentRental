@@ -1,0 +1,139 @@
+@model EquipmentListViewModel
+@{
+    ViewData["Title"] = "设备台账";
+    bool canWrite  = User.IsInRole(Roles.Admin) || User.IsInRole(Roles.DeviceAdmin);
+    bool canExport = canWrite || User.IsInRole(Roles.Auditor);
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h4 class="mb-0">设备台账</h4>
+    <div class="d-flex gap-2">
+        @if (canExport)
+        {
+            <a asp-action="Export"
+               asp-route-categoryId="@Model.CategoryId"
+               asp-route-status="@Model.Status"
+               asp-route-keyword="@Model.Keyword"
+               class="btn btn-outline-success btn-sm">导出 Excel</a>
+        }
+        @if (canWrite)
+        {
+            <a asp-action="Create" class="btn btn-primary btn-sm">+ 设备入库</a>
+            <a asp-action="Categories" class="btn btn-outline-secondary btn-sm">分类管理</a>
+        }
+    </div>
+</div>
+
+<!-- 筛选栏 -->
+<form method="get" class="row g-2 mb-3">
+    <div class="col-auto">
+        <input type="text" name="keyword" value="@Model.Keyword"
+               class="form-control form-control-sm" placeholder="编号 / 名称 / 品牌型号" />
+    </div>
+    <div class="col-auto">
+        <select name="categoryId" class="form-select form-select-sm">
+            <option value="">全部分类</option>
+            @foreach (var opt in Model.CategoryOptions)
+            {
+                <option value="@opt.Value"
+                        selected="@(Model.CategoryId?.ToString() == opt.Value)">@opt.Text</option>
+            }
+        </select>
+    </div>
+    <div class="col-auto">
+        <select name="status" class="form-select form-select-sm">
+            <option value="">全部状态</option>
+            <option value="0" selected="@(Model.Status == EquipmentStatus.PendingReview)">待审核</option>
+            <option value="1" selected="@(Model.Status == EquipmentStatus.Idle)">闲置</option>
+            <option value="2" selected="@(Model.Status == EquipmentStatus.InUse)">使用中</option>
+            <option value="3" selected="@(Model.Status == EquipmentStatus.Maintenance)">维修中</option>
+            <option value="4" selected="@(Model.Status == EquipmentStatus.Scrapped)">已报废</option>
+        </select>
+    </div>
+    <div class="col-auto">
+        <button type="submit" class="btn btn-secondary btn-sm">筛选</button>
+        <a asp-action="Index" class="btn btn-outline-secondary btn-sm">重置</a>
+    </div>
+</form>
+
+<!-- 设备表格 -->
+<div class="table-responsive">
+    <table class="table table-hover table-sm align-middle">
+        <thead class="table-light">
+            <tr>
+                <th>设备编号</th>
+                <th>设备名称</th>
+                <th>分类</th>
+                <th>品牌/型号</th>
+                <th>状态</th>
+                <th>录入时间</th>
+                <th>操作</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.Items)
+            {
+                <tr>
+                    <td><code>@item.EquipmentNo</code></td>
+                    <td>@item.Name</td>
+                    <td class="text-muted small">@item.CategoryName</td>
+                    <td class="text-muted small">@item.BrandModel</td>
+                    <td>
+                        @{
+                            var (badgeCss, badgeText) = item.Status switch
+                            {
+                                EquipmentStatus.PendingReview => ("bg-warning text-dark", "待审核"),
+                                EquipmentStatus.Idle          => ("bg-success", "闲置"),
+                                EquipmentStatus.InUse         => ("bg-primary", "使用中"),
+                                EquipmentStatus.Maintenance   => ("bg-danger", "维修中"),
+                                EquipmentStatus.Scrapped      => ("bg-secondary", "已报废"),
+                                _                             => ("bg-secondary", item.Status.ToString())
+                            };
+                        }
+                        <span class="badge @badgeCss">@badgeText</span>
+                    </td>
+                    <td class="text-muted small">@item.CreatedAt.ToLocalTime().ToString("yyyy-MM-dd")</td>
+                    <td>
+                        <a asp-action="Details" asp-route-id="@item.Id"
+                           class="btn btn-outline-secondary btn-sm">详情</a>
+                        @if (canWrite)
+                        {
+                            <a asp-action="Edit" asp-route-id="@item.Id"
+                               class="btn btn-outline-primary btn-sm">编辑</a>
+                        }
+                    </td>
+                </tr>
+            }
+            @if (!Model.Items.Any())
+            {
+                <tr>
+                    <td colspan="7" class="text-center text-muted py-4">暂无数据</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<!-- 分页 + 记录数 -->
+<div class="d-flex justify-content-between align-items-center">
+    <small class="text-muted">共 @Model.TotalCount 条记录</small>
+
+    @if (Model.TotalPages > 1)
+    {
+        <nav>
+            <ul class="pagination pagination-sm mb-0">
+                @for (int p = 1; p <= Model.TotalPages; p++)
+                {
+                    <li class="page-item @(p == Model.Page ? "active" : "")">
+                        <a class="page-link"
+                           asp-action="Index"
+                           asp-route-keyword="@Model.Keyword"
+                           asp-route-categoryId="@Model.CategoryId"
+                           asp-route-status="@Model.Status"
+                           asp-route-page="@p">@p</a>
+                    </li>
+                }
+            </ul>
+        </nav>
+    }
+</div>
