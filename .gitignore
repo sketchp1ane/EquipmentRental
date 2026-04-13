@@ -1,0 +1,30 @@
+# Build output
+bin/
+obj/
+
+# User-specific / IDE
+*.user
+*.suo
+.vs/
+.vscode/
+.idea/
+*.DS_Store
+
+# Secrets / local config
+appsettings.Development.json
+appsettings.*.json
+!appsettings.json
+
+# Uploaded files (runtime data, not source)
+Uploads/
+
+# Playwright test artifacts
+.playwright-mcp/
+
+# NuGet
+*.nupkg
+.nuget/
+
+# Logs
+*.log
+logs/

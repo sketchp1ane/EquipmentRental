@@ -1,0 +1,43 @@
+@model ProfileViewModel
+@{
+    ViewData["Title"] = "个人信息";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h4 class="mb-0">个人信息</h4>
+    <a asp-action="ChangePassword" class="btn btn-outline-secondary btn-sm">修改密码</a>
+</div>
+
+<div class="card" style="max-width: 520px;">
+    <div class="card-body">
+        @Html.ValidationSummary(true, "", new { @class = "alert alert-danger py-2" })
+
+        <form asp-action="Profile" method="post">
+            @Html.AntiForgeryToken()
+
+            <div class="mb-3">
+                <label asp-for="RealName" class="form-label"></label>
+                <input asp-for="RealName" class="form-control" />
+                <span asp-validation-for="RealName" class="text-danger small"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="PhoneNumber" class="form-label"></label>
+                <input asp-for="PhoneNumber" class="form-control" />
+                <span asp-validation-for="PhoneNumber" class="text-danger small"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Email" class="form-label"></label>
+                <input asp-for="Email" class="form-control" type="email" />
+                <span asp-validation-for="Email" class="text-danger small"></span>
+            </div>
+
+            <button type="submit" class="btn btn-primary">保存</button>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+}
