@@ -1,0 +1,105 @@
+@model QualificationIndexViewModel
+@{
+    ViewData["Title"] = "证件管理";
+
+    var (statusCss, statusText) = Model.EquipmentStatus switch
+    {
+        EquipmentStatus.PendingReview => ("bg-warning text-dark", "待审核"),
+        EquipmentStatus.Idle          => ("bg-success", "闲置"),
+        EquipmentStatus.InUse         => ("bg-primary", "使用中"),
+        EquipmentStatus.Maintenance   => ("bg-danger", "维修中"),
+        EquipmentStatus.Scrapped      => ("bg-secondary", "已报废"),
+        _                             => ("bg-secondary", Model.EquipmentStatus.ToString())
+    };
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <div>
+        <h4 class="mb-0">证件管理</h4>
+        <small class="text-muted">
+            <code>@Model.EquipmentNo</code> @Model.EquipmentName
+            <span class="badge @statusCss ms-1">@statusText</span>
+        </small>
+    </div>
+    <div class="d-flex gap-2">
+        <a asp-action="Create" asp-route-equipmentId="@Model.EquipmentId"
+           class="btn btn-primary btn-sm">+ 新增证件</a>
+        <a asp-controller="Equipment" asp-action="Details" asp-route-id="@Model.EquipmentId"
+           class="btn btn-outline-secondary btn-sm">返回设备详情</a>
+    </div>
+</div>
+
+<div class="table-responsive">
+    <table class="table table-hover table-sm align-middle">
+        <thead class="table-light">
+            <tr>
+                <th>证件类型</th>
+                <th>证件编号</th>
+                <th>发证机构</th>
+                <th>有效期起</th>
+                <th>有效期至</th>
+                <th>状态</th>
+                <th>附件</th>
+                <th>更新时间</th>
+                <th>操作</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.Items)
+            {
+                <tr>
+                    <td>@item.TypeName</td>
+                    <td class="text-muted small">@(item.CertNo ?? "—")</td>
+                    <td class="text-muted small">@(item.IssuedBy ?? "—")</td>
+                    <td class="small">@item.ValidFrom.ToString("yyyy-MM-dd")</td>
+                    <td class="small">
+                        @item.ValidTo.ToString("yyyy-MM-dd")
+                    </td>
+                    <td>
+                        @if (item.IsExpired)
+                        {
+                            <span class="badge bg-danger">已过期</span>
+                        }
+                        else if (item.IsExpiringSoon)
+                        {
+                            <span class="badge bg-warning text-dark">即将到期</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-success">有效</span>
+                        }
+                    </td>
+                    <td>
+                        @if (!string.IsNullOrEmpty(item.FilePath))
+                        {
+                            <a href="/@item.FilePath.Replace('\\', '/')" target="_blank"
+                               class="btn btn-outline-secondary btn-sm">查看</a>
+                        }
+                        else
+                        {
+                            <span class="text-muted small">—</span>
+                        }
+                    </td>
+                    <td class="text-muted small">@item.UpdatedAt.ToLocalTime().ToString("yyyy-MM-dd HH:mm")</td>
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@item.Id"
+                           class="btn btn-outline-primary btn-sm">编辑</a>
+                        <form asp-action="Delete" method="post" class="d-inline"
+                              onsubmit="return confirm('确认删除该证件记录？');">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="id" value="@item.Id" />
+                            <input type="hidden" name="equipmentId" value="@Model.EquipmentId" />
+                            <button type="submit" class="btn btn-outline-danger btn-sm">删除</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+            @if (!Model.Items.Any())
+            {
+                <tr>
+                    <td colspan="9" class="text-center text-muted py-4">暂无证件记录，请点击"新增证件"上传</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

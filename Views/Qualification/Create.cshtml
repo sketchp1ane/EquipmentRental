@@ -1,0 +1,83 @@
+@model QualificationFormViewModel
+@{
+    ViewData["Title"] = "新增证件";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h4 class="mb-0">新增证件</h4>
+    <a asp-action="Index" asp-route-equipmentId="@Model.EquipmentId"
+       class="btn btn-outline-secondary btn-sm">返回证件列表</a>
+</div>
+
+<div class="card" style="max-width:640px;">
+    <div class="card-header">
+        <small class="text-muted">设备：<code>@Model.EquipmentNo</code> @Model.EquipmentName</small>
+    </div>
+    <div class="card-body">
+        <form asp-action="Create" method="post" enctype="multipart/form-data">
+            @Html.AntiForgeryToken()
+            <input type="hidden" asp-for="EquipmentId" />
+            <input type="hidden" asp-for="EquipmentNo" />
+            <input type="hidden" asp-for="EquipmentName" />
+
+            <div asp-validation-summary="ModelOnly" class="alert alert-danger py-2 small" role="alert"></div>
+
+            <div class="mb-3">
+                <label asp-for="Type" class="form-label fw-semibold"></label>
+                <select asp-for="Type" class="form-select">
+                    <option value="">请选择证件类型</option>
+                    <option value="1">产品合格证</option>
+                    <option value="2">出厂检验报告</option>
+                    <option value="3">特种设备使用登记证</option>
+                    <option value="4">年度检验报告</option>
+                    <option value="5">保险凭证</option>
+                    <option value="6">安装资质证明</option>
+                </select>
+                <span asp-validation-for="Type" class="text-danger small"></span>
+            </div>
+
+            <div class="row g-3 mb-3">
+                <div class="col-md-6">
+                    <label asp-for="CertNo" class="form-label fw-semibold"></label>
+                    <input asp-for="CertNo" class="form-control" placeholder="证件编号（选填）" />
+                    <span asp-validation-for="CertNo" class="text-danger small"></span>
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="IssuedBy" class="form-label fw-semibold"></label>
+                    <input asp-for="IssuedBy" class="form-control" placeholder="发证机构（选填）" />
+                    <span asp-validation-for="IssuedBy" class="text-danger small"></span>
+                </div>
+            </div>
+
+            <div class="row g-3 mb-3">
+                <div class="col-md-6">
+                    <label asp-for="ValidFrom" class="form-label fw-semibold"></label>
+                    <input asp-for="ValidFrom" type="date" class="form-control" />
+                    <span asp-validation-for="ValidFrom" class="text-danger small"></span>
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="ValidTo" class="form-label fw-semibold"></label>
+                    <input asp-for="ValidTo" type="date" class="form-control" />
+                    <span asp-validation-for="ValidTo" class="text-danger small"></span>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="CertFile" class="form-label fw-semibold"></label>
+                <input asp-for="CertFile" type="file" class="form-control"
+                       accept=".jpg,.jpeg,.png,.pdf" />
+                <div class="form-text">支持 JPG、PNG、PDF，选填</div>
+            </div>
+
+            <div class="d-flex gap-2">
+                <button type="submit" class="btn btn-primary">保存</button>
+                <a asp-action="Index" asp-route-equipmentId="@Model.EquipmentId"
+                   class="btn btn-outline-secondary">取消</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

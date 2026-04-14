@@ -1,0 +1,91 @@
+@model AuditListViewModel
+@{
+    ViewData["Title"] = "资质审核";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h4 class="mb-0">资质审核</h4>
+    <small class="text-muted">待审核设备列表</small>
+</div>
+
+<!-- 筛选栏 -->
+<form method="get" class="row g-2 mb-3">
+    <div class="col-auto">
+        <input type="text" name="keyword" value="@Model.Keyword"
+               class="form-control form-control-sm" placeholder="设备编号 / 名称" />
+    </div>
+    <div class="col-auto">
+        <button type="submit" class="btn btn-secondary btn-sm">筛选</button>
+        <a asp-action="Index" class="btn btn-outline-secondary btn-sm">重置</a>
+    </div>
+</form>
+
+<div class="table-responsive">
+    <table class="table table-hover table-sm align-middle">
+        <thead class="table-light">
+            <tr>
+                <th>设备编号</th>
+                <th>设备名称</th>
+                <th>分类</th>
+                <th>录入人</th>
+                <th>录入时间</th>
+                <th>已上传证件</th>
+                <th>操作</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.Items)
+            {
+                <tr>
+                    <td><code>@item.EquipmentNo</code></td>
+                    <td>@item.EquipmentName</td>
+                    <td class="text-muted small">@item.CategoryName</td>
+                    <td class="text-muted small">@item.CreatedByName</td>
+                    <td class="text-muted small">@item.CreatedAt.ToLocalTime().ToString("yyyy-MM-dd HH:mm")</td>
+                    <td>
+                        @if (item.QualificationCount > 0)
+                        {
+                            <span class="badge bg-info text-dark">@item.QualificationCount 份</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-secondary">未上传</span>
+                        }
+                    </td>
+                    <td>
+                        <a asp-action="Review" asp-route-equipmentId="@item.EquipmentId"
+                           class="btn btn-warning btn-sm">审核</a>
+                    </td>
+                </tr>
+            }
+            @if (!Model.Items.Any())
+            {
+                <tr>
+                    <td colspan="7" class="text-center text-muted py-4">暂无待审核设备</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<!-- 分页 + 记录数 -->
+<div class="d-flex justify-content-between align-items-center">
+    <small class="text-muted">共 @Model.TotalCount 条待审核记录</small>
+
+    @if (Model.TotalPages > 1)
+    {
+        <nav>
+            <ul class="pagination pagination-sm mb-0">
+                @for (int p = 1; p <= Model.TotalPages; p++)
+                {
+                    <li class="page-item @(p == Model.Page ? "active" : "")">
+                        <a class="page-link"
+                           asp-action="Index"
+                           asp-route-keyword="@Model.Keyword"
+                           asp-route-page="@p">@p</a>
+                    </li>
+                }
+            </ul>
+        </nav>
+    }
+</div>

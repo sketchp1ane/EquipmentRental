@@ -21,6 +21,8 @@
         {
             <a asp-action="Edit" asp-route-id="@Model.Id"
                class="btn btn-primary btn-sm">编辑</a>
+            <a asp-controller="Qualification" asp-action="Index" asp-route-equipmentId="@Model.Id"
+               class="btn btn-outline-warning btn-sm">证件管理</a>
         }
         <a asp-action="Index" class="btn btn-outline-secondary btn-sm">返回列表</a>
     </div>

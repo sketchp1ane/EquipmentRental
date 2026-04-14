@@ -2,15 +2,21 @@ using System.Diagnostics;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using EquipmentRental.Models;
+using EquipmentRental.Models.ViewModels;
+using EquipmentRental.Services;
 
 namespace EquipmentRental.Controllers;
 
 [Authorize]
-public class HomeController : Controller
+public class HomeController(QualificationService qualificationService) : Controller
 {
-    public IActionResult Index()
+    public async Task<IActionResult> Index()
     {
-        return View();
+        var vm = new HomeIndexViewModel
+        {
+            ExpiringCerts = await qualificationService.GetExpiringAsync(30)
+        };
+        return View(vm);
     }
 
     public IActionResult Privacy()

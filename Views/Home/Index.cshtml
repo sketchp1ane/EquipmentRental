@@ -1,6 +1,79 @@
+@model HomeIndexViewModel
 @{
     ViewData["Title"] = "首页看板";
 }
 
-<h2 class="mb-4">首页看板</h2>
-<p class="text-muted">统计图表将在 Phase 9 实现。</p>
+<h4 class="mb-4">首页看板</h4>
+
+@if (Model.ExpiringCerts.Any())
+{
+    var expiredCount = Model.ExpiringCerts.Count(c => c.IsExpired);
+    var soonCount    = Model.ExpiringCerts.Count(c => !c.IsExpired);
+
+    <div class="card border-warning mb-4">
+        <div class="card-header bg-warning text-dark fw-semibold">
+            证件到期预警
+            @if (expiredCount > 0)
+            {
+                <span class="badge bg-danger ms-2">已过期 @expiredCount</span>
+            }
+            @if (soonCount > 0)
+            {
+                <span class="badge bg-warning text-dark border border-dark ms-1">即将到期 @soonCount</span>
+            }
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-sm align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>设备编号</th>
+                            <th>设备名称</th>
+                            <th>证件类型</th>
+                            <th>有效期至</th>
+                            <th>状态</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var cert in Model.ExpiringCerts)
+                        {
+                            <tr class="@(cert.IsExpired ? "table-danger" : "table-warning")">
+                                <td><code>@cert.EquipmentNo</code></td>
+                                <td>@cert.EquipmentName</td>
+                                <td>@cert.CertTypeName</td>
+                                <td class="small">@cert.ValidTo.ToString("yyyy-MM-dd")</td>
+                                <td>
+                                    @if (cert.IsExpired)
+                                    {
+                                        <span class="badge bg-danger">已过期 @(-cert.DaysLeft) 天</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-warning text-dark">还剩 @cert.DaysLeft 天</span>
+                                    }
+                                </td>
+                                <td>
+                                    @if (User.IsInRole(Roles.Admin) || User.IsInRole(Roles.DeviceAdmin))
+                                    {
+                                        <a asp-controller="Qualification" asp-action="Index"
+                                           asp-route-equipmentId="@cert.EquipmentId"
+                                           class="btn btn-outline-warning btn-sm">证件管理</a>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+}
+else
+{
+    <div class="alert alert-success py-2">
+        <small>所有证件均在有效期内（未来 30 天内无到期证件）。</small>
+    </div>
+}
+
+<p class="text-muted small">统计图表将在 Phase 9 实现。</p>

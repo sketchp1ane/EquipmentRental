@@ -1,0 +1,166 @@
+@model AuditDetailViewModel
+@{
+    ViewData["Title"] = "设备审核";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h4 class="mb-0">设备审核</h4>
+    <a asp-action="Index" class="btn btn-outline-secondary btn-sm">返回审核列表</a>
+</div>
+
+<!-- 设备基本信息 -->
+<div class="card mb-3">
+    <div class="card-header fw-semibold">设备信息</div>
+    <div class="card-body">
+        <dl class="row mb-0">
+            <dt class="col-sm-3">设备编号</dt>
+            <dd class="col-sm-9"><code>@Model.EquipmentNo</code></dd>
+
+            <dt class="col-sm-3">设备名称</dt>
+            <dd class="col-sm-9">@Model.EquipmentName</dd>
+
+            <dt class="col-sm-3">设备分类</dt>
+            <dd class="col-sm-9">@Model.CategoryName</dd>
+
+            <dt class="col-sm-3">品牌/型号</dt>
+            <dd class="col-sm-9">@Model.BrandModel</dd>
+
+            <dt class="col-sm-3">所属单位</dt>
+            <dd class="col-sm-9">@Model.OwnedBy</dd>
+
+            <dt class="col-sm-3">录入人</dt>
+            <dd class="col-sm-9">@Model.CreatedByName</dd>
+
+            <dt class="col-sm-3">录入时间</dt>
+            <dd class="col-sm-9 text-muted">@Model.CreatedAt.ToLocalTime().ToString("yyyy-MM-dd HH:mm")</dd>
+        </dl>
+    </div>
+</div>
+
+<!-- 证件列表（只读） -->
+<div class="card mb-3">
+    <div class="card-header fw-semibold">
+        已上传证件
+        @if (!Model.Qualifications.Any())
+        {
+            <span class="badge bg-secondary ms-2">未上传</span>
+        }
+        else
+        {
+            <span class="badge bg-info text-dark ms-2">@Model.Qualifications.Count 份</span>
+        }
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-sm align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>证件类型</th>
+                        <th>证件编号</th>
+                        <th>发证机构</th>
+                        <th>有效期至</th>
+                        <th>状态</th>
+                        <th>附件</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var cert in Model.Qualifications)
+                    {
+                        <tr>
+                            <td>@cert.TypeName</td>
+                            <td class="text-muted small">@(cert.CertNo ?? "—")</td>
+                            <td class="text-muted small">@(cert.IssuedBy ?? "—")</td>
+                            <td class="small">@cert.ValidTo.ToString("yyyy-MM-dd")</td>
+                            <td>
+                                @if (cert.IsExpired)
+                                {
+                                    <span class="badge bg-danger">已过期</span>
+                                }
+                                else if (cert.IsExpiringSoon)
+                                {
+                                    <span class="badge bg-warning text-dark">即将到期</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-success">有效</span>
+                                }
+                            </td>
+                            <td>
+                                @if (!string.IsNullOrEmpty(cert.FilePath))
+                                {
+                                    <a href="/@cert.FilePath.Replace('\\', '/')" target="_blank"
+                                       class="btn btn-outline-secondary btn-sm">查看</a>
+                                }
+                                else
+                                {
+                                    <span class="text-muted small">—</span>
+                                }
+                            </td>
+                        </tr>
+                    }
+                    @if (!Model.Qualifications.Any())
+                    {
+                        <tr>
+                            <td colspan="6" class="text-center text-muted py-3">该设备暂未上传任何证件</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- 审核操作 -->
+<div class="card" style="max-width:560px;">
+    <div class="card-header fw-semibold">审核操作</div>
+    <div class="card-body">
+        <form asp-action="Review" method="post">
+            @Html.AntiForgeryToken()
+            <input type="hidden" asp-for="Form.EquipmentId" />
+
+            <div asp-validation-summary="ModelOnly" class="alert alert-danger py-2 small" role="alert"></div>
+
+            <div class="mb-3">
+                <label class="form-label fw-semibold">审核结论</label>
+                <div class="d-flex gap-4">
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio"
+                               name="Action" id="actionPass" value="1"
+                               @(Model.Form.Action == AuditAction.Pass ? "checked" : "") />
+                        <label class="form-check-label text-success fw-semibold" for="actionPass">
+                            通过
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio"
+                               name="Action" id="actionReject" value="2"
+                               @(Model.Form.Action == AuditAction.Reject ? "checked" : "") />
+                        <label class="form-check-label text-danger fw-semibold" for="actionReject">
+                            驳回
+                        </label>
+                    </div>
+                </div>
+                <span asp-validation-for="Form.Action" class="text-danger small"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Form.Remark" class="form-label fw-semibold">
+                    备注 / 驳回原因
+                    <span class="text-danger small fw-normal">（驳回时必填）</span>
+                </label>
+                <textarea asp-for="Form.Remark" class="form-control" rows="3"
+                          placeholder="通过时可留空，驳回时请填写原因"></textarea>
+                <span asp-validation-for="Form.Remark" class="text-danger small"></span>
+            </div>
+
+            <div class="d-flex gap-2">
+                <button type="submit" class="btn btn-primary">提交审核</button>
+                <a asp-action="Index" class="btn btn-outline-secondary">取消</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
