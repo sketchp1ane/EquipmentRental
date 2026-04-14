@@ -140,6 +140,7 @@ public class OrderDetailViewModel
     public string? ContractNo { get; set; }
     public DateTime CreatedAt { get; set; }
     public string QrCodeDataUri { get; set; } = string.Empty;
+    public bool IsVerified { get; set; }
 }
 
 // ── 日历页面 Shell ────────────────────────────────────────────────────────────

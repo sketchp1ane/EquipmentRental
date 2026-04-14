@@ -1,0 +1,154 @@
+@model VerifyFormViewModel
+@using EquipmentRental.Models
+@using EquipmentRental.Models.ViewModels
+@{
+    ViewData["Title"] = "进场核验";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h4 class="mb-0">进场核验</h4>
+    <a asp-action="List" class="btn btn-outline-secondary btn-sm">核验记录</a>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-lg-7">
+
+        @if (!ViewData.ModelState.IsValid)
+        {
+            <div class="alert alert-danger">
+                @foreach (var err in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                {
+                    <div>@err.ErrorMessage</div>
+                }
+            </div>
+        }
+
+        <div class="card mb-4">
+            <div class="card-header fw-semibold">输入核验码</div>
+            <div class="card-body">
+                <form asp-action="Verify" method="post">
+                    @Html.AntiForgeryToken()
+                    <div class="mb-3">
+                        <label class="form-label">核验码 <span class="text-danger">*</span></label>
+                        <div class="input-group">
+                            <input asp-for="VerifyCode"
+                                   class="form-control font-monospace"
+                                   placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+                                   maxlength="36"
+                                   autocomplete="off" />
+                            <button type="button" class="btn btn-outline-secondary" id="btn-scan">
+                                扫描二维码
+                            </button>
+                        </div>
+                        <span asp-validation-for="VerifyCode" class="text-danger small"></span>
+                    </div>
+
+                    <!-- 订单信息预览（核验码有效时显示） -->
+                    @if (Model.HasOrderInfo)
+                    {
+                        <div class="alert alert-info mb-3">
+                            <div class="fw-semibold mb-1">找到匹配调度单 #@Model.OrderId</div>
+                            <div class="row row-cols-2 g-1 small">
+                                <div class="col text-muted">项目名称</div>
+                                <div class="col">@Model.ProjectName</div>
+                                <div class="col text-muted">设备编号</div>
+                                <div class="col"><code>@Model.EquipmentNo</code> @Model.EquipmentName</div>
+                                <div class="col text-muted">租赁期间</div>
+                                <div class="col">@Model.ActualStart.ToString("yyyy-MM-dd") 至 @Model.ActualEnd.ToString("yyyy-MM-dd")</div>
+                                <div class="col text-muted">调度单状态</div>
+                                <div class="col">
+                                    @switch (Model.OrderStatus)
+                                    {
+                                        case DispatchOrderStatus.Signed:
+                                            <span class="badge bg-info">已签署</span>
+                                            break;
+                                        case DispatchOrderStatus.InProgress:
+                                            <span class="badge bg-success">进行中</span>
+                                            break;
+                                        default:
+                                            <span class="badge bg-secondary">@Model.OrderStatus</span>
+                                            break;
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    }
+
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-primary">开始核验</button>
+                        <a asp-action="Verify" class="btn btn-outline-secondary">重置</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- 摄像头扫码区（默认隐藏） -->
+        <div id="scanner-area" class="card mb-4 d-none">
+            <div class="card-header fw-semibold d-flex justify-content-between align-items-center">
+                扫描二维码
+                <button type="button" class="btn-close" id="btn-close-scan"></button>
+            </div>
+            <div class="card-body text-center">
+                <video id="qr-video" class="w-100 rounded" style="max-height:300px;" autoplay playsinline></video>
+                <p class="text-muted small mt-2">请将二维码对准摄像头</p>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+@section Scripts {
+<script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js" crossorigin="anonymous"></script>
+<script>
+(function () {
+    const btnScan      = document.getElementById('btn-scan');
+    const btnClose     = document.getElementById('btn-close-scan');
+    const scannerArea  = document.getElementById('scanner-area');
+    const video        = document.getElementById('qr-video');
+    const codeInput    = document.querySelector('input[name="VerifyCode"]');
+    let stream = null;
+    let animId = null;
+
+    function stopScan() {
+        if (animId) { cancelAnimationFrame(animId); animId = null; }
+        if (stream)  { stream.getTracks().forEach(t => t.stop()); stream = null; }
+        scannerArea.classList.add('d-none');
+    }
+
+    btnScan.addEventListener('click', async () => {
+        if (!navigator.mediaDevices?.getUserMedia) {
+            alert('当前浏览器不支持摄像头扫码，请手动输入核验码。');
+            return;
+        }
+        try {
+            stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
+            video.srcObject = stream;
+            scannerArea.classList.remove('d-none');
+            scanFrame();
+        } catch {
+            alert('无法访问摄像头，请手动输入核验码。');
+        }
+    });
+
+    btnClose.addEventListener('click', stopScan);
+
+    function scanFrame() {
+        if (!stream) return;
+        const canvas = document.createElement('canvas');
+        canvas.width  = video.videoWidth  || 320;
+        canvas.height = video.videoHeight || 240;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        const code = jsQR(imageData.data, imageData.width, imageData.height);
+        if (code) {
+            codeInput.value = code.data;
+            stopScan();
+            codeInput.form.submit();
+        } else {
+            animId = requestAnimationFrame(scanFrame);
+        }
+    }
+})();
+</script>
+}

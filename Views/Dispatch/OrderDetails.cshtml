@@ -124,18 +124,31 @@
             </div>
         </div>
 
-        <div class="card">
-            <div class="card-header fw-semibold">进场核验码</div>
-            <div class="card-body text-center">
-                <p class="text-muted small mb-2">进场时扫描或输入以下核验码</p>
-                @if (!string.IsNullOrEmpty(Model.QrCodeDataUri))
-                {
-                    <img src="@Model.QrCodeDataUri" alt="核验码二维码" class="img-fluid mb-2" style="max-width:160px;" />
-                }
-                <div class="mt-2">
-                    <code class="user-select-all fs-6">@Model.VerifyCode</code>
+        @if (Model.OrderStatus >= DispatchOrderStatus.Signed)
+        {
+            <div class="card">
+                <div class="card-header fw-semibold">进场核验码</div>
+                <div class="card-body text-center">
+                    <p class="text-muted small mb-2">进场时扫描或输入以下核验码</p>
+                    @if (!string.IsNullOrEmpty(Model.QrCodeDataUri))
+                    {
+                        <img src="@Model.QrCodeDataUri" alt="核验码二维码" class="img-fluid mb-2" style="max-width:160px;" />
+                    }
+                    <div class="mt-2 mb-3">
+                        <code class="user-select-all fs-6">@Model.VerifyCode</code>
+                    </div>
+                    @if (Model.IsVerified)
+                    {
+                        <span class="badge bg-success">已核验</span>
+                    }
+                    else if (Model.OrderStatus == DispatchOrderStatus.Signed)
+                    {
+                        <a asp-controller="Verification" asp-action="Verify"
+                           asp-route-code="@Model.VerifyCode"
+                           class="btn btn-sm btn-primary">前往核验</a>
+                    }
                 </div>
             </div>
-        </div>
+        }
     </div>
 </div>

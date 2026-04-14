@@ -301,6 +301,7 @@ public class DispatchService(
             .Include(o => o.Equipment)
             .Include(o => o.Dispatcher)
             .Include(o => o.Contract)
+            .Include(o => o.EntryVerification)
             .FirstOrDefaultAsync(o => o.Id == orderId);
 
         if (order == null) return null;
@@ -329,7 +330,8 @@ public class DispatchService(
             ContractId     = order.Contract?.Id,
             ContractStatus = order.Contract?.Status,
             ContractNo     = order.Contract?.ContractNo,
-            CreatedAt      = order.CreatedAt
+            CreatedAt      = order.CreatedAt,
+            IsVerified     = order.EntryVerification?.IsPass == true
         };
     }
 
