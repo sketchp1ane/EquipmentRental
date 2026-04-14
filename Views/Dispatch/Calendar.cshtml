@@ -1,0 +1,134 @@
+@model CalendarPageViewModel
+@using EquipmentRental.Models.ViewModels
+@{
+    ViewData["Title"] = "调度日历";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h4 class="mb-0">调度日历</h4>
+    <a asp-action="Index" class="btn btn-outline-secondary btn-sm">调度列表</a>
+</div>
+
+<!-- 日期范围选择 -->
+<div class="card mb-4">
+    <div class="card-body py-2">
+        <form method="get" asp-action="Calendar" class="row g-2 align-items-end">
+            <div class="col-auto">
+                <label class="form-label mb-1 small">开始日期</label>
+                <input type="date" name="start" value="@Model.RangeStart.ToString("yyyy-MM-dd")"
+                       class="form-control form-control-sm" id="calStart" />
+            </div>
+            <div class="col-auto">
+                <label class="form-label mb-1 small">结束日期</label>
+                <input type="date" name="end" value="@Model.RangeEnd.ToString("yyyy-MM-dd")"
+                       class="form-control form-control-sm" id="calEnd" />
+            </div>
+            <div class="col-auto">
+                <button type="submit" class="btn btn-secondary btn-sm">查询</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- 图例 -->
+<div class="mb-2 d-flex gap-3 small">
+    <span><span class="badge bg-warning text-dark">待签署</span></span>
+    <span><span class="badge bg-info">已签署</span></span>
+    <span><span class="badge bg-success">进行中</span></span>
+    <span><span class="badge bg-secondary">已完成</span></span>
+</div>
+
+<div id="calendar-container">
+    <p class="text-muted small">正在加载日历数据…</p>
+</div>
+
+@section Scripts {
+<script>
+    const rangeStart = '@Model.RangeStart.ToString("yyyy-MM-dd")';
+    const rangeEnd   = '@Model.RangeEnd.ToString("yyyy-MM-dd")';
+
+    function dateRange(start, end) {
+        const dates = [];
+        let cur = new Date(start + 'T00:00:00');
+        const endDate = new Date(end + 'T00:00:00');
+        while (cur <= endDate) {
+            dates.push(cur.toISOString().slice(0, 10));
+            cur.setDate(cur.getDate() + 1);
+        }
+        return dates;
+    }
+
+    function statusClass(s) {
+        switch (s) {
+            case 'Unsigned':    return 'bg-warning text-dark';
+            case 'Signed':      return 'bg-info';
+            case 'InProgress':  return 'bg-success';
+            case 'Complete':    return 'bg-secondary';
+            case 'Terminated':  return 'bg-danger';
+            default:            return 'bg-light text-dark';
+        }
+    }
+
+    function statusLabel(s) {
+        const map = { Unsigned:'待签署', Signed:'已签署', InProgress:'进行中', Complete:'已完成', Terminated:'已终止' };
+        return map[s] || s;
+    }
+
+    async function loadCalendar() {
+        const container = document.getElementById('calendar-container');
+        try {
+            const res = await fetch(`/Dispatch/CalendarData?start=${rangeStart}&end=${rangeEnd}`);
+            const data = await res.json();
+
+            const dates = dateRange(rangeStart, rangeEnd);
+
+            if (data.equipments.length === 0) {
+                container.innerHTML = '<p class="text-muted py-3 text-center">该时间段内暂无调度记录</p>';
+                return;
+            }
+
+            // 构建占用 Map: "equipmentId:date" -> { orderNo, status }
+            const occupancy = new Map();
+            for (const slot of data.slots) {
+                const slotDates = dateRange(slot.start, slot.end);
+                for (const d of slotDates) {
+                    if (d >= rangeStart && d <= rangeEnd) {
+                        occupancy.set(`${slot.equipmentId}:${d}`, slot);
+                    }
+                }
+            }
+
+            // 构建表格
+            let html = '<div class="table-responsive"><table class="table table-bordered table-sm" style="font-size:0.78rem;">';
+            html += '<thead class="table-light"><tr><th style="min-width:140px;white-space:nowrap;">设备</th>';
+            for (const d of dates) {
+                const label = d.slice(5); // MM-DD
+                html += `<th class="text-center" style="min-width:48px;">${label}</th>`;
+            }
+            html += '</tr></thead><tbody>';
+
+            for (const eq of data.equipments) {
+                html += `<tr><td class="text-nowrap"><strong>${eq.equipmentNo}</strong><br><span class="text-muted">${eq.name}</span></td>`;
+                for (const d of dates) {
+                    const key = `${eq.id}:${d}`;
+                    if (occupancy.has(key)) {
+                        const slot = occupancy.get(key);
+                        const cls = statusClass(slot.status);
+                        html += `<td class="text-center p-1"><a href="/Dispatch/OrderDetails/${slot.orderNo}" class="badge ${cls} text-decoration-none" title="${statusLabel(slot.status)} #${slot.orderNo}">#${slot.orderNo}</a></td>`;
+                    } else {
+                        html += '<td></td>';
+                    }
+                }
+                html += '</tr>';
+            }
+
+            html += '</tbody></table></div>';
+            container.innerHTML = html;
+        } catch (e) {
+            container.innerHTML = '<p class="text-danger">日历数据加载失败，请刷新页面重试。</p>';
+        }
+    }
+
+    loadCalendar();
+</script>
+}

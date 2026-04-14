@@ -1,0 +1,140 @@
+@model ContractDetailViewModel
+@using EquipmentRental.Models
+@using EquipmentRental.Models.ViewModels
+@{
+    ViewData["Title"] = $"合同 {Model.ContractNo}";
+    bool canUpload = User.IsInRole("Dispatcher") || User.IsInRole("Admin");
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h4 class="mb-0">租赁合同</h4>
+    <div class="d-flex gap-2">
+        <a asp-action="ExportPdf" asp-route-id="@Model.ContractId"
+           class="btn btn-outline-danger btn-sm" target="_blank">
+            导出 PDF
+        </a>
+        <a asp-controller="Dispatch" asp-action="OrderDetails" asp-route-id="@Model.OrderId"
+           class="btn btn-outline-secondary btn-sm">返回调度单</a>
+    </div>
+</div>
+
+<!-- 合同状态 -->
+<div class="mb-3">
+    @switch (Model.Status)
+    {
+        case ContractStatus.Draft:
+            <span class="badge bg-secondary fs-6 px-3 py-2">草稿</span>
+            break;
+        case ContractStatus.AwaitingSignature:
+            <span class="badge bg-warning text-dark fs-6 px-3 py-2">待签署</span>
+            break;
+        case ContractStatus.Signed:
+            <span class="badge bg-success fs-6 px-3 py-2">已签署</span>
+            break;
+        case ContractStatus.Terminated:
+            <span class="badge bg-danger fs-6 px-3 py-2">已终止</span>
+            break;
+    }
+    <span class="text-muted small ms-2">合同编号：<code>@Model.ContractNo</code></span>
+</div>
+
+<!-- 合同正文 -->
+<div class="card mb-4" style="max-width:800px;">
+    <div class="card-body p-4">
+
+        <h2 class="text-center mb-1">设备租赁合同</h2>
+        <p class="text-center text-muted small mb-4">合同编号：@Model.ContractNo</p>
+
+        <h6 class="mt-3 mb-2 fw-bold border-bottom pb-1">一、甲乙双方</h6>
+        <table class="table table-sm table-bordered">
+            <tr><th class="table-light" style="width:30%">甲方（出租方）</th><td>@Model.PartyAName</td></tr>
+            <tr><th class="table-light">乙方（承租方）</th><td>@Model.PartyBName</td></tr>
+            <tr><th class="table-light">乙方联系电话</th><td>@Model.PartyBPhone</td></tr>
+        </table>
+
+        <h6 class="mt-3 mb-2 fw-bold border-bottom pb-1">二、项目信息</h6>
+        <table class="table table-sm table-bordered">
+            <tr><th class="table-light" style="width:30%">项目名称</th><td>@Model.ProjectName</td></tr>
+            <tr><th class="table-light">项目地址</th><td>@Model.ProjectAddress</td></tr>
+        </table>
+
+        <h6 class="mt-3 mb-2 fw-bold border-bottom pb-1">三、设备信息</h6>
+        <table class="table table-sm table-bordered">
+            <tr>
+                <th class="table-light" style="width:30%">设备编号</th>
+                <td><code>@Model.EquipmentNo</code></td>
+            </tr>
+            <tr><th class="table-light">设备名称</th><td>@Model.EquipmentName</td></tr>
+            <tr><th class="table-light">品牌型号</th><td>@Model.BrandModel</td></tr>
+            <tr><th class="table-light">所属单位</th><td>@Model.OwnedBy</td></tr>
+        </table>
+
+        <h6 class="mt-3 mb-2 fw-bold border-bottom pb-1">四、租期与费用</h6>
+        <table class="table table-sm table-bordered">
+            <tr>
+                <th class="table-light" style="width:30%">租赁开始</th>
+                <td>@Model.RentalStart.ToString("yyyy-MM-dd")</td>
+            </tr>
+            <tr><th class="table-light">租赁结束</th><td>@Model.RentalEnd.ToString("yyyy-MM-dd")</td></tr>
+            <tr><th class="table-light">租赁天数</th><td>@Model.RentalDays 天</td></tr>
+            <tr><th class="table-light">日租金（元/天）</th><td>¥ @Model.UnitPrice.ToString("N2")</td></tr>
+            <tr><th class="table-light">租赁金额（元）</th><td><strong>¥ @Model.RentalAmount.ToString("N2")</strong></td></tr>
+            <tr><th class="table-light">押金（元）</th><td>¥ @Model.Deposit.ToString("N2")</td></tr>
+        </table>
+
+        <h6 class="mt-3 mb-2 fw-bold border-bottom pb-1">五、违约条款</h6>
+        <p class="small" style="white-space:pre-line;">@Model.ViolationClauses</p>
+
+        <h6 class="mt-3 mb-2 fw-bold border-bottom pb-1">六、签署</h6>
+        <div class="row mt-3">
+            <div class="col-4">签署日期：____________</div>
+            <div class="col-4 text-center">甲方签章：____________</div>
+            <div class="col-4 text-end">乙方签章：____________</div>
+        </div>
+
+        <p class="text-muted small text-end mt-4">生成日期：@Model.CreatedAt.ToLocalTime().ToString("yyyy-MM-dd")</p>
+    </div>
+</div>
+
+<!-- 扫描件区域 -->
+<div class="card" style="max-width:800px;">
+    <div class="card-header fw-semibold">合同扫描件</div>
+    <div class="card-body">
+        @if (!string.IsNullOrWhiteSpace(Model.ScanPath))
+        {
+            <div class="mb-3">
+                <span class="text-success me-2">已上传签署扫描件</span>
+                <a href="/@Model.ScanPath.Replace('\\', '/')" target="_blank" class="btn btn-outline-secondary btn-sm">
+                    查看扫描件
+                </a>
+            </div>
+        }
+        else
+        {
+            <p class="text-muted small">尚未上传签署扫描件。</p>
+        }
+
+        @if (canUpload && Model.Status != ContractStatus.Terminated)
+        {
+            <div class="collapse @(string.IsNullOrWhiteSpace(Model.ScanPath) ? "show" : "")" id="uploadCollapse">
+                <form asp-controller="Contract" asp-action="UploadScan"
+                      method="post" enctype="multipart/form-data">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="ContractId" value="@Model.ContractId" />
+                    <div class="mb-3">
+                        <label class="form-label">选择扫描件（JPG / PNG / PDF）</label>
+                        <input type="file" name="ScanFile" class="form-control" accept=".jpg,.jpeg,.png,.pdf" required />
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-sm">上传并签署</button>
+                </form>
+            </div>
+            @if (!string.IsNullOrWhiteSpace(Model.ScanPath))
+            {
+                <button class="btn btn-outline-secondary btn-sm mt-2"
+                        type="button" data-bs-toggle="collapse" data-bs-target="#uploadCollapse">
+                    重新上传
+                </button>
+            }
+        }
+    </div>
+</div>

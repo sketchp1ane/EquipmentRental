@@ -1,0 +1,96 @@
+@model DispatchRequestFormViewModel
+@using EquipmentRental.Models.ViewModels
+@{
+    ViewData["Title"] = "用车申请";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h4 class="mb-0">用车申请</h4>
+</div>
+
+<div class="card" style="max-width:680px;">
+    <div class="card-body">
+        <form asp-action="Request" method="post">
+            @Html.AntiForgeryToken()
+            <div asp-validation-summary="ModelOnly" class="alert alert-danger" style="display:@(ViewContext.ViewData.ModelState.IsValid ? "none" : "block")"></div>
+
+            <div class="row g-3">
+                <div class="col-12">
+                    <label asp-for="ProjectName" class="form-label">项目名称 <span class="text-danger">*</span></label>
+                    <input asp-for="ProjectName" class="form-control" placeholder="如：XX 大厦主体施工项目" />
+                    <span asp-validation-for="ProjectName" class="text-danger small"></span>
+                </div>
+
+                <div class="col-12">
+                    <label asp-for="ProjectAddress" class="form-label">项目地址 <span class="text-danger">*</span></label>
+                    <input asp-for="ProjectAddress" class="form-control" placeholder="如：北京市朝阳区 XX 路 1 号" />
+                    <span asp-validation-for="ProjectAddress" class="text-danger small"></span>
+                </div>
+
+                <div class="col-md-6">
+                    <label asp-for="CategoryId" class="form-label">设备类型 <span class="text-danger">*</span></label>
+                    <select asp-for="CategoryId" asp-items="Model.CategoryOptions" class="form-select">
+                        <option value="">-- 请选择设备类型 --</option>
+                    </select>
+                    <span asp-validation-for="CategoryId" class="text-danger small"></span>
+                </div>
+
+                <div class="col-md-6">
+                    <label asp-for="Quantity" class="form-label">数量 <span class="text-danger">*</span></label>
+                    <input asp-for="Quantity" type="number" min="1" max="100" class="form-control" />
+                    <span asp-validation-for="Quantity" class="text-danger small"></span>
+                </div>
+
+                <div class="col-md-6">
+                    <label asp-for="ExpectedStart" class="form-label">预计开始日期 <span class="text-danger">*</span></label>
+                    <input asp-for="ExpectedStart" type="date" class="form-control" id="expectedStart" />
+                    <span asp-validation-for="ExpectedStart" class="text-danger small"></span>
+                </div>
+
+                <div class="col-md-6">
+                    <label asp-for="ExpectedEnd" class="form-label">预计归还日期 <span class="text-danger">*</span></label>
+                    <input asp-for="ExpectedEnd" type="date" class="form-control" id="expectedEnd" />
+                    <span asp-validation-for="ExpectedEnd" class="text-danger small"></span>
+                </div>
+
+                <div class="col-12">
+                    <label asp-for="SpecialRequirements" class="form-label">特殊要求</label>
+                    <textarea asp-for="SpecialRequirements" class="form-control" rows="2"
+                              placeholder="如载重规格、特殊配件等要求（可选）"></textarea>
+                    <span asp-validation-for="SpecialRequirements" class="text-danger small"></span>
+                </div>
+
+                <div class="col-md-6">
+                    <label asp-for="ContactName" class="form-label">联系人 <span class="text-danger">*</span></label>
+                    <input asp-for="ContactName" class="form-control" />
+                    <span asp-validation-for="ContactName" class="text-danger small"></span>
+                </div>
+
+                <div class="col-md-6">
+                    <label asp-for="ContactPhone" class="form-label">联系电话 <span class="text-danger">*</span></label>
+                    <input asp-for="ContactPhone" type="tel" class="form-control" />
+                    <span asp-validation-for="ContactPhone" class="text-danger small"></span>
+                </div>
+            </div>
+
+            <div class="mt-4 d-flex gap-2">
+                <button type="submit" class="btn btn-primary">提交申请</button>
+                <a asp-action="Index" class="btn btn-outline-secondary">取消</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        // 校验归还日期不早于开始日期
+        document.getElementById('expectedEnd').addEventListener('change', function () {
+            const s = document.getElementById('expectedStart').value;
+            if (s && this.value < s) {
+                alert('归还日期不能早于开始日期');
+                this.value = s;
+            }
+        });
+    </script>
+}

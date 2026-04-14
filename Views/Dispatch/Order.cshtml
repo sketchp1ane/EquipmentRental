@@ -1,0 +1,146 @@
+@model CreateOrderViewModel
+@using EquipmentRental.Models.ViewModels
+@{
+    ViewData["Title"] = "调度排期";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h4 class="mb-0">调度排期</h4>
+    <a asp-action="Index" class="btn btn-outline-secondary btn-sm">返回列表</a>
+</div>
+
+<!-- 申请信息（只读） -->
+<div class="card mb-4">
+    <div class="card-header bg-light fw-semibold">用车申请详情</div>
+    <div class="card-body">
+        <dl class="row mb-0">
+            <dt class="col-sm-3">项目名称</dt>
+            <dd class="col-sm-9">@Model.ProjectName</dd>
+
+            <dt class="col-sm-3">设备类型</dt>
+            <dd class="col-sm-9">@Model.CategoryName &nbsp;（需 @Model.Quantity 台）</dd>
+
+            <dt class="col-sm-3">期望日期</dt>
+            <dd class="col-sm-9">@Model.ExpectedStart.ToString("yyyy-MM-dd") 至 @Model.ExpectedEnd.ToString("yyyy-MM-dd")</dd>
+
+            <dt class="col-sm-3">联系人</dt>
+            <dd class="col-sm-9">@Model.ContactName &nbsp; @Model.ContactPhone</dd>
+
+            @if (!string.IsNullOrWhiteSpace(Model.SpecialRequirements))
+            {
+                <dt class="col-sm-3">特殊要求</dt>
+                <dd class="col-sm-9">@Model.SpecialRequirements</dd>
+            }
+        </dl>
+    </div>
+</div>
+
+<!-- 先选日期再查可用设备 -->
+<div class="card mb-3">
+    <div class="card-header bg-light fw-semibold">日期查询</div>
+    <div class="card-body">
+        <form method="get" asp-action="Order" class="row g-2 align-items-end">
+            <input type="hidden" name="requestId" value="@Model.RequestId" />
+            <div class="col-auto">
+                <label class="form-label mb-1">实际开始</label>
+                <input type="date" name="start" value="@Model.ActualStart.ToString("yyyy-MM-dd")" class="form-control form-control-sm" />
+            </div>
+            <div class="col-auto">
+                <label class="form-label mb-1">实际结束</label>
+                <input type="date" name="end" value="@Model.ActualEnd.ToString("yyyy-MM-dd")" class="form-control form-control-sm" />
+            </div>
+            <div class="col-auto">
+                <button type="submit" class="btn btn-secondary btn-sm">查询可用设备</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- 创建调度单表单 -->
+<div class="card">
+    <div class="card-header bg-light fw-semibold">创建调度单</div>
+    <div class="card-body">
+        <form asp-action="Order" method="post">
+            @Html.AntiForgeryToken()
+            <input type="hidden" asp-for="RequestId" />
+            <input type="hidden" asp-for="CategoryId" />
+            <input type="hidden" asp-for="ActualStart" />
+            <input type="hidden" asp-for="ActualEnd" />
+
+            <div asp-validation-summary="ModelOnly" class="alert alert-danger"
+                 style="display:@(ViewContext.ViewData.ModelState.IsValid ? "none" : "block")"></div>
+
+            @if (!Model.AvailableEquipments.Any())
+            {
+                <div class="alert alert-warning">
+                    在所选时间段（@Model.ActualStart.ToString("yyyy-MM-dd") 至 @Model.ActualEnd.ToString("yyyy-MM-dd")）内无可用设备。
+                    请调整日期后重新查询，或检查设备资质状态。
+                </div>
+            }
+            else
+            {
+                <div class="row g-3">
+                    <div class="col-12">
+                        <label asp-for="EquipmentId" class="form-label">选择设备 <span class="text-danger">*</span></label>
+                        <select asp-for="EquipmentId" class="form-select" id="equipSelect">
+                            <option value="">-- 请从可用设备中选择 --</option>
+                            @foreach (var e in Model.AvailableEquipments)
+                            {
+                                <option value="@e.Id">@e.EquipmentNo — @e.Name（@e.BrandModel）@e.OwnedBy</option>
+                            }
+                        </select>
+                        <span asp-validation-for="EquipmentId" class="text-danger small"></span>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label">实际租期</label>
+                        <p class="form-control-plaintext">
+                            @Model.ActualStart.ToString("yyyy-MM-dd") 至 @Model.ActualEnd.ToString("yyyy-MM-dd")
+                            （<span id="dayCount">@((Model.ActualEnd.DayNumber - Model.ActualStart.DayNumber + 1))</span> 天）
+                        </p>
+                    </div>
+
+                    <div class="col-md-3">
+                        <label asp-for="UnitPrice" class="form-label">日租金（元/天） <span class="text-danger">*</span></label>
+                        <input asp-for="UnitPrice" type="number" min="0.01" step="0.01" class="form-control" id="unitPrice" />
+                        <span asp-validation-for="UnitPrice" class="text-danger small"></span>
+                    </div>
+
+                    <div class="col-md-3">
+                        <label asp-for="Deposit" class="form-label">押金（元） <span class="text-danger">*</span></label>
+                        <input asp-for="Deposit" type="number" min="0" step="0.01" class="form-control" />
+                        <span asp-validation-for="Deposit" class="text-danger small"></span>
+                    </div>
+
+                    <div class="col-12">
+                        <div class="alert alert-info py-2 mb-0">
+                            预计租赁金额：<strong>¥ <span id="totalAmount">0.00</span></strong>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-4 d-flex gap-2">
+                    <button type="submit" class="btn btn-primary">生成调度单</button>
+                    <a asp-action="Index" class="btn btn-outline-secondary">取消</a>
+                </div>
+            }
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        const days = @((Model.ActualEnd.DayNumber - Model.ActualStart.DayNumber + 1));
+        const unitPriceInput = document.getElementById('unitPrice');
+        const totalSpan = document.getElementById('totalAmount');
+
+        function updateTotal() {
+            const price = parseFloat(unitPriceInput?.value) || 0;
+            totalSpan.textContent = (price * days).toFixed(2);
+        }
+
+        unitPriceInput?.addEventListener('input', updateTotal);
+        updateTotal();
+    </script>
+}

@@ -1,0 +1,129 @@
+@model DispatchListViewModel
+@using EquipmentRental.Models
+@using EquipmentRental.Models.ViewModels
+@{
+    ViewData["Title"] = "调度列表";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h4 class="mb-0">调度列表</h4>
+    <a asp-action="Calendar" class="btn btn-outline-secondary btn-sm">调度日历</a>
+</div>
+
+<!-- 状态筛选 -->
+<ul class="nav nav-pills mb-3">
+    <li class="nav-item">
+        <a class="nav-link @(Model.StatusFilter == null ? "active" : "")"
+           asp-action="Index">全部</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link @(Model.StatusFilter == DispatchRequestStatus.Pending ? "active" : "")"
+           asp-action="Index" asp-route-status="@DispatchRequestStatus.Pending">待处理</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link @(Model.StatusFilter == DispatchRequestStatus.Scheduled ? "active" : "")"
+           asp-action="Index" asp-route-status="@DispatchRequestStatus.Scheduled">已排期</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link @(Model.StatusFilter == DispatchRequestStatus.Cancelled ? "active" : "")"
+           asp-action="Index" asp-route-status="@DispatchRequestStatus.Cancelled">已取消</a>
+    </li>
+</ul>
+
+<div class="table-responsive">
+    <table class="table table-hover table-sm align-middle">
+        <thead class="table-light">
+            <tr>
+                <th>项目名称</th>
+                <th>设备类型</th>
+                <th>数量</th>
+                <th>期望日期</th>
+                <th>申请人</th>
+                <th>联系电话</th>
+                <th>调度单数</th>
+                <th>状态</th>
+                <th>操作</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.Items)
+            {
+                <tr>
+                    <td>@item.ProjectName</td>
+                    <td class="text-muted small">@item.CategoryName</td>
+                    <td>@item.Quantity</td>
+                    <td class="text-muted small text-nowrap">
+                        @item.ExpectedStart.ToString("MM-dd") – @item.ExpectedEnd.ToString("MM-dd")
+                    </td>
+                    <td class="text-muted small">@item.RequesterName</td>
+                    <td class="text-muted small">@item.ContactPhone</td>
+                    <td>
+                        @if (item.OrderCount > 0)
+                        {
+                            <span class="badge bg-info text-dark">@item.OrderCount</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-secondary">0</span>
+                        }
+                    </td>
+                    <td>
+                        @switch (item.Status)
+                        {
+                            case DispatchRequestStatus.Pending:
+                                <span class="badge bg-warning text-dark">待处理</span>
+                                break;
+                            case DispatchRequestStatus.Scheduled:
+                                <span class="badge bg-success">已排期</span>
+                                break;
+                            case DispatchRequestStatus.Cancelled:
+                                <span class="badge bg-secondary">已取消</span>
+                                break;
+                        }
+                    </td>
+                    <td>
+                        @if (item.Status == DispatchRequestStatus.Pending)
+                        {
+                            <a asp-action="Order"
+                               asp-route-requestId="@item.Id"
+                               class="btn btn-primary btn-sm">调度</a>
+                        }
+                        else
+                        {
+                            <a asp-action="Order"
+                               asp-route-requestId="@item.Id"
+                               class="btn btn-outline-secondary btn-sm">补充调度</a>
+                        }
+                    </td>
+                </tr>
+            }
+            @if (!Model.Items.Any())
+            {
+                <tr>
+                    <td colspan="9" class="text-center text-muted py-4">暂无调度申请</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<!-- 分页 -->
+<div class="d-flex justify-content-between align-items-center">
+    <small class="text-muted">共 @Model.TotalCount 条记录</small>
+    @if (Model.TotalPages > 1)
+    {
+        <nav>
+            <ul class="pagination pagination-sm mb-0">
+                @for (int p = 1; p <= Model.TotalPages; p++)
+                {
+                    <li class="page-item @(p == Model.Page ? "active" : "")">
+                        <a class="page-link"
+                           asp-action="Index"
+                           asp-route-status="@Model.StatusFilter"
+                           asp-route-page="@p">@p</a>
+                    </li>
+                }
+            </ul>
+        </nav>
+    }
+</div>
