@@ -16,4 +16,5 @@ public class SafetyBriefing
     public DispatchOrder Order { get; set; } = null!;
     public ApplicationUser Creator { get; set; } = null!;
     public ICollection<BriefingParticipant> Participants { get; set; } = new List<BriefingParticipant>();
+    public ICollection<BriefingAttachment> Attachments { get; set; } = new List<BriefingAttachment>();
 }

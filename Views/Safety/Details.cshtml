@@ -1,0 +1,164 @@
+@model SafetyDetailViewModel
+@using EquipmentRental.Models
+@using EquipmentRental.Models.ViewModels
+@{
+    ViewData["Title"] = $"安全交底 #{Model.Id}";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h4 class="mb-0">安全交底 <small class="text-muted fs-6">#@Model.Id</small></h4>
+    <div class="d-flex gap-2">
+        <a asp-action="ExportPdf" asp-route-id="@Model.Id"
+           class="btn btn-outline-secondary btn-sm" target="_blank">导出 PDF</a>
+        <a asp-action="List" class="btn btn-outline-secondary btn-sm">返回列表</a>
+    </div>
+</div>
+
+<!-- 状态横幅 -->
+@if (Model.Status == SafetyBriefingStatus.Completed)
+{
+    <div class="alert alert-success py-2 mb-3">
+        <strong>已完成</strong> — 安全交底已由双方签署确认，记录已锁定。
+    </div>
+}
+else
+{
+    <div class="alert alert-warning py-2 mb-3">
+        <strong>草稿</strong> — 等待安全员和项目负责人签署确认。
+    </div>
+}
+
+<div class="row g-4">
+    <!-- 左列：基本信息 + 交底内容 + 参与人 + 附件 -->
+    <div class="col-lg-8">
+        <div class="card mb-3">
+            <div class="card-header fw-semibold">基本信息</div>
+            <div class="card-body">
+                <dl class="row mb-0">
+                    <dt class="col-sm-3">调度单</dt>
+                    <dd class="col-sm-9">
+                        <a asp-controller="Dispatch" asp-action="OrderDetails" asp-route-id="@Model.OrderId">#@Model.OrderId</a>
+                        &nbsp;@Model.ProjectName
+                    </dd>
+                    <dt class="col-sm-3">设备</dt>
+                    <dd class="col-sm-9"><code>@Model.EquipmentNo</code> @Model.EquipmentName</dd>
+                    <dt class="col-sm-3">交底日期</dt>
+                    <dd class="col-sm-9">@Model.BriefingDate.ToString("yyyy-MM-dd")</dd>
+                    <dt class="col-sm-3">交底地点</dt>
+                    <dd class="col-sm-9">@Model.Location</dd>
+                    <dt class="col-sm-3">安全员</dt>
+                    <dd class="col-sm-9">@Model.CreatorName</dd>
+                    <dt class="col-sm-3">创建时间</dt>
+                    <dd class="col-sm-9">@Model.CreatedAt.ToLocalTime().ToString("yyyy-MM-dd HH:mm")</dd>
+                </dl>
+            </div>
+        </div>
+
+        <div class="card mb-3">
+            <div class="card-header fw-semibold">交底内容</div>
+            <div class="card-body briefing-content">
+                @Html.Raw(Model.ContentHtml)
+            </div>
+        </div>
+
+        @if (Model.Workers.Count > 0)
+        {
+            <div class="card mb-3">
+                <div class="card-header fw-semibold">参与人员</div>
+                <div class="table-responsive">
+                    <table class="table table-sm mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>姓名</th>
+                                <th>工种</th>
+                                <th>电话</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var w in Model.Workers)
+                            {
+                                <tr>
+                                    <td>@w.Name</td>
+                                    <td>@w.JobType</td>
+                                    <td>@(w.Phone ?? "—")</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        }
+
+        @if (Model.Attachments.Count > 0)
+        {
+            <div class="card mb-3">
+                <div class="card-header fw-semibold">附件</div>
+                <ul class="list-group list-group-flush">
+                    @foreach (var att in Model.Attachments)
+                    {
+                        <li class="list-group-item d-flex align-items-center gap-2">
+                            <span class="text-muted">&#128196;</span>
+                            <a href="/@att.FilePath.Replace("\\","/")" target="_blank">@att.OriginalName</a>
+                        </li>
+                    }
+                </ul>
+            </div>
+        }
+    </div>
+
+    <!-- 右列：签署状态 -->
+    <div class="col-lg-4">
+        <div class="card">
+            <div class="card-header fw-semibold">电子签署</div>
+            <div class="card-body">
+
+                <!-- 安全员 -->
+                <div class="mb-4">
+                    <div class="fw-semibold mb-1">安全员</div>
+                    @if (Model.SafetyOfficerSigned)
+                    {
+                        <div class="text-success fw-semibold">&#10003; 已签署</div>
+                        <div class="text-muted small">@Model.SafetyOfficerSignName</div>
+                        <div class="text-muted small">@Model.SafetyOfficerSignAt?.ToLocalTime().ToString("yyyy-MM-dd HH:mm")</div>
+                    }
+                    else
+                    {
+                        <div class="text-muted small mb-2">待签署</div>
+                        @if (Model.CanSign && User.IsInRole(EquipmentRental.Constants.Roles.SafetyOfficer))
+                        {
+                            <form asp-action="Sign" asp-route-id="@Model.Id" method="post">
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="btn btn-sm btn-success">签署确认</button>
+                            </form>
+                        }
+                    }
+                </div>
+
+                <hr />
+
+                <!-- 项目负责人 -->
+                <div>
+                    <div class="fw-semibold mb-1">项目负责人</div>
+                    @if (Model.ProjectLeadSigned)
+                    {
+                        <div class="text-success fw-semibold">&#10003; 已签署</div>
+                        <div class="text-muted small">@Model.ProjectLeadSignName</div>
+                        <div class="text-muted small">@Model.ProjectLeadSignAt?.ToLocalTime().ToString("yyyy-MM-dd HH:mm")</div>
+                    }
+                    else
+                    {
+                        <div class="text-muted small mb-2">待签署</div>
+                        @if (Model.CanSign && User.IsInRole(EquipmentRental.Constants.Roles.ProjectLead))
+                        {
+                            <form asp-action="Sign" asp-route-id="@Model.Id" method="post">
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="btn btn-sm btn-success">签署确认</button>
+                            </form>
+                        }
+                    }
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>

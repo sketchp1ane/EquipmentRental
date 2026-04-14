@@ -1,0 +1,169 @@
+@model CreateBriefingViewModel
+@using EquipmentRental.Models.ViewModels
+@{
+    ViewData["Title"] = "新建安全交底";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h4 class="mb-0">新建安全交底</h4>
+    <a asp-action="List" class="btn btn-outline-secondary btn-sm">返回列表</a>
+</div>
+
+<!-- 调度单信息 -->
+<div class="alert alert-info mb-4 small">
+    <strong>调度单 #@Model.OrderId</strong> &nbsp;|&nbsp;
+    项目：@Model.ProjectName &nbsp;|&nbsp;
+    设备编号：<code>@Model.EquipmentNo</code>
+</div>
+
+@if (!ViewData.ModelState.IsValid)
+{
+    <div class="alert alert-danger">
+        @foreach (var err in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+        {
+            <div>@err.ErrorMessage</div>
+        }
+    </div>
+}
+
+<form asp-action="Create" method="post" enctype="multipart/form-data">
+    @Html.AntiForgeryToken()
+    <input type="hidden" asp-for="OrderId" />
+    <input type="hidden" name="ProjectName" value="@Model.ProjectName" />
+    <input type="hidden" name="EquipmentNo" value="@Model.EquipmentNo" />
+
+    <div class="row g-4">
+        <!-- 左列：基本信息 + 内容 -->
+        <div class="col-lg-8">
+            <div class="card mb-4">
+                <div class="card-header fw-semibold">基本信息</div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-md-5">
+                            <label class="form-label">交底日期 <span class="text-danger">*</span></label>
+                            <input asp-for="BriefingDate" type="date" class="form-control" />
+                            <span asp-validation-for="BriefingDate" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-7">
+                            <label class="form-label">交底地点 <span class="text-danger">*</span></label>
+                            <input asp-for="Location" class="form-control" placeholder="如：项目工地 3 号楼施工现场" />
+                            <span asp-validation-for="Location" class="text-danger small"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card mb-4">
+                <div class="card-header fw-semibold">交底内容 <span class="text-danger">*</span></div>
+                <div class="card-body">
+                    <textarea asp-for="ContentHtml" id="editor-content"></textarea>
+                    <span asp-validation-for="ContentHtml" class="text-danger small"></span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 右列：参与人 + 附件 -->
+        <div class="col-lg-4">
+            <div class="card mb-4">
+                <div class="card-header fw-semibold d-flex justify-content-between align-items-center">
+                    参与人员
+                    <button type="button" class="btn btn-outline-primary btn-sm" id="btn-add-participant">+ 添加</button>
+                </div>
+                <div class="card-body p-2" id="participant-list">
+                    @for (int i = 0; i < Model.Participants.Count; i++)
+                    {
+                        <div class="participant-row border rounded p-2 mb-2">
+                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                <small class="fw-semibold text-muted">人员 #<span class="row-num">@(i + 1)</span></small>
+                                <button type="button" class="btn-close btn-sm btn-remove-participant" aria-label="删除"></button>
+                            </div>
+                            <input name="Participants[@i].Name" class="form-control form-control-sm mb-1"
+                                   placeholder="姓名 *" value="@Model.Participants[i].Name" />
+                            <input name="Participants[@i].JobType" class="form-control form-control-sm mb-1"
+                                   placeholder="工种 *" value="@Model.Participants[i].JobType" />
+                            <input name="Participants[@i].Phone" class="form-control form-control-sm"
+                                   placeholder="电话" value="@Model.Participants[i].Phone" />
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <div class="card mb-4">
+                <div class="card-header fw-semibold">附件（最多 10 个）</div>
+                <div class="card-body">
+                    <input type="file" name="Attachments" id="file-input"
+                           class="form-control form-control-sm"
+                           multiple accept=".jpg,.jpeg,.png,.pdf" />
+                    <div id="file-count" class="text-muted small mt-1"></div>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100">提交安全交底</button>
+        </div>
+    </div>
+</form>
+
+@section Scripts {
+<script>
+(function () {
+    // Summernote 初始化
+    $('#editor-content').summernote({
+        height: 260,
+        lang: 'zh-CN',
+        toolbar: [
+            ['style', ['bold', 'italic', 'underline', 'clear']],
+            ['font', ['strikethrough']],
+            ['para', ['ul', 'ol', 'paragraph']],
+            ['insert', ['hr']],
+            ['view', ['fullscreen']]
+        ]
+    });
+
+    // 动态参与人
+    let idx = @Model.Participants.Count;
+
+    function buildRow(i) {
+        return `<div class="participant-row border rounded p-2 mb-2">
+            <div class="d-flex justify-content-between align-items-center mb-1">
+                <small class="fw-semibold text-muted">人员 #<span class="row-num">${i + 1}</span></small>
+                <button type="button" class="btn-close btn-sm btn-remove-participant" aria-label="删除"></button>
+            </div>
+            <input name="Participants[${i}].Name" class="form-control form-control-sm mb-1" placeholder="姓名 *" />
+            <input name="Participants[${i}].JobType" class="form-control form-control-sm mb-1" placeholder="工种 *" />
+            <input name="Participants[${i}].Phone" class="form-control form-control-sm" placeholder="电话" />
+        </div>`;
+    }
+
+    function reindex() {
+        $('#participant-list .participant-row').each(function (i) {
+            $(this).find('.row-num').text(i + 1);
+            $(this).find('input').each(function () {
+                const name = $(this).attr('name').replace(/\[\d+\]/, `[${i}]`);
+                $(this).attr('name', name);
+            });
+        });
+        idx = $('#participant-list .participant-row').length;
+    }
+
+    $('#btn-add-participant').on('click', function () {
+        $('#participant-list').append(buildRow(idx));
+        idx++;
+    });
+
+    $(document).on('click', '.btn-remove-participant', function () {
+        $(this).closest('.participant-row').remove();
+        reindex();
+    });
+
+    // 附件计数
+    $('#file-input').on('change', function () {
+        const n = this.files.length;
+        if (n > 10) {
+            $('#file-count').text('最多 10 个附件，请重新选择').addClass('text-danger');
+        } else {
+            $('#file-count').text(`已选择 ${n} 个文件`).removeClass('text-danger');
+        }
+    });
+})();
+</script>
+}

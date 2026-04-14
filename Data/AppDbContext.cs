@@ -20,6 +20,7 @@ public class AppDbContext : IdentityDbContext<ApplicationUser>
     public DbSet<EntryVerification> EntryVerifications { get; set; }
     public DbSet<SafetyBriefing> SafetyBriefings { get; set; }
     public DbSet<BriefingParticipant> BriefingParticipants { get; set; }
+    public DbSet<BriefingAttachment> BriefingAttachments { get; set; }
     public DbSet<InspectionRecord> InspectionRecords { get; set; }
     public DbSet<InspectionImage> InspectionImages { get; set; }
     public DbSet<FaultReport> FaultReports { get; set; }
@@ -228,6 +229,18 @@ public class AppDbContext : IdentityDbContext<ApplicationUser>
              .HasForeignKey(bp => bp.SignedById)
              .OnDelete(DeleteBehavior.SetNull)
              .IsRequired(false);
+        });
+
+        // ── BriefingAttachment ────────────────────────────────────────────
+        builder.Entity<BriefingAttachment>(e =>
+        {
+            e.HasKey(ba => ba.Id);
+            e.Property(ba => ba.FilePath).HasMaxLength(500).IsRequired();
+            e.Property(ba => ba.OriginalName).HasMaxLength(260).IsRequired();
+            e.HasOne(ba => ba.Briefing)
+             .WithMany(sb => sb.Attachments)
+             .HasForeignKey(ba => ba.BriefingId)
+             .OnDelete(DeleteBehavior.Cascade);
         });
 
         // ── InspectionRecord ──────────────────────────────────────────────
