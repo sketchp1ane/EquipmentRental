@@ -1,0 +1,101 @@
+@model CreateInspectionViewModel
+@using EquipmentRental.Models
+@using EquipmentRental.Models.ViewModels
+@{
+    ViewData["Title"] = "新建巡检记录";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h4 class="mb-0">新建巡检记录</h4>
+    <a asp-action="Index" class="btn btn-outline-secondary btn-sm">返回列表</a>
+</div>
+
+<div class="alert alert-info mb-4 small">
+    <strong>调度单 #@Model.OrderId</strong> &nbsp;|&nbsp;
+    项目：@Model.ProjectName &nbsp;|&nbsp;
+    设备编号：<code>@Model.EquipmentNo</code>
+</div>
+
+@if (!ViewData.ModelState.IsValid)
+{
+    <div class="alert alert-danger">
+        @foreach (var err in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+        {
+            <div>@err.ErrorMessage</div>
+        }
+    </div>
+}
+
+<form asp-action="Create" method="post" enctype="multipart/form-data">
+    @Html.AntiForgeryToken()
+    <input type="hidden" asp-for="OrderId" />
+    <input type="hidden" name="ProjectName" value="@Model.ProjectName" />
+    <input type="hidden" name="EquipmentNo" value="@Model.EquipmentNo" />
+
+    <div class="row g-4">
+        <!-- 左列：基本信息 + 备注 -->
+        <div class="col-lg-8">
+            <div class="card mb-4">
+                <div class="card-header fw-semibold">基本信息</div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-md-5">
+                            <label class="form-label">巡检日期 <span class="text-danger">*</span></label>
+                            <input asp-for="InspectionDate" type="date" class="form-control" />
+                            <span asp-validation-for="InspectionDate" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-7">
+                            <label class="form-label">总体状态 <span class="text-danger">*</span></label>
+                            <select asp-for="OverallStatus" class="form-select">
+                                <option value="">— 请选择 —</option>
+                                <option value="0">正常</option>
+                                <option value="1">异常</option>
+                            </select>
+                            <span asp-validation-for="OverallStatus" class="text-danger small"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card mb-4">
+                <div class="card-header fw-semibold">巡检备注</div>
+                <div class="card-body">
+                    <textarea asp-for="Remark" rows="4" class="form-control"
+                              placeholder="记录巡检发现的问题或情况说明（选填）" maxlength="500"></textarea>
+                    <span asp-validation-for="Remark" class="text-danger small"></span>
+                    <div class="text-muted small mt-1">最多 500 字</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 右列：照片 + 提交 -->
+        <div class="col-lg-4">
+            <div class="card mb-4">
+                <div class="card-header fw-semibold">巡检照片（最多 5 张）</div>
+                <div class="card-body">
+                    <input type="file" name="Images" id="file-input"
+                           class="form-control form-control-sm"
+                           multiple accept=".jpg,.jpeg,.png" />
+                    <div id="file-count" class="text-muted small mt-1"></div>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100">提交巡检记录</button>
+        </div>
+    </div>
+</form>
+
+@section Scripts {
+<script>
+(function () {
+    $('#file-input').on('change', function () {
+        const n = this.files.length;
+        if (n > 5) {
+            $('#file-count').text('最多 5 张照片，请重新选择').addClass('text-danger').removeClass('text-muted');
+        } else {
+            $('#file-count').text('已选择 ' + n + ' 张').removeClass('text-danger').addClass('text-muted');
+        }
+    });
+})();
+</script>
+}

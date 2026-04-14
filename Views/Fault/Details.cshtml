@@ -1,0 +1,164 @@
+@model FaultDetailViewModel
+@using EquipmentRental.Models
+@using EquipmentRental.Models.ViewModels
+@{
+    ViewData["Title"] = $"故障工单 #{Model.Id}";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h4 class="mb-0">故障工单 <small class="text-muted fs-6">#@Model.Id</small></h4>
+    <a asp-action="Index" class="btn btn-outline-secondary btn-sm">返回列表</a>
+</div>
+
+<!-- 状态横幅 -->
+@switch (Model.Status)
+{
+    case FaultStatus.Pending:
+        <div class="alert alert-secondary py-2 mb-3">
+            <strong>待处理</strong> — 等待设备管理员受理工单。
+        </div>
+        break;
+    case FaultStatus.InProgress:
+        <div class="alert alert-primary py-2 mb-3">
+            <strong>处理中</strong> — 维修工作正在进行。
+        </div>
+        break;
+    case FaultStatus.Closed:
+        <div class="alert alert-success py-2 mb-3">
+            <strong>已关闭</strong> — 故障已处理完成，设备已恢复空闲状态。
+        </div>
+        break;
+}
+
+<div class="row g-4">
+    <!-- 左列：故障详情 + 处理结果 + 照片 -->
+    <div class="col-lg-8">
+        <div class="card mb-3">
+            <div class="card-header fw-semibold">故障详情</div>
+            <div class="card-body">
+                <dl class="row mb-0">
+                    <dt class="col-sm-3">调度单</dt>
+                    <dd class="col-sm-9">
+                        <a asp-controller="Dispatch" asp-action="OrderDetails" asp-route-id="@Model.OrderId">#@Model.OrderId</a>
+                        &nbsp;@Model.ProjectName
+                    </dd>
+                    <dt class="col-sm-3">设备</dt>
+                    <dd class="col-sm-9"><code>@Model.EquipmentNo</code> @Model.EquipmentName</dd>
+                    <dt class="col-sm-3">严重程度</dt>
+                    <dd class="col-sm-9">
+                        @switch (Model.Severity)
+                        {
+                            case FaultSeverity.Minor:
+                                <span class="badge bg-info text-dark">轻微</span>
+                                break;
+                            case FaultSeverity.Medium:
+                                <span class="badge bg-warning text-dark">中等</span>
+                                break;
+                            case FaultSeverity.Severe:
+                                <span class="badge bg-danger">严重</span>
+                                break;
+                        }
+                    </dd>
+                    <dt class="col-sm-3">故障描述</dt>
+                    <dd class="col-sm-9">
+                        <p class="mb-0" style="white-space:pre-wrap">@Model.Description</p>
+                    </dd>
+                    <dt class="col-sm-3">上报人</dt>
+                    <dd class="col-sm-9">@Model.ReporterName</dd>
+                    <dt class="col-sm-3">上报时间</dt>
+                    <dd class="col-sm-9">@Model.ReportedAt.ToLocalTime().ToString("yyyy-MM-dd HH:mm")</dd>
+                </dl>
+            </div>
+        </div>
+
+        @if (Model.Status == FaultStatus.Closed)
+        {
+            <div class="card mb-3">
+                <div class="card-header fw-semibold">处理结果</div>
+                <div class="card-body">
+                    <dl class="row mb-0">
+                        <dt class="col-sm-3">处理说明</dt>
+                        <dd class="col-sm-9">
+                            <p class="mb-0" style="white-space:pre-wrap">@Model.Resolution</p>
+                        </dd>
+                        <dt class="col-sm-3">维修费用</dt>
+                        <dd class="col-sm-9">¥ @Model.RepairCost?.ToString("N2")</dd>
+                        <dt class="col-sm-3">关闭人</dt>
+                        <dd class="col-sm-9">@Model.ClosedByName</dd>
+                        <dt class="col-sm-3">关闭时间</dt>
+                        <dd class="col-sm-9">@Model.ClosedAt?.ToLocalTime().ToString("yyyy-MM-dd HH:mm")</dd>
+                    </dl>
+                </div>
+            </div>
+        }
+
+        @if (Model.Images.Count > 0)
+        {
+            <div class="card mb-3">
+                <div class="card-header fw-semibold">故障照片</div>
+                <div class="card-body">
+                    <div class="row g-2">
+                        @foreach (var img in Model.Images)
+                        {
+                            <div class="col-auto">
+                                <a href="/@img.FilePath.Replace("\\", "/")" target="_blank">
+                                    <img src="/@img.FilePath.Replace("\\", "/")"
+                                         class="img-thumbnail" style="max-height:140px;max-width:180px;object-fit:cover"
+                                         alt="故障照片" />
+                                </a>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+    <!-- 右列：工单操作 -->
+    <div class="col-lg-4">
+        <div class="card">
+            <div class="card-header fw-semibold">工单操作</div>
+            <div class="card-body">
+
+                @if (Model.CanAccept && User.IsInRole(EquipmentRental.Constants.Roles.DeviceAdmin))
+                {
+                    <p class="text-muted small mb-3">请确认已了解故障情况，点击受理后工单进入处理中状态。</p>
+                    <form asp-action="Accept" asp-route-id="@Model.Id" method="post">
+                        @Html.AntiForgeryToken()
+                        <button type="submit" class="btn btn-primary w-100">受理工单</button>
+                    </form>
+                }
+                else if (Model.CanClose && User.IsInRole(EquipmentRental.Constants.Roles.DeviceAdmin))
+                {
+                    <form asp-action="Close" method="post">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="Id" value="@Model.Id" />
+
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold small">处理说明 <span class="text-danger">*</span></label>
+                            <textarea name="Resolution" rows="4" class="form-control form-control-sm"
+                                      required maxlength="500"
+                                      placeholder="描述故障原因及处理过程"></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold small">维修费用（元）<span class="text-danger">*</span></label>
+                            <input name="RepairCost" type="number" step="0.01" min="0" max="9999999.99"
+                                   class="form-control form-control-sm" required placeholder="0.00" />
+                        </div>
+                        <button type="submit" class="btn btn-success w-100">关闭工单 &amp; 恢复设备</button>
+                    </form>
+                }
+                else if (Model.Status == FaultStatus.Closed)
+                {
+                    <div class="text-success fw-semibold">&#10003; 工单已关闭</div>
+                    <div class="text-muted small mt-1">设备已恢复空闲状态。</div>
+                }
+                else
+                {
+                    <div class="text-muted small">当前状态下无可用操作，或您无操作权限。</div>
+                }
+
+            </div>
+        </div>
+    </div>
+</div>
