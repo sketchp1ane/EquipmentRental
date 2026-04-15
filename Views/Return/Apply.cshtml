@@ -1,0 +1,74 @@
+@model ApplyReturnViewModel
+@using EquipmentRental.Models.ViewModels
+@{
+    ViewData["Title"] = "退场申请";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h4 class="mb-0">退场申请</h4>
+    <a asp-controller="Dispatch" asp-action="OrderDetails" asp-route-id="@Model.OrderId"
+       class="btn btn-outline-secondary btn-sm">返回调度单</a>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-lg-6">
+        <div class="card">
+            <div class="card-header fw-semibold">填写退场信息</div>
+            <div class="card-body">
+
+                <!-- 只读信息 -->
+                <dl class="row mb-3">
+                    <dt class="col-sm-4">调度单</dt>
+                    <dd class="col-sm-8">#@Model.OrderId</dd>
+                    <dt class="col-sm-4">项目名称</dt>
+                    <dd class="col-sm-8">@Model.ProjectName</dd>
+                    <dt class="col-sm-4">设备编号</dt>
+                    <dd class="col-sm-8"><code>@Model.EquipmentNo</code></dd>
+                </dl>
+
+                <hr class="my-3" />
+
+                <form asp-action="Apply" method="post">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" asp-for="OrderId" />
+
+                    <div asp-validation-summary="All" class="alert alert-danger py-2 mb-3" style="display:none"
+                         id="valSummary"></div>
+
+                    <div class="mb-3">
+                        <label asp-for="ActualReturnDate" class="form-label fw-semibold small">
+                            实际退场日期 <span class="text-danger">*</span>
+                        </label>
+                        <input asp-for="ActualReturnDate" type="date" class="form-control form-control-sm" />
+                        <span asp-validation-for="ActualReturnDate" class="text-danger small"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="ConditionDesc" class="form-label fw-semibold small">设备总体状况描述</label>
+                        <textarea asp-for="ConditionDesc" rows="4" class="form-control form-control-sm"
+                                  maxlength="500" placeholder="描述设备退场时的总体状况（选填）"></textarea>
+                        <span asp-validation-for="ConditionDesc" class="text-danger small"></span>
+                        <div class="form-text">最多 500 字</div>
+                    </div>
+
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary">提交退场申请</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        // Show validation summary if it has content
+        document.addEventListener('DOMContentLoaded', function () {
+            var summary = document.getElementById('valSummary');
+            if (summary && summary.querySelector('li')) {
+                summary.style.display = '';
+            }
+        });
+    </script>
+}
