@@ -1,14 +1,34 @@
 using EquipmentRental.Data;
 using EquipmentRental.Models;
+using EquipmentRental.Models.Entities;
 using EquipmentRental.Models.ViewModels;
 using Microsoft.EntityFrameworkCore;
 using OfficeOpenXml;
 
 namespace EquipmentRental.Services;
 
-public class ReportService(AppDbContext db)
+public class ReportService(AppDbContext db, IHttpContextAccessor httpContextAccessor)
 {
     private readonly AppDbContext _db = db;
+
+    private string? ClientIp =>
+        httpContextAccessor.HttpContext?.Connection.RemoteIpAddress?.ToString();
+
+    private async Task WriteOperationLogAsync(
+        string actorUserId, string action, string entityId, string? detail = null)
+    {
+        _db.OperationLogs.Add(new OperationLog
+        {
+            UserId     = actorUserId,
+            Action     = action,
+            EntityType = "Report",
+            EntityId   = entityId,
+            Detail     = detail,
+            OccurredAt = DateTime.UtcNow,
+            ClientIp   = ClientIp
+        });
+        await _db.SaveChangesAsync();
+    }
 
     // ── Dashboard ─────────────────────────────────────────────────────────
 
@@ -102,7 +122,7 @@ public class ReportService(AppDbContext db)
         };
     }
 
-    public async Task<byte[]> ExportRentalExcelAsync(DateOnly from, DateOnly to)
+    public async Task<byte[]> ExportRentalExcelAsync(DateOnly from, DateOnly to, string actorUserId)
     {
         var stats = await GetRentalStatsAsync(from, to);
 
@@ -134,7 +154,12 @@ public class ReportService(AppDbContext db)
         if (ws.Dimension != null)
             ws.Cells[ws.Dimension.Address].AutoFitColumns();
 
-        return package.GetAsByteArray();
+        var bytes = package.GetAsByteArray();
+
+        await WriteOperationLogAsync(actorUserId, "ExportRentalExcel", "0",
+            $"导出租赁统计 Excel：{from:yyyy-MM-dd} ~ {to:yyyy-MM-dd}，共 {stats.Details.Count} 条");
+
+        return bytes;
     }
 
     // ── Utilization ───────────────────────────────────────────────────────

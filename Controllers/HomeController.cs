@@ -25,9 +25,16 @@ public class HomeController(QualificationService qualificationService, ReportSer
         return View();
     }
 
+    [AllowAnonymous]
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-    public IActionResult Error()
+    public IActionResult Error(int? id)
     {
-        return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        var statusCode = id ?? 500;
+        Response.StatusCode = statusCode;
+        return View(new ErrorViewModel
+        {
+            RequestId  = Activity.Current?.Id ?? HttpContext.TraceIdentifier,
+            StatusCode = statusCode
+        });
     }
 }

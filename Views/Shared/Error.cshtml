@@ -1,25 +1,43 @@
-﻿@model ErrorViewModel
+@model ErrorViewModel
 @{
-    ViewData["Title"] = "Error";
+    ViewData["Title"] = Model.StatusCode switch
+    {
+        404 => "页面不存在",
+        403 => "无访问权限",
+        400 => "请求无效",
+        _   => "服务器错误"
+    };
+    Layout = "_Layout";
 }
 
-<h1 class="text-danger">Error.</h1>
-<h2 class="text-danger">An error occurred while processing your request.</h2>
+<div class="d-flex flex-column align-items-center justify-content-center py-5 text-center">
 
-@if (Model.ShowRequestId)
-{
-    <p>
-        <strong>Request ID:</strong> <code>@Model.RequestId</code>
-    </p>
-}
+    <div class="display-1 fw-bold text-secondary mb-2">@Model.StatusCode</div>
 
-<h3>Development Mode</h3>
-<p>
-    Swapping to <strong>Development</strong> environment will display more detailed information about the error that occurred.
-</p>
-<p>
-    <strong>The Development environment shouldn't be enabled for deployed applications.</strong>
-    It can result in displaying sensitive information from exceptions to end users.
-    For local debugging, enable the <strong>Development</strong> environment by setting the <strong>ASPNETCORE_ENVIRONMENT</strong> environment variable to <strong>Development</strong>
-    and restarting the app.
-</p>
+    @switch (Model.StatusCode)
+    {
+        case 404:
+            <h4 class="mb-2">页面不存在</h4>
+            <p class="text-muted mb-4">您访问的页面已被移除，或地址输入有误。</p>
+            break;
+        case 403:
+            <h4 class="mb-2">无访问权限</h4>
+            <p class="text-muted mb-4">您没有权限访问该页面，请联系管理员。</p>
+            break;
+        case 400:
+            <h4 class="mb-2">请求无效</h4>
+            <p class="text-muted mb-4">请求格式不正确，请返回重试。</p>
+            break;
+        default:
+            <h4 class="mb-2">服务器内部错误</h4>
+            <p class="text-muted mb-4">服务器处理请求时出现了问题，请稍后再试。</p>
+            @if (Model.ShowRequestId)
+            {
+                <p class="small text-muted mb-4">请求 ID：<code>@Model.RequestId</code></p>
+            }
+            break;
+    }
+
+    <a asp-controller="Home" asp-action="Index" class="btn btn-primary">返回首页</a>
+
+</div>

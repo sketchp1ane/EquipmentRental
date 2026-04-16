@@ -53,8 +53,11 @@ builder.Services.ConfigureApplicationCookie(options =>
 });
 
 // ── MVC + Runtime Compilation ──────────────────────────────────────────────
-builder.Services.AddControllersWithViews()
-    .AddRazorRuntimeCompilation();
+builder.Services.AddControllersWithViews(options =>
+{
+    options.Filters.Add(new Microsoft.AspNetCore.Mvc.AutoValidateAntiforgeryTokenAttribute());
+})
+.AddRazorRuntimeCompilation();
 
 // ── Business Services ──────────────────────────────────────────────────────
 builder.Services.AddScoped<EquipmentService>();
@@ -83,6 +86,7 @@ var app = builder.Build();
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
+    app.UseStatusCodePagesWithReExecute("/Home/Error/{0}");
     app.UseHsts();
 }
 

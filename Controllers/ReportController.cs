@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using EquipmentRental.Models.ViewModels;
@@ -26,7 +27,8 @@ public class ReportController(ReportService reportService) : Controller
 
     public async Task<IActionResult> ExportRentalExcel(DateOnly from, DateOnly to)
     {
-        var bytes = await reportService.ExportRentalExcelAsync(from, to);
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? string.Empty;
+        var bytes  = await reportService.ExportRentalExcelAsync(from, to, userId);
         var filename = $"租赁统计_{from:yyyyMMdd}_{to:yyyyMMdd}.xlsx";
         return File(bytes,
             "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
