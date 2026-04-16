@@ -14,4 +14,5 @@ public class ExpiringCertViewModel
 public class HomeIndexViewModel
 {
     public IList<ExpiringCertViewModel> ExpiringCerts { get; set; } = [];
+    public DashboardStatsDto? Stats { get; set; }
 }

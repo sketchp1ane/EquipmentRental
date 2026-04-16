@@ -8,13 +8,14 @@ using EquipmentRental.Services;
 namespace EquipmentRental.Controllers;
 
 [Authorize]
-public class HomeController(QualificationService qualificationService) : Controller
+public class HomeController(QualificationService qualificationService, ReportService reportService) : Controller
 {
     public async Task<IActionResult> Index()
     {
         var vm = new HomeIndexViewModel
         {
-            ExpiringCerts = await qualificationService.GetExpiringAsync(30)
+            ExpiringCerts = await qualificationService.GetExpiringAsync(30),
+            Stats         = await reportService.GetDashboardStatsAsync()
         };
         return View(vm);
     }

@@ -1,0 +1,146 @@
+@model RentalReportViewModel
+@{
+    ViewData["Title"] = "租赁统计报表";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h4 class="mb-0">租赁统计报表</h4>
+    @if (Model.Stats.Total > 0)
+    {
+        <a asp-action="ExportRentalExcel"
+           asp-route-from="@Model.From.ToString("yyyy-MM-dd")"
+           asp-route-to="@Model.To.ToString("yyyy-MM-dd")"
+           class="btn btn-success btn-sm">
+            导出 Excel
+        </a>
+    }
+</div>
+
+<!-- 筛选表单 -->
+<form method="get" class="row g-2 align-items-end mb-4">
+    <div class="col-auto">
+        <label class="form-label mb-1 small">开始日期</label>
+        <input type="date" name="from" class="form-control form-control-sm"
+               value="@Model.From.ToString("yyyy-MM-dd")" />
+    </div>
+    <div class="col-auto">
+        <label class="form-label mb-1 small">结束日期</label>
+        <input type="date" name="to" class="form-control form-control-sm"
+               value="@Model.To.ToString("yyyy-MM-dd")" />
+    </div>
+    <div class="col-auto">
+        <button type="submit" class="btn btn-primary btn-sm">查询</button>
+    </div>
+</form>
+
+@if (Model.Stats.Total == 0)
+{
+    <div class="alert alert-secondary">该时间段内暂无租赁订单数据。</div>
+}
+else
+{
+    <!-- 汇总卡片 -->
+    <div class="row g-3 mb-4">
+        <div class="col-6 col-md-3">
+            <div class="card text-bg-primary h-100">
+                <div class="card-body py-3">
+                    <div class="fs-2 fw-bold">@Model.Stats.Total</div>
+                    <div class="small">总订单数</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="card text-bg-success h-100">
+                <div class="card-body py-3">
+                    <div class="fs-2 fw-bold">@Model.Stats.Completed</div>
+                    <div class="small">已完成</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="card text-bg-info h-100">
+                <div class="card-body py-3">
+                    <div class="fs-2 fw-bold">@Model.Stats.InProgress</div>
+                    <div class="small">租赁中</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="card text-bg-secondary h-100">
+                <div class="card-body py-3">
+                    <div class="fs-2 fw-bold">@Model.Stats.Terminated</div>
+                    <div class="small">已终止</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 按月柱状图 -->
+    @if (Model.Stats.Monthly.Count > 0)
+    {
+        <div class="card mb-4">
+            <div class="card-header fw-semibold">按月订单量</div>
+            <div class="card-body">
+                <canvas id="rentalMonthlyChart" height="80"></canvas>
+            </div>
+        </div>
+
+        <script>
+            (function () {
+                var monthly = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.Stats.Monthly));
+                new Chart(document.getElementById('rentalMonthlyChart'), {
+                    type: 'bar',
+                    data: {
+                        labels: monthly.map(function(d){ return d.Month; }),
+                        datasets: [{
+                            label: '订单数',
+                            data: monthly.map(function(d){ return d.Count; }),
+                            backgroundColor: 'rgba(13,110,253,0.75)'
+                        }]
+                    },
+                    options: {
+                        scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } },
+                        plugins: { legend: { display: false } }
+                    }
+                });
+            })();
+        </script>
+    }
+
+    <!-- 明细表格 -->
+    <div class="card">
+        <div class="card-header fw-semibold">明细列表</div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-sm align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>项目名称</th>
+                            <th>设备名称</th>
+                            <th>开始日期</th>
+                            <th>结束日期</th>
+                            <th class="text-end">租期(天)</th>
+                            <th class="text-end">估算收入(元)</th>
+                            <th>状态</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var d in Model.Stats.Details)
+                        {
+                            int days = Math.Max(0, d.ActualEnd.DayNumber - d.ActualStart.DayNumber);
+                            <tr>
+                                <td>@d.ProjectName</td>
+                                <td>@d.EquipmentName</td>
+                                <td>@d.ActualStart.ToString("yyyy-MM-dd")</td>
+                                <td>@d.ActualEnd.ToString("yyyy-MM-dd")</td>
+                                <td class="text-end">@days</td>
+                                <td class="text-end">@d.EstimatedRevenue.ToString("N2")</td>
+                                <td><span class="badge bg-secondary">@d.Status</span></td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+}

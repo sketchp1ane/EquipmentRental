@@ -5,6 +5,96 @@
 
 <h4 class="mb-4">首页看板</h4>
 
+@if (Model.Stats != null)
+{
+    var s = Model.Stats;
+    <!-- 数量卡片 -->
+    <div class="row g-3 mb-4">
+        <div class="col-6 col-md-4 col-xl-2">
+            <div class="card text-bg-success h-100">
+                <div class="card-body py-3">
+                    <div class="fs-2 fw-bold">@s.EquipmentIdle</div>
+                    <div class="small">空闲设备</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-md-4 col-xl-2">
+            <div class="card text-bg-primary h-100">
+                <div class="card-body py-3">
+                    <div class="fs-2 fw-bold">@s.EquipmentInUse</div>
+                    <div class="small">使用中</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-md-4 col-xl-2">
+            <div class="card text-bg-warning h-100">
+                <div class="card-body py-3">
+                    <div class="fs-2 fw-bold">@s.EquipmentMaintenance</div>
+                    <div class="small">维修中</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-md-4 col-xl-2">
+            <div class="card text-bg-secondary h-100">
+                <div class="card-body py-3">
+                    <div class="fs-2 fw-bold">@s.EquipmentPendingReview</div>
+                    <div class="small">待审核</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-md-4 col-xl-2">
+            <div class="card text-bg-info h-100">
+                <div class="card-body py-3">
+                    <div class="fs-2 fw-bold">@s.ThisMonthOrders</div>
+                    <div class="small">本月新增租赁</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-md-4 col-xl-2">
+            <div class="card text-bg-danger h-100">
+                <div class="card-body py-3">
+                    <div class="fs-2 fw-bold">@s.PendingFaults</div>
+                    <div class="small">待处理故障</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 折线图 -->
+    <div class="card mb-4">
+        <div class="card-header fw-semibold">近 6 个月新增租赁趋势</div>
+        <div class="card-body">
+            <canvas id="rentalTrendChart" height="80"></canvas>
+        </div>
+    </div>
+
+    <script>
+        (function () {
+            var trend = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(s.MonthlyTrend));
+            var labels  = trend.map(function(d){ return d.Month; });
+            var counts  = trend.map(function(d){ return d.Count; });
+            new Chart(document.getElementById('rentalTrendChart'), {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: '新增订单数',
+                        data: counts,
+                        fill: true,
+                        tension: 0.3,
+                        borderColor: 'rgb(13,110,253)',
+                        backgroundColor: 'rgba(13,110,253,0.08)'
+                    }]
+                },
+                options: {
+                    scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } },
+                    plugins: { legend: { display: false } }
+                }
+            });
+        })();
+    </script>
+}
+
 @if (Model.ExpiringCerts.Any())
 {
     var expiredCount = Model.ExpiringCerts.Count(c => c.IsExpired);
@@ -75,5 +165,3 @@ else
         <small>所有证件均在有效期内（未来 30 天内无到期证件）。</small>
     </div>
 }
-
-<p class="text-muted small">统计图表将在 Phase 9 实现。</p>

@@ -1,0 +1,143 @@
+@model SafetyReportViewModel
+@{
+    ViewData["Title"] = "安全记录报表";
+}
+
+<h4 class="mb-3">安全记录报表</h4>
+
+<!-- 筛选表单 -->
+<form method="get" class="row g-2 align-items-end mb-4">
+    <div class="col-auto">
+        <label class="form-label mb-1 small">开始日期</label>
+        <input type="date" name="from" class="form-control form-control-sm"
+               value="@Model.From.ToString("yyyy-MM-dd")" />
+    </div>
+    <div class="col-auto">
+        <label class="form-label mb-1 small">结束日期</label>
+        <input type="date" name="to" class="form-control form-control-sm"
+               value="@Model.To.ToString("yyyy-MM-dd")" />
+    </div>
+    <div class="col-auto">
+        <button type="submit" class="btn btn-primary btn-sm">查询</button>
+    </div>
+</form>
+
+@{
+    bool hasData = Model.Stats.BriefingStatus.Any()
+                || Model.Stats.InspectionStatus.Any()
+                || Model.Stats.FaultSeverity.Any()
+                || Model.Stats.FaultStatus.Any();
+}
+
+@if (!hasData)
+{
+    <div class="alert alert-secondary">该时间段内暂无安全记录数据。</div>
+}
+else
+{
+    <div class="row g-4">
+        <!-- 安全交底状态 -->
+        <div class="col-md-6">
+            <div class="card h-100">
+                <div class="card-header fw-semibold">安全交底状态分布</div>
+                <div class="card-body d-flex justify-content-center">
+                    @if (Model.Stats.BriefingStatus.Any())
+                    {
+                        <canvas id="briefingChart" width="260" height="260"></canvas>
+                    }
+                    else
+                    {
+                        <p class="text-muted my-auto">暂无数据</p>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- 巡检状态 -->
+        <div class="col-md-6">
+            <div class="card h-100">
+                <div class="card-header fw-semibold">巡检记录状态分布</div>
+                <div class="card-body d-flex justify-content-center">
+                    @if (Model.Stats.InspectionStatus.Any())
+                    {
+                        <canvas id="inspectionChart" width="260" height="260"></canvas>
+                    }
+                    else
+                    {
+                        <p class="text-muted my-auto">暂无数据</p>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- 故障严重程度 -->
+        <div class="col-md-6">
+            <div class="card h-100">
+                <div class="card-header fw-semibold">故障报告严重程度分布</div>
+                <div class="card-body d-flex justify-content-center">
+                    @if (Model.Stats.FaultSeverity.Any())
+                    {
+                        <canvas id="faultSeverityChart" width="260" height="260"></canvas>
+                    }
+                    else
+                    {
+                        <p class="text-muted my-auto">暂无数据</p>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- 故障处理状态 -->
+        <div class="col-md-6">
+            <div class="card h-100">
+                <div class="card-header fw-semibold">故障报告处理状态分布</div>
+                <div class="card-body d-flex justify-content-center">
+                    @if (Model.Stats.FaultStatus.Any())
+                    {
+                        <canvas id="faultStatusChart" width="260" height="260"></canvas>
+                    }
+                    else
+                    {
+                        <p class="text-muted my-auto">暂无数据</p>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        (function () {
+            var COLORS = [
+                'rgba(13,110,253,0.8)',
+                'rgba(25,135,84,0.8)',
+                'rgba(220,53,69,0.8)',
+                'rgba(255,193,7,0.8)',
+                'rgba(13,202,240,0.8)',
+                'rgba(108,117,125,0.8)'
+            ];
+
+            function makePie(id, data) {
+                var el = document.getElementById(id);
+                if (!el || !data) return;
+                var keys = Object.keys(data);
+                var vals = keys.map(function(k){ return data[k]; });
+                new Chart(el, {
+                    type: 'pie',
+                    data: {
+                        labels: keys,
+                        datasets: [{ data: vals, backgroundColor: COLORS.slice(0, keys.length) }]
+                    },
+                    options: {
+                        plugins: { legend: { position: 'bottom' } }
+                    }
+                });
+            }
+
+            var stats = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.Stats));
+            makePie('briefingChart',     stats.BriefingStatus);
+            makePie('inspectionChart',   stats.InspectionStatus);
+            makePie('faultSeverityChart', stats.FaultSeverity);
+            makePie('faultStatusChart',  stats.FaultStatus);
+        })();
+    </script>
+}
