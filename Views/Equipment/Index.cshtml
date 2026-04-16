@@ -33,10 +33,31 @@
     <div class="col-auto">
         <select name="categoryId" class="form-select form-select-sm">
             <option value="">全部分类</option>
-            @foreach (var opt in Model.CategoryOptions)
+            @{
+                var catGroups = Model.CategoryOptions
+                    .GroupBy(o => o.Group?.Name)
+                    .ToList();
+            }
+            @foreach (var grp in catGroups)
             {
-                <option value="@opt.Value"
-                        selected="@(Model.CategoryId?.ToString() == opt.Value)">@opt.Text</option>
+                if (grp.Key != null)
+                {
+                    <optgroup label="@grp.Key">
+                        @foreach (var opt in grp)
+                        {
+                            <option value="@opt.Value"
+                                    selected="@(Model.CategoryId?.ToString() == opt.Value)">@opt.Text</option>
+                        }
+                    </optgroup>
+                }
+                else
+                {
+                    @foreach (var opt in grp)
+                    {
+                        <option value="@opt.Value"
+                                selected="@(Model.CategoryId?.ToString() == opt.Value)">@opt.Text</option>
+                    }
+                }
             }
         </select>
     </div>

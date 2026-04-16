@@ -100,18 +100,38 @@ public class EquipmentService(
     public async Task<IList<SelectListItem>> GetCategorySelectListAsync()
     {
         var all = await db.EquipmentCategories
-            .OrderBy(c => c.Level)
-            .ThenBy(c => c.SortOrder)
+            .OrderBy(c => c.SortOrder)
             .ThenBy(c => c.Name)
             .ToListAsync();
 
-        return all.Select(c => new SelectListItem
+        var roots    = all.Where(c => c.ParentId == null).ToList();
+        var children = all.Where(c => c.ParentId != null).ToList();
+
+        var groups            = roots.ToDictionary(r => r.Id, r => new SelectListGroup { Name = r.Name });
+        var rootsWithChildren = children.Select(c => c.ParentId!.Value).ToHashSet();
+
+        var items = new List<SelectListItem>();
+        foreach (var root in roots)
         {
-            Value = c.Id.ToString(),
-            Text  = c.Level > 1
-                        ? $"{"　".PadLeft(c.Level - 1)}{c.Name}"
-                        : c.Name
-        }).ToList();
+            if (!rootsWithChildren.Contains(root.Id))
+            {
+                // 无子分类的一级分类直接可选
+                items.Add(new SelectListItem { Value = root.Id.ToString(), Text = root.Name });
+                continue;
+            }
+
+            foreach (var child in children.Where(c => c.ParentId == root.Id)
+                                          .OrderBy(c => c.SortOrder).ThenBy(c => c.Name))
+            {
+                items.Add(new SelectListItem
+                {
+                    Value = child.Id.ToString(),
+                    Text  = child.Name,
+                    Group = groups[root.Id]
+                });
+            }
+        }
+        return items;
     }
 
     public async Task<CategoryFormViewModel?> GetCategoryForEditAsync(int id)
