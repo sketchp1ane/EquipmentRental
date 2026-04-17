@@ -19,6 +19,7 @@ EquipmentCategories（自关联，树形）
                ├──< DispatchOrders
                │         ├── EntryVerification
                │         ├──< SafetyBriefings >──< BriefingParticipants
+               │         │                    └──< BriefingAttachments
                │         ├──< InspectionRecords >──< InspectionImages
                │         ├──< FaultReports >──< FaultImages
                │         └── ReturnApplication ──── ReturnEvaluation
@@ -184,6 +185,14 @@ OperationLogs（操作人 → Users）
 | SignedById | nvarchar(450) | FK NULL | 系统账号（有账号时关联） |
 | SignedAt | datetime2 | NULL | 签署时间，NULL=未签 |
 | ClientIp | nvarchar(50) | | 签署时 IP |
+
+### BriefingAttachments（安全交底附件）
+| 字段 | 类型 | 约束 | 说明 |
+|---|---|---|---|
+| Id | int | PK IDENTITY | |
+| BriefingId | int | FK NOT NULL | 级联删除 |
+| FilePath | nvarchar(500) | NOT NULL | Uploads/ 相对路径 |
+| OriginalName | nvarchar(260) | NOT NULL | 原始文件名 |
 
 ### InspectionRecords（巡检记录）
 | 字段 | 类型 | 约束 | 说明 |

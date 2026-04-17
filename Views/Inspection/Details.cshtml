@@ -78,8 +78,8 @@ else
                         @foreach (var img in Model.Images)
                         {
                             <div class="col-auto">
-                                <a href="/@img.FilePath.Replace("\\", "/")" target="_blank">
-                                    <img src="/@img.FilePath.Replace("\\", "/")"
+                                <a href="/files/@img.FilePath.Replace("\\", "/")" target="_blank">
+                                    <img src="/files/@img.FilePath.Replace("\\", "/")"
                                          class="img-thumbnail" style="max-height:140px;max-width:180px;object-fit:cover"
                                          alt="巡检照片" />
                                 </a>

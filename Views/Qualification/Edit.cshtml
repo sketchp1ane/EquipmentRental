@@ -67,7 +67,7 @@
                 <div class="mb-3">
                     <label class="form-label fw-semibold">当前附件</label>
                     <div class="d-flex align-items-center gap-3">
-                        <a href="/@Model.ExistingFilePath.Replace('\\', '/')" target="_blank"
+                        <a href="/files/@Model.ExistingFilePath.Replace('\\', '/')" target="_blank"
                            class="btn btn-outline-secondary btn-sm">查看附件</a>
                         <div class="form-check mb-0">
                             <input asp-for="RemoveFile" class="form-check-input" type="checkbox" />

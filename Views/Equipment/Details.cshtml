@@ -83,8 +83,8 @@
         <div class="card-body d-flex flex-wrap gap-2">
             @foreach (var img in Model.Images)
             {
-                <a href="/@img.FilePath.Replace('\\', '/')" target="_blank">
-                    <img src="/@img.FilePath.Replace('\\', '/')"
+                <a href="/files/@img.FilePath.Replace('\\', '/')" target="_blank">
+                    <img src="/files/@img.FilePath.Replace('\\', '/')"
                          class="img-thumbnail"
                          style="width:130px;height:100px;object-fit:cover;"
                          alt="设备图片" />

@@ -1,10 +1,11 @@
 # 产品需求文档（PRD）
 ## 基于 ASP.NET MVC 的建筑租赁设备管理平台
 
-**文档版本**：v1.0  
+**文档版本**：v1.1  
 **创建日期**：2026-04-13  
+**更新日期**：2026-04-16  
 **作者**：Evan Chen  
-**文档状态**：草稿
+**文档状态**：已完成
 
 ---
 
@@ -357,6 +358,7 @@ EquipmentRental/
 │   ├── EquipmentController.cs
 │   ├── AuditController.cs
 │   ├── DispatchController.cs
+│   ├── ContractController.cs
 │   ├── InspectionController.cs
 │   ├── SafetyController.cs
 │   ├── FaultController.cs

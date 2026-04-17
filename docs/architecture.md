@@ -7,11 +7,12 @@ EquipmentRental/
 ├── CLAUDE.md
 ├── Controllers/
 │   ├── AccountController.cs        # 登录/注销/个人信息
-│   ├── UserController.cs           # 用户管理（管理员）
+│   ├── UsersController.cs          # 用户管理（管理员）
 │   ├── EquipmentController.cs      # 设备台账 CRUD
 │   ├── QualificationController.cs  # 证件管理
 │   ├── AuditController.cs          # 资质审核
-│   ├── DispatchController.cs       # 调度申请 + 排期 + 合同
+│   ├── DispatchController.cs       # 调度申请 + 排期
+│   ├── ContractController.cs       # 合同详情 + PDF 导出 + 扫描件上传
 │   ├── VerificationController.cs   # 进场核验
 │   ├── SafetyController.cs         # 安全交底
 │   ├── InspectionController.cs     # 日常巡检
@@ -30,6 +31,7 @@ EquipmentRental/
 │   ├── FaultService.cs
 │   ├── ReturnService.cs
 │   ├── ReportService.cs
+│   ├── UserService.cs              # 用户管理
 │   ├── NotificationService.cs      # 站内消息
 │   └── FileService.cs              # 文件上传/下载
 ├── Models/
@@ -51,12 +53,14 @@ EquipmentRental/
 │   ├── Qualification/
 │   ├── Audit/
 │   ├── Dispatch/
+│   ├── Contract/
 │   ├── Verification/
 │   ├── Safety/
 │   ├── Inspection/
 │   ├── Fault/
 │   ├── Return/
-│   └── Report/
+│   ├── Report/
+│   └── Users/
 ├── wwwroot/
 │   ├── css/
 │   ├── js/
