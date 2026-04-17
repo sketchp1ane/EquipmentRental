@@ -164,8 +164,20 @@ public class SafetyService(
         bool alreadySigned = briefing.Participants
             .Any(p => p.SignedById == currentUserId);
 
+        var currentUser = await userManager.FindByIdAsync(currentUserId);
+        bool isCurrentUserAdmin = currentUser != null
+            && await userManager.IsInRoleAsync(currentUser, Roles.Admin);
+
         bool isEligibleSigner = currentUserId == briefing.CreatorId
-                                || currentUserId == projectLeadId;
+                                || currentUserId == projectLeadId
+                                || isCurrentUserAdmin;
+
+        // Admin 代签记录（JobType == "系统管理员"，且 SignedById 不是 SO/PL）
+        var adminSign = briefing.Participants
+            .FirstOrDefault(p => p.SignedById != null
+                && p.SignedById != briefing.CreatorId
+                && p.SignedById != projectLeadId
+                && p.JobType == "系统管理员");
 
         // 工人参与人（没有签署账号的，即 SignedById == null）
         var workers = briefing.Participants
@@ -204,6 +216,8 @@ public class SafetyService(
             ProjectLeadSigned    = plSign != null,
             ProjectLeadSignName  = plSign?.SignedBy?.RealName,
             ProjectLeadSignAt    = plSign?.SignedAt,
+            AdminSignName        = adminSign?.SignedBy?.RealName,
+            AdminSignAt          = adminSign?.SignedAt,
             CanSign = briefing.Status == SafetyBriefingStatus.Draft
                       && isEligibleSigner
                       && !alreadySigned
@@ -258,7 +272,7 @@ public class SafetyService(
         bool soSigned = allParticipants.Any(p => p.SignedById == briefing.CreatorId);
         bool plSigned = allParticipants.Any(p => p.SignedById == projectLeadId);
 
-        if (soSigned && plSigned)
+        if (isAdmin || (soSigned && plSigned))
         {
             briefing.Status = SafetyBriefingStatus.Completed;
             await db.SaveChangesAsync();
@@ -272,15 +286,23 @@ public class SafetyService(
 
     // ── 列表 ──────────────────────────────────────────────────────────────────
 
-    public async Task<SafetyListViewModel> GetListAsync(int page = 1, int pageSize = 15)
+    public async Task<SafetyListViewModel> GetListAsync(
+        SafetyBriefingStatus? status = null, int page = 1, int pageSize = 15)
     {
         var query = db.SafetyBriefings
             .Include(sb => sb.Order)
                 .ThenInclude(o => o.Request)
             .Include(sb => sb.Creator)
-            .OrderByDescending(sb => sb.CreatedAt);
+            .AsQueryable();
+
+        if (status.HasValue)
+            query = query.Where(sb => sb.Status == status.Value);
+
+        query = query.OrderByDescending(sb => sb.CreatedAt);
 
         int total = await query.CountAsync();
+        int totalPages = (int)Math.Ceiling(total / (double)pageSize);
+        page = Math.Max(1, Math.Min(page, Math.Max(1, totalPages)));
 
         var items = await query
             .Skip((page - 1) * pageSize)
@@ -299,11 +321,36 @@ public class SafetyService(
 
         return new SafetyListViewModel
         {
-            Items      = items,
-            TotalCount = total,
-            Page       = page,
-            PageSize   = pageSize
+            Items        = items,
+            TotalCount   = total,
+            Page         = page,
+            PageSize     = pageSize,
+            StatusFilter = status
         };
+    }
+
+    public async Task<SelectOrderViewModel> GetEligibleOrdersAsync()
+    {
+        var orders = await db.DispatchOrders
+            .Include(o => o.Equipment)
+            .Include(o => o.Request)
+            .Include(o => o.EntryVerification)
+            .Where(o => o.Status == DispatchOrderStatus.InProgress
+                        && o.EntryVerification != null
+                        && o.EntryVerification.IsPass)
+            .OrderByDescending(o => o.ActualStart)
+            .Select(o => new EligibleOrderViewModel
+            {
+                OrderId      = o.Id,
+                ProjectName  = o.Request.ProjectName,
+                EquipmentNo  = o.Equipment.EquipmentNo,
+                EquipmentName = o.Equipment.Name,
+                ActualStart  = o.ActualStart,
+                ActualEnd    = o.ActualEnd
+            })
+            .ToListAsync();
+
+        return new SelectOrderViewModel { Orders = orders };
     }
 
     // ── PDF 导出 ──────────────────────────────────────────────────────────────

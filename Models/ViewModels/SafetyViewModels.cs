@@ -74,6 +74,10 @@ public class SafetyDetailViewModel
 
     public bool CanSign { get; set; }
     public bool IsLocked => Status == SafetyBriefingStatus.Completed;
+
+    // Admin 代签记录（不属于 SO/PL 任何一方时使用）
+    public string? AdminSignName { get; set; }
+    public DateTime? AdminSignAt { get; set; }
 }
 
 public class SafetyParticipantViewModel
@@ -99,6 +103,24 @@ public class SafetyListViewModel
     public int Page { get; set; }
     public int PageSize { get; set; }
     public int TotalPages => (int)Math.Ceiling((double)TotalCount / PageSize);
+    public SafetyBriefingStatus? StatusFilter { get; set; }
+}
+
+// ── 新建交底选单 ──────────────────────────────────────────────────────────────
+
+public class EligibleOrderViewModel
+{
+    public int OrderId { get; set; }
+    public string ProjectName { get; set; } = string.Empty;
+    public string EquipmentNo { get; set; } = string.Empty;
+    public string EquipmentName { get; set; } = string.Empty;
+    public DateOnly ActualStart { get; set; }
+    public DateOnly ActualEnd { get; set; }
+}
+
+public class SelectOrderViewModel
+{
+    public IList<EligibleOrderViewModel> Orders { get; set; } = [];
 }
 
 public class SafetyListItemViewModel

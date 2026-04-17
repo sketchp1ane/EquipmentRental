@@ -4,21 +4,67 @@
     ViewData["Title"] = "新建安全交底";
 }
 
-<div class="d-flex justify-content-between align-items-center mb-3">
-    <h4 class="mb-0">新建安全交底</h4>
-    <a asp-action="List" class="btn btn-outline-secondary btn-sm">返回列表</a>
+<style>
+    .step-circle {
+        width: 2rem; height: 2rem; border-radius: 50%;
+        display: flex; align-items: center; justify-content: center;
+        font-size: .85rem; font-weight: 700;
+    }
+    .step-line { height: 2px; flex: 1; max-width: 5rem; }
+    .upload-zone {
+        border: 2px dashed #ced4da; border-radius: .5rem;
+        padding: 1.5rem; text-align: center; cursor: pointer;
+        transition: border-color .2s, background .2s;
+    }
+    .upload-zone:hover, .upload-zone.dragover { border-color: #0d6efd; background: #f0f6ff; }
+    .file-preview-item { display: flex; align-items: center; gap: .5rem; padding: .35rem .5rem; border-radius: .375rem; background: #f8f9fa; margin-top: .4rem; }
+    .sticky-footer { position: sticky; bottom: 0; z-index: 10; background: #fff; border-top: 1px solid #dee2e6; padding: .75rem 0; }
+</style>
+
+<!-- 面包屑 -->
+<nav aria-label="breadcrumb" class="mb-3">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-action="List">安全交底记录</a></li>
+        <li class="breadcrumb-item"><a asp-action="SelectOrder">选择调度单</a></li>
+        <li class="breadcrumb-item active">填写安全交底</li>
+    </ol>
+</nav>
+
+<!-- 步骤条 -->
+<div class="d-flex align-items-center mb-4 px-1">
+    <div class="d-flex align-items-center text-muted">
+        <div class="step-circle bg-light border">1</div>
+        <span class="ms-2 small">选择调度单</span>
+    </div>
+    <div class="step-line border-top border-2 mx-3"></div>
+    <div class="d-flex align-items-center">
+        <div class="step-circle text-white bg-warning">2</div>
+        <span class="ms-2 fw-semibold text-warning">填写安全交底</span>
+    </div>
+    <div class="step-line border-top border-2 mx-3"></div>
+    <div class="d-flex align-items-center text-muted">
+        <div class="step-circle bg-light border">3</div>
+        <span class="ms-2 small">提交确认</span>
+    </div>
 </div>
 
-<!-- 调度单信息 -->
-<div class="alert alert-info mb-4 small">
-    <strong>调度单 #@Model.OrderId</strong> &nbsp;|&nbsp;
-    项目：@Model.ProjectName &nbsp;|&nbsp;
-    设备编号：<code>@Model.EquipmentNo</code>
+<!-- 调度单上下文卡片 -->
+<div class="card mb-4 border-start border-4 border-warning bg-light">
+    <div class="card-body py-2 px-3">
+        <div class="d-flex align-items-center gap-3 flex-wrap">
+            <span class="fw-semibold">调度单 <a asp-controller="Dispatch" asp-action="OrderDetails" asp-route-id="@Model.OrderId">#@Model.OrderId</a></span>
+            <span class="text-muted">|</span>
+            <span>@Model.ProjectName</span>
+            <span class="text-muted">|</span>
+            <code>@Model.EquipmentNo</code>
+            <span class="badge bg-success ms-auto">进行中</span>
+        </div>
+    </div>
 </div>
 
 @if (!ViewData.ModelState.IsValid)
 {
-    <div class="alert alert-danger">
+    <div class="alert alert-danger mb-4">
         @foreach (var err in ViewData.ModelState.Values.SelectMany(v => v.Errors))
         {
             <div>@err.ErrorMessage</div>
@@ -26,144 +72,271 @@
     </div>
 }
 
-<form asp-action="Create" method="post" enctype="multipart/form-data">
+<form asp-action="Create" method="post" enctype="multipart/form-data" id="briefing-form">
     @Html.AntiForgeryToken()
     <input type="hidden" asp-for="OrderId" />
     <input type="hidden" name="ProjectName" value="@Model.ProjectName" />
     <input type="hidden" name="EquipmentNo" value="@Model.EquipmentNo" />
 
-    <div class="row g-4">
-        <!-- 左列：基本信息 + 内容 -->
-        <div class="col-lg-8">
-            <div class="card mb-4">
-                <div class="card-header fw-semibold">基本信息</div>
-                <div class="card-body">
-                    <div class="row g-3">
-                        <div class="col-md-5">
-                            <label class="form-label">交底日期 <span class="text-danger">*</span></label>
-                            <input asp-for="BriefingDate" type="date" class="form-control" />
-                            <span asp-validation-for="BriefingDate" class="text-danger small"></span>
-                        </div>
-                        <div class="col-md-7">
-                            <label class="form-label">交底地点 <span class="text-danger">*</span></label>
-                            <input asp-for="Location" class="form-control" placeholder="如：项目工地 3 号楼施工现场" />
-                            <span asp-validation-for="Location" class="text-danger small"></span>
-                        </div>
-                    </div>
+    <!-- 卡片 1：基本信息 -->
+    <div class="card mb-4">
+        <div class="card-header fw-semibold border-start border-3 border-warning ps-3">基本信息</div>
+        <div class="card-body">
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <label class="form-label">交底日期 <span class="text-danger">*</span></label>
+                    <input asp-for="BriefingDate" type="date" class="form-control" />
+                    <span asp-validation-for="BriefingDate" class="text-danger small"></span>
+                </div>
+                <div class="col-md-8">
+                    <label class="form-label">交底地点 <span class="text-danger">*</span></label>
+                    <input asp-for="Location" class="form-control" placeholder="如：项目工地 3 号楼施工现场" />
+                    <span asp-validation-for="Location" class="text-danger small"></span>
                 </div>
             </div>
-
-            <div class="card mb-4">
-                <div class="card-header fw-semibold">交底内容 <span class="text-danger">*</span></div>
-                <div class="card-body">
-                    <textarea asp-for="ContentHtml" id="editor-content"></textarea>
-                    <span asp-validation-for="ContentHtml" class="text-danger small"></span>
-                </div>
-            </div>
-        </div>
-
-        <!-- 右列：参与人 + 附件 -->
-        <div class="col-lg-4">
-            <div class="card mb-4">
-                <div class="card-header fw-semibold d-flex justify-content-between align-items-center">
-                    参与人员
-                    <button type="button" class="btn btn-outline-primary btn-sm" id="btn-add-participant">+ 添加</button>
-                </div>
-                <div class="card-body p-2" id="participant-list">
-                    @for (int i = 0; i < Model.Participants.Count; i++)
-                    {
-                        <div class="participant-row border rounded p-2 mb-2">
-                            <div class="d-flex justify-content-between align-items-center mb-1">
-                                <small class="fw-semibold text-muted">人员 #<span class="row-num">@(i + 1)</span></small>
-                                <button type="button" class="btn-close btn-sm btn-remove-participant" aria-label="删除"></button>
-                            </div>
-                            <input name="Participants[@i].Name" class="form-control form-control-sm mb-1"
-                                   placeholder="姓名 *" value="@Model.Participants[i].Name" />
-                            <input name="Participants[@i].JobType" class="form-control form-control-sm mb-1"
-                                   placeholder="工种 *" value="@Model.Participants[i].JobType" />
-                            <input name="Participants[@i].Phone" class="form-control form-control-sm"
-                                   placeholder="电话" value="@Model.Participants[i].Phone" />
-                        </div>
-                    }
-                </div>
-            </div>
-
-            <div class="card mb-4">
-                <div class="card-header fw-semibold">附件（最多 10 个）</div>
-                <div class="card-body">
-                    <input type="file" name="Attachments" id="file-input"
-                           class="form-control form-control-sm"
-                           multiple accept=".jpg,.jpeg,.png,.pdf" />
-                    <div id="file-count" class="text-muted small mt-1"></div>
-                </div>
-            </div>
-
-            <button type="submit" class="btn btn-primary w-100">提交安全交底</button>
         </div>
     </div>
+
+    <!-- 卡片 2：交底内容 -->
+    <div class="card mb-4">
+        <div class="card-header fw-semibold border-start border-3 border-warning ps-3 d-flex align-items-center justify-content-between">
+            <span>交底内容 <span class="text-danger">*</span></span>
+            <div class="d-flex align-items-center gap-2">
+                <small class="text-muted me-1">预置模板：</small>
+                <button type="button" class="btn btn-outline-secondary btn-sm tpl-btn" data-tpl="crane">起重作业</button>
+                <button type="button" class="btn btn-outline-secondary btn-sm tpl-btn" data-tpl="height">高空作业</button>
+                <button type="button" class="btn btn-outline-secondary btn-sm tpl-btn" data-tpl="electric">用电作业</button>
+                <button type="button" class="btn btn-outline-secondary btn-sm tpl-btn" data-tpl="fire">动火作业</button>
+            </div>
+        </div>
+        <div class="card-body">
+            <textarea asp-for="ContentHtml" id="editor-content" style="display:none"></textarea>
+            <span asp-validation-for="ContentHtml" class="text-danger small"></span>
+        </div>
+    </div>
+
+    <!-- 卡片 3：参与人员 -->
+    <datalist id="jobtypes">
+        <option value="机械操作员"></option>
+        <option value="起重工"></option>
+        <option value="电工"></option>
+        <option value="焊工"></option>
+        <option value="架子工"></option>
+        <option value="施工工人"></option>
+        <option value="安全员"></option>
+        <option value="项目负责人"></option>
+    </datalist>
+
+    <div class="card mb-4">
+        <div class="card-header fw-semibold border-start border-3 border-warning ps-3 d-flex justify-content-between align-items-center">
+            参与人员 <span class="text-muted fw-normal small ms-1">（至少填写 1 人）</span>
+            <button type="button" class="btn btn-outline-primary btn-sm" id="btn-add-participant">&#43; 添加人员</button>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-sm align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th style="width:3rem">#</th>
+                        <th>姓名 <span class="text-danger">*</span></th>
+                        <th>工种 <span class="text-danger">*</span></th>
+                        <th>联系电话</th>
+                        <th style="width:3.5rem"></th>
+                    </tr>
+                </thead>
+                <tbody id="participant-list">
+                    @for (int i = 0; i < Model.Participants.Count; i++)
+                    {
+                        <tr class="participant-row">
+                            <td><span class="row-num text-muted small">@(i + 1)</span></td>
+                            <td>
+                                <input name="Participants[@i].Name" class="form-control form-control-sm"
+                                       placeholder="姓名" value="@Model.Participants[i].Name" />
+                            </td>
+                            <td>
+                                <input name="Participants[@i].JobType" class="form-control form-control-sm"
+                                       list="jobtypes" placeholder="工种" value="@Model.Participants[i].JobType" />
+                            </td>
+                            <td>
+                                <input name="Participants[@i].Phone" class="form-control form-control-sm"
+                                       placeholder="选填" value="@Model.Participants[i].Phone" />
+                            </td>
+                            <td class="text-center">
+                                <button type="button" class="btn btn-outline-danger btn-sm btn-remove-participant px-2"
+                                        title="删除此行">&times;</button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- 卡片 4：附件上传 -->
+    <div class="card mb-5">
+        <div class="card-header fw-semibold border-start border-3 border-warning ps-3">
+            附件上传 <span class="text-muted fw-normal small ms-1">（最多 10 个，支持 JPG / PNG / PDF）</span>
+        </div>
+        <div class="card-body">
+            <div class="upload-zone" id="upload-zone">
+                <div class="text-muted mb-2" style="font-size:2rem">&#128193;</div>
+                <p class="mb-1 fw-semibold">点击选择文件，或拖拽文件至此处</p>
+                <p class="text-muted small mb-0">支持 JPG、PNG、PDF，单次最多 10 个</p>
+                <input type="file" name="Attachments" id="file-input"
+                       class="d-none" multiple accept=".jpg,.jpeg,.png,.pdf" />
+            </div>
+            <div id="file-list" class="mt-2"></div>
+            <div id="file-error" class="text-danger small mt-1 d-none">最多上传 10 个附件，请重新选择。</div>
+        </div>
+    </div>
+
+    <!-- 底部固定操作栏 -->
+    <div class="sticky-footer">
+        <div class="d-flex justify-content-between align-items-center container-fluid px-0">
+            <a asp-action="SelectOrder" class="btn btn-outline-secondary">&larr; 重新选择调度单</a>
+            <button type="submit" class="btn btn-primary px-5">提交安全交底 &rarr;</button>
+        </div>
+    </div>
+
 </form>
 
 @section Scripts {
 <script>
 (function () {
-    // Summernote 初始化
-    $('#editor-content').summernote({
-        height: 260,
-        lang: 'zh-CN',
-        toolbar: [
-            ['style', ['bold', 'italic', 'underline', 'clear']],
-            ['font', ['strikethrough']],
-            ['para', ['ul', 'ol', 'paragraph']],
-            ['insert', ['hr']],
-            ['view', ['fullscreen']]
-        ]
-    });
+    // ── 预置模板 ──────────────────────────────────────────────────
+    const TEMPLATES = {
+        crane: `<h4>起重作业安全交底</h4><ul>
+<li>作业前检查起重设备及吊索具，确认无损伤、无变形</li>
+<li>严禁超载作业，吊物下方及运动轨迹内禁止站人</li>
+<li>信号工持证上岗，指挥信号明确，司机凭信号操作</li>
+<li>六级以上大风、大雾、大雪等恶劣天气停止室外起重作业</li>
+<li>吊装区域设置警戒线，无关人员禁止进入</li></ul>`,
+        height: `<h4>高空作业安全交底</h4><ul>
+<li>凡离地 2m 及以上作业均须系安全带，遵循挂高用低原则</li>
+<li>脚手架须经验收合格并挂牌后方可使用</li>
+<li>作业区域下方设置警戒线，禁止上下同时垂直交叉作业</li>
+<li>工具、材料放置稳固，防止坠落伤人，严禁高空抛物</li>
+<li>患有高血压、心脏病等不适合高空作业的人员不得上岗</li></ul>`,
+        electric: `<h4>用电作业安全交底</h4><ul>
+<li>电气作业人员须持有效证件上岗，严禁无证操作</li>
+<li>临时用电须执行一机一闸一漏电保护器制度</li>
+<li>配电箱上锁并挂警示牌，严禁带电检修</li>
+<li>临时用电线路须绝缘良好，架空或套绝缘管保护，禁止拖地</li>
+<li>潮湿或金属容器内作业使用安全电压（≤36V）</li></ul>`,
+        fire: `<h4>动火作业安全交底</h4><ul>
+<li>作业前办理动火许可证，在有效期限内方可施工</li>
+<li>清除作业点 10m 范围内的可燃、易燃物，配备足量灭火器</li>
+<li>焊工须持证操作，设专职监护人全程陪同</li>
+<li>气瓶与明火距离不小于 10m，氧气与乙炔瓶间距不小于 5m</li>
+<li>作业结束后检查现场，确认无残留火种方可离开</li></ul>`
+    };
 
-    // 动态参与人
+    // ── 动态参与人 ─────────────────────────────────────────────────
     let idx = @Model.Participants.Count;
 
     function buildRow(i) {
-        return `<div class="participant-row border rounded p-2 mb-2">
-            <div class="d-flex justify-content-between align-items-center mb-1">
-                <small class="fw-semibold text-muted">人员 #<span class="row-num">${i + 1}</span></small>
-                <button type="button" class="btn-close btn-sm btn-remove-participant" aria-label="删除"></button>
-            </div>
-            <input name="Participants[${i}].Name" class="form-control form-control-sm mb-1" placeholder="姓名 *" />
-            <input name="Participants[${i}].JobType" class="form-control form-control-sm mb-1" placeholder="工种 *" />
-            <input name="Participants[${i}].Phone" class="form-control form-control-sm" placeholder="电话" />
-        </div>`;
+        return `<tr class="participant-row">
+            <td><span class="row-num text-muted small">${i + 1}</span></td>
+            <td><input name="Participants[${i}].Name" class="form-control form-control-sm" placeholder="姓名" /></td>
+            <td><input name="Participants[${i}].JobType" class="form-control form-control-sm" list="jobtypes" placeholder="工种" /></td>
+            <td><input name="Participants[${i}].Phone" class="form-control form-control-sm" placeholder="选填" /></td>
+            <td class="text-center"><button type="button" class="btn btn-outline-danger btn-sm btn-remove-participant px-2" title="删除此行">&times;</button></td>
+        </tr>`;
     }
 
     function reindex() {
-        $('#participant-list .participant-row').each(function (i) {
-            $(this).find('.row-num').text(i + 1);
-            $(this).find('input').each(function () {
-                const name = $(this).attr('name').replace(/\[\d+\]/, `[${i}]`);
-                $(this).attr('name', name);
+        document.querySelectorAll('#participant-list tr.participant-row').forEach((tr, i) => {
+            tr.querySelector('.row-num').textContent = i + 1;
+            tr.querySelectorAll('input').forEach(inp => {
+                inp.name = inp.name.replace(/\[\d+\]/, `[${i}]`);
             });
         });
-        idx = $('#participant-list .participant-row').length;
+        idx = document.querySelectorAll('#participant-list tr.participant-row').length;
     }
 
-    $('#btn-add-participant').on('click', function () {
-        $('#participant-list').append(buildRow(idx));
+    document.getElementById('btn-add-participant').addEventListener('click', function () {
+        document.getElementById('participant-list').insertAdjacentHTML('beforeend', buildRow(idx));
         idx++;
     });
 
-    $(document).on('click', '.btn-remove-participant', function () {
-        $(this).closest('.participant-row').remove();
-        reindex();
-    });
-
-    // 附件计数
-    $('#file-input').on('change', function () {
-        const n = this.files.length;
-        if (n > 10) {
-            $('#file-count').text('最多 10 个附件，请重新选择').addClass('text-danger');
-        } else {
-            $('#file-count').text(`已选择 ${n} 个文件`).removeClass('text-danger');
+    document.addEventListener('click', function (e) {
+        if (e.target.classList.contains('btn-remove-participant')) {
+            e.target.closest('tr.participant-row').remove();
+            reindex();
         }
     });
+
+    // ── 附件上传 ──────────────────────────────────────────────────
+    const zone = document.getElementById('upload-zone');
+    const fileInput = document.getElementById('file-input');
+    const fileList = document.getElementById('file-list');
+    const fileError = document.getElementById('file-error');
+
+    zone.addEventListener('click', () => fileInput.click());
+
+    zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('dragover'); });
+    zone.addEventListener('dragleave', () => zone.classList.remove('dragover'));
+    zone.addEventListener('drop', e => {
+        e.preventDefault();
+        zone.classList.remove('dragover');
+        fileInput.files = e.dataTransfer.files;
+        renderFiles(fileInput.files);
+    });
+
+    fileInput.addEventListener('change', () => renderFiles(fileInput.files));
+
+    function fileIcon(name) {
+        const ext = name.split('.').pop().toLowerCase();
+        return ext === 'pdf' ? '&#128196;' : '&#128444;';
+    }
+
+    function formatSize(bytes) {
+        if (bytes < 1024) return bytes + ' B';
+        if (bytes < 1048576) return (bytes / 1024).toFixed(1) + ' KB';
+        return (bytes / 1048576).toFixed(1) + ' MB';
+    }
+
+    function renderFiles(files) {
+        fileError.classList.add('d-none');
+        fileList.innerHTML = '';
+        if (files.length > 10) {
+            fileError.classList.remove('d-none');
+            return;
+        }
+        Array.from(files).forEach(f => {
+            const div = document.createElement('div');
+            div.className = 'file-preview-item';
+            div.innerHTML = `<span>${fileIcon(f.name)}</span>
+                <span class="flex-grow-1 text-truncate small">${f.name}</span>
+                <span class="text-muted small text-nowrap">${formatSize(f.size)}</span>`;
+            fileList.appendChild(div);
+        });
+    }
+
+    // ── Summernote（放最后，防止初始化报错影响上方逻辑）──────────────
+    try {
+        $('#editor-content').summernote({
+            height: 300,
+            toolbar: [
+                ['style', ['bold', 'italic', 'underline', 'clear']],
+                ['font', ['strikethrough']],
+                ['para', ['ul', 'ol']],
+                ['insert', ['hr']],
+                ['view', ['codeview']]
+            ]
+        });
+        document.querySelectorAll('.tpl-btn').forEach(btn => {
+            btn.addEventListener('click', function () {
+                const html = TEMPLATES[this.dataset.tpl];
+                if (html) $('#editor-content').summernote('code', html);
+            });
+        });
+    } catch (e) {
+        console.error('Summernote init error:', e);
+        // 清理残留的半初始化 DOM，降级为普通文本框
+        document.querySelector('.note-editor')?.remove();
+        const ta = document.getElementById('editor-content');
+        ta.style.cssText = 'display:block;width:100%;height:300px;';
+    }
 })();
 </script>
 }

@@ -124,6 +124,20 @@
             </div>
         </div>
 
+        @if (Model.OrderStatus == DispatchOrderStatus.InProgress || Model.OrderStatus == DispatchOrderStatus.Complete)
+        {
+            <div class="card mb-3">
+                <div class="card-header fw-semibold">安全交底</div>
+                <div class="card-body text-center">
+                    <p class="text-muted small mb-2">设备进场后，安全员可为本调度单创建安全交底记录。</p>
+                    <a asp-controller="Safety" asp-action="Create" asp-route-orderId="@Model.OrderId"
+                       class="btn btn-sm btn-warning">新建交底</a>
+                    <a asp-controller="Safety" asp-action="List"
+                       class="btn btn-sm btn-outline-secondary ms-1">查看交底列表</a>
+                </div>
+            </div>
+        }
+
         @if (Model.OrderStatus >= DispatchOrderStatus.Signed)
         {
             <div class="card">

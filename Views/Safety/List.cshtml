@@ -1,23 +1,47 @@
 @model SafetyListViewModel
 @using EquipmentRental.Models
 @using EquipmentRental.Models.ViewModels
+@using EquipmentRental.Constants
 @{
     ViewData["Title"] = "安全交底记录";
 }
 
 <div class="d-flex justify-content-between align-items-center mb-3">
     <h4 class="mb-0">安全交底记录</h4>
+    @if (User.IsInRole(Roles.SafetyOfficer) || User.IsInRole(Roles.Admin))
+    {
+        <a asp-action="SelectOrder" class="btn btn-warning btn-sm">&#43; 新建交底</a>
+    }
 </div>
+
+<!-- 状态过滤 Tab -->
+<ul class="nav nav-tabs mb-3">
+    <li class="nav-item">
+        <a class="nav-link @(Model.StatusFilter == null ? "active" : "")"
+           asp-action="List">全部</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link @(Model.StatusFilter == SafetyBriefingStatus.Draft ? "active" : "")"
+           asp-action="List" asp-route-status="@SafetyBriefingStatus.Draft">待签署</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link @(Model.StatusFilter == SafetyBriefingStatus.Completed ? "active" : "")"
+           asp-action="List" asp-route-status="@SafetyBriefingStatus.Completed">已完成</a>
+    </li>
+</ul>
 
 @if (Model.Items.Count == 0)
 {
-    <div class="text-center py-5 text-muted">暂无安全交底记录</div>
+    <div class="text-center py-5">
+        <div class="text-muted mb-2" style="font-size:2.5rem">&#128196;</div>
+        <p class="text-muted">暂无安全交底记录</p>
+    </div>
 }
 else
 {
     <div class="card">
         <div class="table-responsive">
-            <table class="table table-hover mb-0">
+            <table class="table table-hover align-middle mb-0">
                 <thead class="table-light">
                     <tr>
                         <th>ID</th>
@@ -34,22 +58,23 @@ else
                     @foreach (var item in Model.Items)
                     {
                         <tr>
-                            <td>#@item.Id</td>
+                            <td class="text-muted small">#@item.Id</td>
                             <td>
-                                <a asp-controller="Dispatch" asp-action="OrderDetails" asp-route-id="@item.OrderId">#@item.OrderId</a>
+                                <a asp-controller="Dispatch" asp-action="OrderDetails" asp-route-id="@item.OrderId"
+                                   class="text-decoration-none">#@item.OrderId</a>
                             </td>
                             <td>@item.ProjectName</td>
-                            <td>@item.BriefingDate.ToString("yyyy-MM-dd")</td>
+                            <td class="text-nowrap">@item.BriefingDate.ToString("yyyy-MM-dd")</td>
                             <td>@item.Location</td>
                             <td>@item.CreatorName</td>
                             <td>
                                 @if (item.Status == SafetyBriefingStatus.Completed)
                                 {
-                                    <span class="badge bg-success">已完成</span>
+                                    <span class="badge bg-success">&#10003; 双方已签</span>
                                 }
                                 else
                                 {
-                                    <span class="badge bg-warning text-dark">草稿</span>
+                                    <span class="badge bg-warning text-dark">待签署</span>
                                 }
                             </td>
                             <td>
@@ -70,7 +95,7 @@ else
                 @for (int p = 1; p <= Model.TotalPages; p++)
                 {
                     <li class="page-item @(p == Model.Page ? "active" : "")">
-                        <a class="page-link" asp-action="List" asp-route-page="@p">@p</a>
+                        <a class="page-link" asp-action="List" asp-route-page="@p" asp-route-status="@Model.StatusFilter">@p</a>
                     </li>
                 }
             </ul>

@@ -1,4 +1,5 @@
 using EquipmentRental.Constants;
+using EquipmentRental.Models;
 using EquipmentRental.Models.Entities;
 using EquipmentRental.Models.ViewModels;
 using EquipmentRental.Services;
@@ -18,9 +19,17 @@ public class SafetyController(
     // ── 安全交底列表 ──────────────────────────────────────────────────────────
 
     [HttpGet]
-    public async Task<IActionResult> List(int page = 1)
+    public async Task<IActionResult> List(SafetyBriefingStatus? status = null, int page = 1)
     {
-        var vm = await safetyService.GetListAsync(page);
+        var vm = await safetyService.GetListAsync(status, page);
+        return View(vm);
+    }
+
+    [Authorize(Roles = $"{Roles.SafetyOfficer},{Roles.Admin}")]
+    [HttpGet]
+    public async Task<IActionResult> SelectOrder()
+    {
+        var vm = await safetyService.GetEligibleOrdersAsync();
         return View(vm);
     }
 

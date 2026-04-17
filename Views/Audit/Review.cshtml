@@ -125,7 +125,7 @@
                 <div class="d-flex gap-4">
                     <div class="form-check">
                         <input class="form-check-input" type="radio"
-                               name="Action" id="actionPass" value="1"
+                               name="Form.Action" id="actionPass" value="1"
                                @(Model.Form.Action == AuditAction.Pass ? "checked" : "") />
                         <label class="form-check-label text-success fw-semibold" for="actionPass">
                             通过
@@ -133,7 +133,7 @@
                     </div>
                     <div class="form-check">
                         <input class="form-check-input" type="radio"
-                               name="Action" id="actionReject" value="2"
+                               name="Form.Action" id="actionReject" value="2"
                                @(Model.Form.Action == AuditAction.Reject ? "checked" : "") />
                         <label class="form-check-label text-danger fw-semibold" for="actionReject">
                             驳回

@@ -73,24 +73,38 @@ public class VerificationService(
             .Include(o => o.Dispatcher)
             .FirstOrDefaultAsync(o => o.VerifyCode == verifyCode);
 
-        if (order == null || order.Status != DispatchOrderStatus.Signed)
-            return await RecordFailAsync(order?.Id, verifierId,
-                "核验码无效或调度单尚未签署");
+        if (order == null)
+            return (false, false, "核验码无效", null);
+
+        // 已完成进场核验（InProgress 及之后状态），直接返回通过记录
+        if (order.Status == DispatchOrderStatus.InProgress
+            || order.Status == DispatchOrderStatus.Terminated)
+        {
+            var existingPass = await db.EntryVerifications
+                .FirstOrDefaultAsync(ev => ev.OrderId == order.Id && ev.IsPass);
+            if (existingPass != null)
+                return (true, true, null, existingPass.Id);
+        }
+
+        if (order.Status != DispatchOrderStatus.Signed)
+            return await RecordFailAsync(order.Id, verifierId,
+                "调度单尚未签署，无法核验");
 
         // 2. 核验码有效期（开始日期起 3 天内）
         if (today > order.ActualStart.AddDays(3))
             return await RecordFailAsync(order.Id, verifierId,
                 "核验码已过期（有效期为租赁开始日期后 3 天）");
 
-        // 3. 未曾通过核验
-        bool alreadyPassed = await db.EntryVerifications
-            .AnyAsync(ev => ev.OrderId == order.Id && ev.IsPass);
-        if (alreadyPassed)
-            return await RecordFailAsync(order.Id, verifierId,
-                "该调度单已完成进场核验");
+        // 3. 未曾通过核验（Signed 状态下的防重复）
+        var existingPass2 = await db.EntryVerifications
+            .FirstOrDefaultAsync(ev => ev.OrderId == order.Id && ev.IsPass);
+        if (existingPass2 != null)
+            return (true, true, null, existingPass2.Id);
 
-        // 4. 设备状态为出租中
-        if (order.Equipment.Status != EquipmentStatus.InUse)
+        // 4. 设备状态为出租中（合同已签署则自动修正）
+        if (order.Equipment.Status == EquipmentStatus.Idle)
+            order.Equipment.Status = EquipmentStatus.InUse;
+        else if (order.Equipment.Status != EquipmentStatus.InUse)
             return await RecordFailAsync(order.Id, verifierId,
                 "设备当前状态异常，无法核验（设备需处于出租中状态）");
 
@@ -107,14 +121,17 @@ public class VerificationService(
         }
 
         // 全部通过 ─ 记录核验结果并推进状态
-        var verification = new EntryVerification
+        var verification = await db.EntryVerifications
+            .FirstOrDefaultAsync(ev => ev.OrderId == order.Id);
+        if (verification == null)
         {
-            OrderId    = order.Id,
-            VerifierId = verifierId,
-            VerifiedAt = DateTime.UtcNow,
-            IsPass     = true
-        };
-        db.EntryVerifications.Add(verification);
+            verification = new EntryVerification { OrderId = order.Id };
+            db.EntryVerifications.Add(verification);
+        }
+        verification.VerifierId = verifierId;
+        verification.VerifiedAt = DateTime.UtcNow;
+        verification.IsPass     = true;
+        verification.FailReason = null;
         order.Status = DispatchOrderStatus.InProgress;
         await db.SaveChangesAsync();
 
@@ -138,15 +155,17 @@ public class VerificationService(
     {
         if (orderId.HasValue)
         {
-            var verification = new EntryVerification
+            var verification = await db.EntryVerifications
+                .FirstOrDefaultAsync(ev => ev.OrderId == orderId.Value);
+            if (verification == null)
             {
-                OrderId    = orderId.Value,
-                VerifierId = verifierId,
-                VerifiedAt = DateTime.UtcNow,
-                IsPass     = false,
-                FailReason = reason
-            };
-            db.EntryVerifications.Add(verification);
+                verification = new EntryVerification { OrderId = orderId.Value };
+                db.EntryVerifications.Add(verification);
+            }
+            verification.VerifierId = verifierId;
+            verification.VerifiedAt = DateTime.UtcNow;
+            verification.IsPass     = false;
+            verification.FailReason = reason;
             await db.SaveChangesAsync();
 
             await WriteOperationLogAsync(verifierId, "VerifyFail", verification.Id.ToString(),

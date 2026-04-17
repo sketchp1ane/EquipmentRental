@@ -110,28 +110,36 @@ public class AuditService(
 
     public async Task<(bool Success, string? Error)> PassAsync(int equipmentId, string auditorId, string? remark)
     {
-        await using var tx = await db.Database.BeginTransactionAsync();
+        Equipment? equipment = null;
 
-        var equipment = await db.Equipments
-            .Include(e => e.CreatedBy)
-            .FirstOrDefaultAsync(e => e.Id == equipmentId && e.Status == EquipmentStatus.PendingReview);
+        var strategy = db.Database.CreateExecutionStrategy();
+        await strategy.ExecuteAsync(async () =>
+        {
+            await using var tx = await db.Database.BeginTransactionAsync();
+
+            equipment = await db.Equipments
+                .Include(e => e.CreatedBy)
+                .FirstOrDefaultAsync(e => e.Id == equipmentId && e.Status == EquipmentStatus.PendingReview);
+
+            if (equipment == null) return;
+
+            equipment.Status = EquipmentStatus.Idle;
+
+            db.AuditRecords.Add(new AuditRecord
+            {
+                EquipmentId = equipmentId,
+                AuditorId   = auditorId,
+                Action      = AuditAction.Pass,
+                Remark      = remark,
+                AuditedAt   = DateTime.UtcNow
+            });
+
+            await db.SaveChangesAsync();
+            await tx.CommitAsync();
+        });
 
         if (equipment == null)
             return (false, "设备不存在或状态已变更，无法审核");
-
-        equipment.Status = EquipmentStatus.Idle;
-
-        db.AuditRecords.Add(new AuditRecord
-        {
-            EquipmentId = equipmentId,
-            AuditorId   = auditorId,
-            Action      = AuditAction.Pass,
-            Remark      = remark,
-            AuditedAt   = DateTime.UtcNow
-        });
-
-        await db.SaveChangesAsync();
-        await tx.CommitAsync();
 
         await notificationService.SendAsync(
             equipment.CreatedBy.Id,
@@ -139,8 +147,7 @@ public class AuditService(
             $"您提交的设备【{equipment.EquipmentNo} {equipment.Name}】已通过审核，当前状态：闲置。",
             $"/Equipment/Details/{equipmentId}");
 
-        await WriteOperationLogAsync(auditorId, "AuditPass", equipmentId.ToString(),
-            remark);
+        await WriteOperationLogAsync(auditorId, "AuditPass", equipmentId.ToString(), remark);
 
         return (true, null);
     }
@@ -150,27 +157,34 @@ public class AuditService(
         if (string.IsNullOrWhiteSpace(remark))
             return (false, "驳回时必须填写原因");
 
-        await using var tx = await db.Database.BeginTransactionAsync();
+        Equipment? equipment = null;
 
-        var equipment = await db.Equipments
-            .Include(e => e.CreatedBy)
-            .FirstOrDefaultAsync(e => e.Id == equipmentId && e.Status == EquipmentStatus.PendingReview);
+        var strategy = db.Database.CreateExecutionStrategy();
+        await strategy.ExecuteAsync(async () =>
+        {
+            await using var tx = await db.Database.BeginTransactionAsync();
+
+            equipment = await db.Equipments
+                .Include(e => e.CreatedBy)
+                .FirstOrDefaultAsync(e => e.Id == equipmentId && e.Status == EquipmentStatus.PendingReview);
+
+            if (equipment == null) return;
+
+            db.AuditRecords.Add(new AuditRecord
+            {
+                EquipmentId = equipmentId,
+                AuditorId   = auditorId,
+                Action      = AuditAction.Reject,
+                Remark      = remark,
+                AuditedAt   = DateTime.UtcNow
+            });
+
+            await db.SaveChangesAsync();
+            await tx.CommitAsync();
+        });
 
         if (equipment == null)
             return (false, "设备不存在或状态已变更，无法审核");
-
-        // Status stays PendingReview
-        db.AuditRecords.Add(new AuditRecord
-        {
-            EquipmentId = equipmentId,
-            AuditorId   = auditorId,
-            Action      = AuditAction.Reject,
-            Remark      = remark,
-            AuditedAt   = DateTime.UtcNow
-        });
-
-        await db.SaveChangesAsync();
-        await tx.CommitAsync();
 
         await notificationService.SendAsync(
             equipment.CreatedBy.Id,
@@ -178,8 +192,7 @@ public class AuditService(
             $"您提交的设备【{equipment.EquipmentNo} {equipment.Name}】审核被驳回。原因：{remark}",
             $"/Equipment/Details/{equipmentId}");
 
-        await WriteOperationLogAsync(auditorId, "AuditReject", equipmentId.ToString(),
-            remark);
+        await WriteOperationLogAsync(auditorId, "AuditReject", equipmentId.ToString(), remark);
 
         return (true, null);
     }

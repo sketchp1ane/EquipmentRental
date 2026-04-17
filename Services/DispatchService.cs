@@ -240,69 +240,75 @@ public class DispatchService(
         if (actualEnd < actualStart)
             return (false, "结束日期不能早于开始日期", 0);
 
-        await using var tx = await db.Database.BeginTransactionAsync();
+        string? error = null;
+        DispatchRequest? request = null;
+        DispatchOrder? order = null;
+        string? contractNo = null;
 
-        var request = await db.DispatchRequests
-            .Include(r => r.Requester)
-            .FirstOrDefaultAsync(r => r.Id == requestId);
-
-        if (request == null)
-            return (false, "用车申请不存在", 0);
-
-        // 事务内再次校验设备可用（防竞态）
-        var today = DateOnly.FromDateTime(DateTime.Today);
-        var hasExpiredQual = await db.Qualifications.AnyAsync(q =>
-            q.EquipmentId == equipmentId && q.ValidTo < today);
-        if (hasExpiredQual)
-            return (false, "所选设备存在已过期资质，不可调度", 0);
-
-        var hasConflict = await db.DispatchOrders.AnyAsync(o =>
-            o.EquipmentId == equipmentId
-            && o.Status != DispatchOrderStatus.Terminated
-            && o.ActualStart <= actualEnd
-            && o.ActualEnd >= actualStart);
-        if (hasConflict)
-            return (false, "所选设备在该时间段内已被调度，请选择其他设备或时间", 0);
-
-        var equipment = await db.Equipments.FindAsync(equipmentId);
-        if (equipment == null || equipment.Status != EquipmentStatus.Idle)
-            return (false, "所选设备当前不可用", 0);
-
-        // 创建调度单
-        var order = new DispatchOrder
+        var strategy = db.Database.CreateExecutionStrategy();
+        await strategy.ExecuteAsync(async () =>
         {
-            RequestId   = requestId,
-            EquipmentId = equipmentId,
-            DispatcherId = dispatcherId,
-            ActualStart = actualStart,
-            ActualEnd   = actualEnd,
-            UnitPrice   = unitPrice,
-            Deposit     = deposit,
-            VerifyCode  = Guid.NewGuid().ToString(),
-            Status      = DispatchOrderStatus.Unsigned,
-            CreatedAt   = DateTime.UtcNow
-        };
-        db.DispatchOrders.Add(order);
-        await db.SaveChangesAsync();
+            await using var tx = await db.Database.BeginTransactionAsync();
 
-        // 自动生成合同草稿
-        var contractNo = $"CT-{DateTime.UtcNow:yyyyMMdd}-{Guid.NewGuid().ToString("N")[..6].ToUpper()}";
-        var contract = new Contract
-        {
-            OrderId    = order.Id,
-            ContractNo = contractNo,
-            Status     = ContractStatus.Draft,
-            CreatedAt  = DateTime.UtcNow
-        };
-        db.Contracts.Add(contract);
+            request = await db.DispatchRequests
+                .Include(r => r.Requester)
+                .FirstOrDefaultAsync(r => r.Id == requestId);
 
-        // 将申请状态标记为已排期
-        request.Status = DispatchRequestStatus.Scheduled;
+            if (request == null) { error = "用车申请不存在"; return; }
 
-        await db.SaveChangesAsync();
-        await tx.CommitAsync();
+            var today = DateOnly.FromDateTime(DateTime.Today);
+            var hasExpiredQual = await db.Qualifications.AnyAsync(q =>
+                q.EquipmentId == equipmentId && q.ValidTo < today);
+            if (hasExpiredQual) { error = "所选设备存在已过期资质，不可调度"; return; }
 
-        // 通知申请人
+            var hasConflict = await db.DispatchOrders.AnyAsync(o =>
+                o.EquipmentId == equipmentId
+                && o.Status != DispatchOrderStatus.Terminated
+                && o.ActualStart <= actualEnd
+                && o.ActualEnd >= actualStart);
+            if (hasConflict) { error = "所选设备在该时间段内已被调度，请选择其他设备或时间"; return; }
+
+            var equipment = await db.Equipments.FindAsync(equipmentId);
+            if (equipment == null || equipment.Status != EquipmentStatus.Idle)
+            {
+                error = "所选设备当前不可用";
+                return;
+            }
+
+            order = new DispatchOrder
+            {
+                RequestId    = requestId,
+                EquipmentId  = equipmentId,
+                DispatcherId = dispatcherId,
+                ActualStart  = actualStart,
+                ActualEnd    = actualEnd,
+                UnitPrice    = unitPrice,
+                Deposit      = deposit,
+                VerifyCode   = Guid.NewGuid().ToString(),
+                Status       = DispatchOrderStatus.Unsigned,
+                CreatedAt    = DateTime.UtcNow
+            };
+            db.DispatchOrders.Add(order);
+            await db.SaveChangesAsync();
+
+            contractNo = $"CT-{DateTime.UtcNow:yyyyMMdd}-{Guid.NewGuid().ToString("N")[..6].ToUpper()}";
+            db.Contracts.Add(new Contract
+            {
+                OrderId    = order.Id,
+                ContractNo = contractNo,
+                Status     = ContractStatus.Draft,
+                CreatedAt  = DateTime.UtcNow
+            });
+
+            request.Status = DispatchRequestStatus.Scheduled;
+
+            await db.SaveChangesAsync();
+            await tx.CommitAsync();
+        });
+
+        if (error != null) return (false, error, 0);
+        if (order == null || request == null) return (false, "创建失败", 0);
+
         await notificationService.SendAsync(
             request.Requester.Id,
             $"您的用车申请已排期：{request.ProjectName}",
@@ -455,6 +461,7 @@ public class DispatchService(
     {
         var contract = await db.Contracts
             .Include(c => c.Order)
+                .ThenInclude(o => o.Equipment)
             .FirstOrDefaultAsync(c => c.Id == contractId);
 
         if (contract == null)
@@ -470,6 +477,7 @@ public class DispatchService(
         contract.ScanPath = filePath;
         contract.Status   = ContractStatus.Signed;
         contract.Order.Status = DispatchOrderStatus.Signed;
+        contract.Order.Equipment.Status = EquipmentStatus.InUse;
 
         await db.SaveChangesAsync();
 
