@@ -120,7 +120,7 @@
             <div class="card-header fw-semibold">工单操作</div>
             <div class="card-body">
 
-                @if (Model.CanAccept && User.IsInRole(EquipmentRental.Constants.Roles.DeviceAdmin))
+                @if (Model.CanAccept && (User.IsInRole(EquipmentRental.Constants.Roles.DeviceAdmin) || User.IsInRole(EquipmentRental.Constants.Roles.Admin)))
                 {
                     <p class="text-muted small mb-3">请确认已了解故障情况，点击受理后工单进入处理中状态。</p>
                     <form asp-action="Accept" asp-route-id="@Model.Id" method="post">
@@ -128,7 +128,7 @@
                         <button type="submit" class="btn btn-primary w-100">受理工单</button>
                     </form>
                 }
-                else if (Model.CanClose && User.IsInRole(EquipmentRental.Constants.Roles.DeviceAdmin))
+                else if (Model.CanClose && (User.IsInRole(EquipmentRental.Constants.Roles.DeviceAdmin) || User.IsInRole(EquipmentRental.Constants.Roles.Admin)))
                 {
                     <form asp-action="Close" method="post">
                         @Html.AntiForgeryToken()

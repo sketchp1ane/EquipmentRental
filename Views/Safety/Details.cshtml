@@ -124,7 +124,7 @@ else
                     else
                     {
                         <div class="text-muted small mb-2">待签署</div>
-                        @if (Model.CanSign && User.IsInRole(EquipmentRental.Constants.Roles.SafetyOfficer))
+                        @if (Model.CanSign && (User.IsInRole(EquipmentRental.Constants.Roles.SafetyOfficer) || User.IsInRole(EquipmentRental.Constants.Roles.Admin)))
                         {
                             <form asp-action="Sign" asp-route-id="@Model.Id" method="post">
                                 @Html.AntiForgeryToken()
@@ -148,7 +148,7 @@ else
                     else
                     {
                         <div class="text-muted small mb-2">待签署</div>
-                        @if (Model.CanSign && User.IsInRole(EquipmentRental.Constants.Roles.ProjectLead))
+                        @if (Model.CanSign && (User.IsInRole(EquipmentRental.Constants.Roles.ProjectLead) || User.IsInRole(EquipmentRental.Constants.Roles.Admin)))
                         {
                             <form asp-action="Sign" asp-route-id="@Model.Id" method="post">
                                 @Html.AntiForgeryToken()
