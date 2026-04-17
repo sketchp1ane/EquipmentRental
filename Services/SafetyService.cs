@@ -1,3 +1,4 @@
+using EquipmentRental.Constants;
 using EquipmentRental.Data;
 using EquipmentRental.Models;
 using EquipmentRental.Models.Entities;
@@ -227,14 +228,16 @@ public class SafetyService(
 
         var projectLeadId = briefing.Order.Request.RequesterId;
 
-        if (userId != briefing.CreatorId && userId != projectLeadId)
+        var user = await userManager.FindByIdAsync(userId);
+        bool isAdmin = user != null && await userManager.IsInRoleAsync(user, Roles.Admin);
+
+        if (!isAdmin && userId != briefing.CreatorId && userId != projectLeadId)
             return (false, "您无权签署此安全交底");
 
         if (briefing.Participants.Any(p => p.SignedById == userId))
             return (false, "您已签署此安全交底");
 
-        var user = await userManager.FindByIdAsync(userId);
-        var jobType = userId == briefing.CreatorId ? "安全员" : "项目负责人";
+        var jobType = isAdmin ? "系统管理员" : (userId == briefing.CreatorId ? "安全员" : "项目负责人");
 
         db.BriefingParticipants.Add(new BriefingParticipant
         {
