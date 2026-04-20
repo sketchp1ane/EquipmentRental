@@ -11,7 +11,7 @@
 </div>
 
 <!-- 设备基本信息 -->
-<div class="er-card mb-3">
+<div class="er-card p-3 p-md-4 mb-3">
     <h5 class="mb-3"><i class="bi bi-box-seam me-2"></i>设备信息</h5>
     <dl class="row mb-0">
         <dt class="col-sm-3">设备编号</dt>
@@ -38,7 +38,7 @@
 </div>
 
 <!-- 证件列表（只读） -->
-<div class="er-card mb-3">
+<div class="er-card p-3 p-md-4 mb-3">
     <h5 class="mb-3 d-flex align-items-center flex-wrap gap-2">
         <i class="bi bi-file-earmark-text me-1"></i>已上传证件
         @if (!Model.Qualifications.Any())
@@ -113,7 +113,7 @@
 </div>
 
 <!-- 审核操作 -->
-<div class="er-card" style="max-width:640px;">
+<div class="er-card p-3 p-md-4" style="max-width:640px;">
     <h5 class="mb-3"><i class="bi bi-gavel me-2"></i>审核操作</h5>
 
     <form id="auditReviewForm" asp-action="Review" method="post">
