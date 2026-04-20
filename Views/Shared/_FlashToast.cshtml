@@ -1,0 +1,23 @@
+@*
+    Reads TempData and emits inline script that triggers erToast() for each message.
+    Supports TempData keys: SuccessMessage, ErrorMessage, WarningMessage, InfoMessage.
+    Include once in _Layout.cshtml right before the closing </body>.
+*@
+@{
+    var messages = new List<(string type, string text)>();
+    if (TempData["SuccessMessage"] is string s && !string.IsNullOrEmpty(s)) messages.Add(("success", s));
+    if (TempData["ErrorMessage"]   is string e && !string.IsNullOrEmpty(e)) messages.Add(("danger",  e));
+    if (TempData["WarningMessage"] is string w && !string.IsNullOrEmpty(w)) messages.Add(("warning", w));
+    if (TempData["InfoMessage"]    is string i && !string.IsNullOrEmpty(i)) messages.Add(("info",    i));
+}
+@if (messages.Count > 0)
+{
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            @foreach (var (type, text) in messages)
+            {
+                <text>window.erToast(@Html.Raw(System.Text.Json.JsonSerializer.Serialize(type)), @Html.Raw(System.Text.Json.JsonSerializer.Serialize(text)));</text>
+            }
+        });
+    </script>
+}

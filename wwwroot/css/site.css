@@ -1,31 +1,377 @@
-html {
-  font-size: 14px;
+/* ==========================================================================
+   EquipmentRental — Design Tokens & Shared Utilities
+   ========================================================================== */
+
+:root {
+    /* Brand */
+    --er-color-primary:         #1E5EFF;
+    --er-color-primary-hover:   #1849CC;
+    --er-color-primary-surface: #EAF0FF;
+
+    /* Status colors (semantic, non-overlapping) */
+    --er-status-draft:       #6B7280; /* 草稿 / 未提交 */
+    --er-status-pending:     #F59E0B; /* 待审核 / 待处理 */
+    --er-status-progress:    #2563EB; /* 进行中 / 已审批未执行 */
+    --er-status-success:     #16A34A; /* 通过 / 完成 / 在用 */
+    --er-status-danger:      #DC2626; /* 驳回 / 故障 / 严重 */
+    --er-status-warn-soft:   #FBBF24; /* 即将到期 / 提醒 */
+    --er-status-info:        #0EA5E9; /* 信息 / 已归档 */
+
+    /* Soft badge backgrounds (≈15% alpha) + foreground text */
+    --er-status-draft-bg:     rgba(107, 114, 128, 0.12);
+    --er-status-draft-fg:     #374151;
+    --er-status-pending-bg:   rgba(245, 158, 11, 0.15);
+    --er-status-pending-fg:   #92400E;
+    --er-status-progress-bg:  rgba(37, 99, 235, 0.12);
+    --er-status-progress-fg:  #1D4ED8;
+    --er-status-success-bg:   rgba(22, 163, 74, 0.12);
+    --er-status-success-fg:   #166534;
+    --er-status-danger-bg:    rgba(220, 38, 38, 0.12);
+    --er-status-danger-fg:    #991B1B;
+    --er-status-warn-soft-bg: rgba(251, 191, 36, 0.18);
+    --er-status-warn-soft-fg: #92400E;
+    --er-status-info-bg:      rgba(14, 165, 233, 0.12);
+    --er-status-info-fg:      #075985;
+
+    /* Neutral grayscale */
+    --er-gray-50:  #F9FAFB;
+    --er-gray-100: #F3F4F6;
+    --er-gray-200: #E5E7EB;
+    --er-gray-300: #D1D5DB;
+    --er-gray-400: #9CA3AF;
+    --er-gray-500: #6B7280;
+    --er-gray-600: #4B5563;
+    --er-gray-700: #374151;
+    --er-gray-800: #1F2937;
+    --er-gray-900: #111827;
+
+    /* Spacing */
+    --er-space-1: 4px;
+    --er-space-2: 8px;
+    --er-space-3: 12px;
+    --er-space-4: 16px;
+    --er-space-5: 20px;
+    --er-space-6: 24px;
+    --er-space-7: 32px;
+    --er-space-8: 48px;
+
+    /* Radius */
+    --er-radius-sm:   4px;
+    --er-radius-md:   8px;
+    --er-radius-lg:   12px;
+    --er-radius-pill: 999px;
+
+    /* Typography */
+    --er-font-xs:  12px;
+    --er-font-sm:  13px;
+    --er-font-md:  14px;
+    --er-font-lg:  16px;
+    --er-font-xl:  18px;
+    --er-font-2xl: 20px;
+    --er-font-3xl: 24px;
+
+    /* Shadow */
+    --er-shadow-sm: 0 1px 2px  rgba(15, 23, 42, 0.06);
+    --er-shadow-md: 0 4px 12px rgba(15, 23, 42, 0.08);
+    --er-shadow-lg: 0 8px 24px rgba(15, 23, 42, 0.10);
+
+    /* Layout */
+    --er-sidebar-w:           240px;
+    --er-sidebar-w-collapsed: 64px;
+
+    /* Transition */
+    --er-transition: 150ms ease-out;
 }
 
-@media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
+/* Base */
+html { font-size: 14px; }
+@media (min-width: 768px) { html { font-size: 16px; } }
+
+.btn:focus, .btn:active:focus, .btn-link.nav-link:focus,
+.form-control:focus, .form-check-input:focus {
+    box-shadow: 0 0 0 0.1rem #fff, 0 0 0 0.25rem var(--er-color-primary);
 }
 
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+.form-floating > .form-control-plaintext::placeholder,
+.form-floating > .form-control::placeholder {
+    color: var(--bs-secondary-color);
+    text-align: end;
+}
+.form-floating > .form-control-plaintext:focus::placeholder,
+.form-floating > .form-control:focus::placeholder { text-align: start; }
+
+/* ==========================================================================
+   Layout — sidebar (migrated from _Layout inline style)
+   ========================================================================== */
+body { overflow: hidden; }
+#main-content { overflow-y: auto; }
+
+.sidebar {
+    width: var(--er-sidebar-w);
+    min-height: 0;
+    transition: width var(--er-transition);
+}
+.sidebar .nav-link {
+    border-radius: var(--er-radius-md);
+    padding: 6px 12px;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.sidebar .nav-link:hover { background-color: rgba(255, 255, 255, 0.12); }
+.sidebar .nav-link.active { background-color: var(--er-color-primary); }
+.sidebar .section-label {
+    font-size: 0.7rem;
+    letter-spacing: 0.08em;
+    padding: 4px 12px;
 }
 
-html {
-  position: relative;
-  min-height: 100%;
+/* Off-canvas sidebar on small screens */
+.offcanvas.sidebar-offcanvas {
+    background-color: var(--er-gray-900);
+    color: #fff;
+    width: var(--er-sidebar-w);
+}
+.offcanvas.sidebar-offcanvas .nav-link { color: #fff; }
+
+@media (max-width: 991.98px) {
+    .sidebar-desktop { display: none !important; }
+}
+@media (min-width: 992px) {
+    .sidebar-mobile-toggle { display: none !important; }
 }
 
-body {
-  margin-bottom: 60px;
+/* Notification dropdown — responsive width */
+.notif-dropdown-menu {
+    width: min(340px, calc(100vw - 24px));
+    max-height: min(420px, 70dvh);
+    padding: 0;
+}
+.notif-list { max-height: calc(min(420px, 70dvh) - 48px); overflow-y: auto; }
+
+/* ==========================================================================
+   Soft badges — semantic status
+   ========================================================================== */
+.badge-soft {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 10px;
+    border-radius: var(--er-radius-pill);
+    font-size: var(--er-font-xs);
+    font-weight: 600;
+    line-height: 1.4;
+}
+.badge-soft i { font-size: 0.9em; }
+
+.badge-soft-draft    { background: var(--er-status-draft-bg);     color: var(--er-status-draft-fg); }
+.badge-soft-pending  { background: var(--er-status-pending-bg);   color: var(--er-status-pending-fg); }
+.badge-soft-progress { background: var(--er-status-progress-bg);  color: var(--er-status-progress-fg); }
+.badge-soft-success  { background: var(--er-status-success-bg);   color: var(--er-status-success-fg); }
+.badge-soft-danger   { background: var(--er-status-danger-bg);    color: var(--er-status-danger-fg); }
+.badge-soft-warn     { background: var(--er-status-warn-soft-bg); color: var(--er-status-warn-soft-fg); }
+.badge-soft-info     { background: var(--er-status-info-bg);      color: var(--er-status-info-fg); }
+
+/* ==========================================================================
+   Utility classes
+   ========================================================================== */
+.text-truncate-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+td.text-truncate-2,
+th.text-truncate-2 {
+    display: table-cell;
+    -webkit-line-clamp: unset;
+    -webkit-box-orient: unset;
+    white-space: nowrap;
+    text-overflow: ellipsis;
 }
 
-.form-floating > .form-control-plaintext::placeholder, .form-floating > .form-control::placeholder {
-  color: var(--bs-secondary-color);
-  text-align: end;
+.er-required::after {
+    content: " *";
+    color: var(--er-status-danger);
+    font-weight: 700;
 }
 
-.form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
-  text-align: start;
+.er-card {
+    border: 1px solid var(--er-gray-200);
+    border-radius: var(--er-radius-lg);
+    background: #fff;
+    box-shadow: var(--er-shadow-sm);
+}
+
+.er-stat-card {
+    border-radius: var(--er-radius-lg);
+    border: none;
+    box-shadow: var(--er-shadow-sm);
+    transition: transform var(--er-transition), box-shadow var(--er-transition);
+}
+.er-stat-card:hover { transform: translateY(-1px); box-shadow: var(--er-shadow-md); }
+.er-stat-card .stat-value { font-size: 1.75rem; font-weight: 700; line-height: 1.1; }
+.er-stat-card .stat-label { font-size: var(--er-font-sm); opacity: 0.9; }
+
+.er-empty {
+    padding: var(--er-space-7) var(--er-space-4);
+    text-align: center;
+    color: var(--er-gray-500);
+}
+.er-empty .er-empty-icon { font-size: 3rem; color: var(--er-gray-300); margin-bottom: var(--er-space-3); }
+.er-empty .er-empty-title { font-size: var(--er-font-lg); color: var(--er-gray-700); margin-bottom: var(--er-space-1); }
+.er-empty .er-empty-hint  { font-size: var(--er-font-sm); color: var(--er-gray-500); }
+
+/* Chart responsive container */
+.er-chart {
+    position: relative;
+    height: clamp(240px, 40vh, 360px);
+}
+.er-chart canvas { max-width: 100%; }
+
+/* Dropzone upload area */
+.er-dropzone {
+    border: 2px dashed var(--er-gray-300);
+    border-radius: var(--er-radius-lg);
+    background: var(--er-gray-50);
+    padding: var(--er-space-6) var(--er-space-4);
+    cursor: pointer;
+    transition: border-color var(--er-transition), background var(--er-transition);
+    min-height: 120px;
+}
+.er-dropzone:hover {
+    border-color: var(--er-color-primary);
+    background: var(--er-color-surface);
+    color: var(--er-color-primary);
+}
+
+/* Readonly input — visual cue for locked fields */
+.er-readonly-field {
+    background-color: var(--er-status-warn-soft-bg) !important;
+    cursor: not-allowed;
+}
+
+/* Safety briefing stepper (desktop circles + mobile progress) */
+.er-stepper {
+    display: flex;
+    align-items: center;
+    gap: var(--er-space-3);
+    flex-wrap: wrap;
+}
+.er-stepper .er-step {
+    display: flex;
+    align-items: center;
+    gap: var(--er-space-2);
+}
+.er-stepper .er-step-circle {
+    width: 2rem; height: 2rem; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: var(--er-font-sm); font-weight: 700;
+    background: var(--er-gray-100); color: var(--er-gray-500);
+    border: 1px solid var(--er-gray-200);
+    flex-shrink: 0;
+}
+.er-stepper .er-step.is-active .er-step-circle {
+    background: var(--er-status-pending); color: #fff; border-color: transparent;
+}
+.er-stepper .er-step.is-done .er-step-circle {
+    background: var(--er-status-success); color: #fff; border-color: transparent;
+}
+.er-stepper .er-step-line {
+    flex: 1 1 2rem; max-width: 4rem; height: 2px; background: var(--er-gray-200);
+}
+
+/* File preview row for upload lists */
+.er-file-preview-item {
+    display: flex; align-items: center; gap: var(--er-space-2);
+    padding: var(--er-space-1) var(--er-space-2);
+    border-radius: var(--er-radius-md);
+    background: var(--er-gray-50);
+    margin-top: var(--er-space-1);
+}
+
+/* Sticky footer used by long forms */
+.er-sticky-footer {
+    position: sticky; bottom: 0; z-index: 10;
+    background: #fff; border-top: 1px solid var(--er-gray-200);
+    padding: var(--er-space-3) 0;
+}
+
+/* CSS-only 5-star rating (no JS dependency) */
+.er-rating {
+    display: inline-flex;
+    flex-direction: row-reverse;
+    font-size: 1.75rem;
+    gap: 4px;
+    align-items: center;
+}
+.er-rating input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
+.er-rating label {
+    cursor: pointer;
+    color: var(--er-gray-300);
+    line-height: 1;
+    transition: color var(--er-transition);
+}
+.er-rating label:hover,
+.er-rating label:hover ~ label,
+.er-rating input:checked ~ label {
+    color: var(--er-status-warn-soft);
+}
+.er-rating input:focus-visible + label {
+    outline: 2px solid var(--er-color-primary);
+    outline-offset: 2px;
+    border-radius: 4px;
+}
+
+/* Toast container */
+.er-toast-container {
+    position: fixed;
+    top: var(--er-space-4);
+    right: var(--er-space-4);
+    z-index: 1090;
+    display: flex;
+    flex-direction: column;
+    gap: var(--er-space-2);
+    pointer-events: none;
+}
+.er-toast-container .toast { pointer-events: auto; }
+
+/* Confirm modal — variant helpers */
+.modal-header.er-variant-danger  { background: var(--er-status-danger-bg);   color: var(--er-status-danger-fg); }
+.modal-header.er-variant-warning { background: var(--er-status-pending-bg);  color: var(--er-status-pending-fg); }
+.modal-header.er-variant-info    { background: var(--er-status-info-bg);     color: var(--er-status-info-fg); }
+
+/* Print styles */
+@media print {
+    .sidebar, .navbar, .er-no-print, .btn, .dropdown,
+    .offcanvas, .modal-backdrop, .notif-dropdown-menu,
+    .er-toast-container, footer, form { display: none !important; }
+    #main-content { overflow: visible !important; padding: 0 !important; }
+    body { overflow: visible !important; background: #fff !important; }
+    .er-card, .card { border: 1px solid #000 !important; box-shadow: none !important; page-break-inside: avoid; }
+    a { color: inherit !important; text-decoration: none !important; }
+    code { border: none !important; background: transparent !important; }
+}
+
+/* Contract-specific print block (signature lines) */
+.er-contract-signature {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: var(--er-space-4);
+    margin-top: var(--er-space-7);
+}
+.er-contract-signature > div {
+    min-height: 4rem;
+    border-bottom: 1px solid var(--er-gray-400);
+    padding-bottom: var(--er-space-1);
+    font-size: var(--er-font-sm);
+    color: var(--er-gray-700);
+}
+@media print {
+    .er-contract-signature > div { border-bottom: 1px solid #000; min-height: 5rem; }
 }

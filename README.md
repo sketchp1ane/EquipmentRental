@@ -86,6 +86,7 @@ EquipmentRental/
 | [docs/architecture.md](docs/architecture.md) | 系统架构与分层职责 |
 | [docs/deployment.md](docs/deployment.md) | 完整部署指南 |
 | [docs/user-guide.md](docs/user-guide.md) | 用户操作手册（按角色） |
+| [docs/demo-guide.md](docs/demo-guide.md) | 演示脚本（按模块流程） |
 | [docs/progress.md](docs/progress.md) | 开发进度 |
 
 ## 技术栈

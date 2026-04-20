@@ -1,0 +1,11 @@
+@*
+    Required label with red asterisk + optional help text.
+    Usage: @await Html.PartialAsync("_RequiredLabel", (For: "Name", Text: "设备名称", Help: "最多 40 字"))
+    Set Help to null for no help text; set Required=false to hide the asterisk.
+*@
+@model (string For, string Text, string Help, bool Required)
+<label for="@Model.For" class="form-label @(Model.Required ? "er-required" : "")">@Model.Text</label>
+@if (!string.IsNullOrWhiteSpace(Model.Help))
+{
+    <div class="form-text small text-muted mb-1">@Model.Help</div>
+}

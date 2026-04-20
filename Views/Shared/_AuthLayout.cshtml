@@ -1,0 +1,85 @@
+@*
+    Full-page split layout used by Login / AccessDenied.
+    Usage:
+      @{ Layout = "_AuthLayout"; }
+    Child view renders into the right-hand card area via RenderBody.
+
+    Error.cshtml keeps Layout = "_Layout" to retain in-app navigation.
+*@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - 租赁设备管理平台</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/lib/bootstrap-icons/bootstrap-icons.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <style>
+        body { background: linear-gradient(135deg, var(--er-color-primary-surface) 0%, #fff 60%); }
+        .er-auth-shell {
+            min-height: 100vh;
+            display: grid;
+            grid-template-columns: 1fr;
+        }
+        @@media (min-width: 992px) {
+            .er-auth-shell { grid-template-columns: 1.1fr 1fr; }
+        }
+        .er-auth-illust {
+            display: none;
+            padding: var(--er-space-8);
+            background: linear-gradient(135deg, var(--er-color-primary) 0%, #4f7ffd 100%);
+            color: #fff;
+        }
+        @@media (min-width: 992px) {
+            .er-auth-illust { display: flex; flex-direction: column; justify-content: space-between; }
+        }
+        .er-auth-illust .er-brand { font-size: var(--er-font-xl); font-weight: 700; }
+        .er-auth-illust .er-tagline { font-size: 2rem; font-weight: 700; line-height: 1.3; margin-top: var(--er-space-6); }
+        .er-auth-illust .er-bullet-list { margin-top: var(--er-space-4); opacity: 0.9; }
+        .er-auth-illust .er-bullet-list li { margin-bottom: var(--er-space-2); }
+        .er-auth-illust .er-footer { font-size: var(--er-font-sm); opacity: 0.8; }
+        .er-auth-card-area {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: var(--er-space-5);
+        }
+        .er-auth-card {
+            width: 100%;
+            max-width: 420px;
+            background: #fff;
+            border-radius: var(--er-radius-lg);
+            padding: var(--er-space-6);
+            box-shadow: var(--er-shadow-md);
+        }
+    </style>
+</head>
+<body>
+<div class="er-auth-shell">
+    <aside class="er-auth-illust">
+        <div class="er-brand">
+            <i class="bi bi-boxes me-2"></i>租赁设备管理平台
+        </div>
+        <div>
+            <div class="er-tagline">让建筑设备<br />全生命周期<br />可见可管可控</div>
+            <ul class="er-bullet-list list-unstyled">
+                <li><i class="bi bi-check2-circle me-2"></i>设备入库 → 资质审核 → 调度派工</li>
+                <li><i class="bi bi-check2-circle me-2"></i>进场核验 → 安全交底 → 巡检维护</li>
+                <li><i class="bi bi-check2-circle me-2"></i>故障上报 → 退场评价 → 报表分析</li>
+            </ul>
+        </div>
+        <div class="er-footer">&copy; @DateTime.Now.Year 租赁设备管理平台</div>
+    </aside>
+
+    <main class="er-auth-card-area">
+        <div class="er-auth-card">
+            @RenderBody()
+        </div>
+    </main>
+</div>
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="~/lib/bootstrap/js/bootstrap.bundle.min.js"></script>
+@await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

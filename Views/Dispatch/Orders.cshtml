@@ -3,18 +3,41 @@
 @using EquipmentRental.Models.ViewModels
 @{
     ViewData["Title"] = "调度单列表";
+
+    (string Key, string Text) OrderStatusVm(DispatchOrderStatus s) => s switch
+    {
+        DispatchOrderStatus.Unsigned   => ("Pending",   "待签署"),
+        DispatchOrderStatus.Signed     => ("Info",      "已签署"),
+        DispatchOrderStatus.InProgress => ("Success",   "进行中"),
+        DispatchOrderStatus.Complete   => ("Draft",     "已完成"),
+        DispatchOrderStatus.Terminated => ("Cancelled", "已终止"),
+        _                              => ("Draft",     s.ToString())
+    };
+
+    (string Key, string Text) ContractStatusVm(ContractStatus s) => s switch
+    {
+        ContractStatus.Draft             => ("Draft",      "合同·草稿"),
+        ContractStatus.AwaitingSignature => ("Pending",    "合同·待签署"),
+        ContractStatus.Signed            => ("Success",    "合同·已签署"),
+        ContractStatus.Terminated        => ("Cancelled",  "合同·已终止"),
+        _                                => ("Draft",      s.ToString())
+    };
 }
 
-<div class="d-flex justify-content-between align-items-center mb-3">
-    <h4 class="mb-0">调度单列表</h4>
-    <div>
-        <a asp-action="Index" class="btn btn-outline-secondary btn-sm">用车申请</a>
-        <a asp-action="Calendar" class="btn btn-outline-secondary btn-sm">调度日历</a>
+<div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+    <h4 class="mb-0"><i class="bi bi-truck me-2"></i>调度单列表</h4>
+    <div class="d-flex gap-2">
+        <a asp-action="Index" class="btn btn-outline-secondary btn-sm">
+            <i class="bi bi-clipboard-check me-1"></i>用车申请
+        </a>
+        <a asp-action="Calendar" class="btn btn-outline-secondary btn-sm">
+            <i class="bi bi-calendar3 me-1"></i>调度日历
+        </a>
     </div>
 </div>
 
 <!-- 状态筛选 -->
-<ul class="nav nav-pills mb-3">
+<ul class="nav nav-pills mb-3 flex-wrap">
     <li class="nav-item">
         <a class="nav-link @(Model.StatusFilter == null ? "active" : "")"
            asp-action="Orders" asp-route-keyword="@Model.Keyword">全部</a>
@@ -54,7 +77,9 @@
                placeholder="项目名 / 设备编号 / 合同号" style="min-width: 260px;" />
     </div>
     <div class="col-auto">
-        <button type="submit" class="btn btn-primary btn-sm">搜索</button>
+        <button type="submit" class="btn btn-primary btn-sm">
+            <i class="bi bi-search me-1"></i>搜索
+        </button>
         @if (!string.IsNullOrWhiteSpace(Model.Keyword))
         {
             <a asp-action="Orders" asp-route-status="@Model.StatusFilter"
@@ -63,116 +88,89 @@
     </div>
 </form>
 
-<div class="table-responsive">
-    <table class="table table-hover table-sm align-middle">
-        <thead class="table-light">
-            <tr>
-                <th>项目名称</th>
-                <th>设备</th>
-                <th>租期</th>
-                <th>日租金</th>
-                <th>合同</th>
-                <th>调度员</th>
-                <th>创建时间</th>
-                <th>状态</th>
-                <th>操作</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in Model.Items)
-            {
+@if (Model.Items.Any())
+{
+    <div class="table-responsive">
+        <table class="table table-hover table-sm align-middle">
+            <thead class="table-light">
                 <tr>
-                    <td>@item.ProjectName</td>
-                    <td class="small">
-                        <div>@item.EquipmentNo</div>
-                        <div class="text-muted">@item.EquipmentName</div>
-                    </td>
-                    <td class="text-muted small text-nowrap">
-                        @item.ActualStart.ToString("yyyy-MM-dd")<br />
-                        <span class="text-muted">至 @item.ActualEnd.ToString("yyyy-MM-dd")</span>
-                    </td>
-                    <td class="text-nowrap">¥ @item.UnitPrice.ToString("N2")</td>
-                    <td class="small">
-                        @if (!string.IsNullOrEmpty(item.ContractNo))
-                        {
-                            <div>📄 @item.ContractNo</div>
-                            @switch (item.ContractStatus)
-                            {
-                                case EquipmentRental.Models.ContractStatus.Draft:
-                                    <span class="badge border border-secondary text-secondary bg-light">合同·草稿</span>
-                                    break;
-                                case EquipmentRental.Models.ContractStatus.AwaitingSignature:
-                                    <span class="badge border border-warning text-warning bg-light">合同·待签署</span>
-                                    break;
-                                case EquipmentRental.Models.ContractStatus.Signed:
-                                    <span class="badge border border-success text-success bg-light">合同·已签署</span>
-                                    break;
-                                case EquipmentRental.Models.ContractStatus.Terminated:
-                                    <span class="badge border border-danger text-danger bg-light">合同·已终止</span>
-                                    break;
-                            }
-                        }
-                        else
-                        {
-                            <span class="text-muted">—</span>
-                        }
-                    </td>
-                    <td class="text-muted small">@item.DispatcherName</td>
-                    <td class="text-muted small text-nowrap">@item.CreatedAt.ToLocalTime().ToString("yyyy-MM-dd")</td>
-                    <td>
-                        @switch (item.Status)
-                        {
-                            case DispatchOrderStatus.Unsigned:
-                                <span class="badge bg-warning text-dark">待签署</span>
-                                break;
-                            case DispatchOrderStatus.Signed:
-                                <span class="badge bg-info">已签署</span>
-                                break;
-                            case DispatchOrderStatus.InProgress:
-                                <span class="badge bg-success">进行中</span>
-                                break;
-                            case DispatchOrderStatus.Complete:
-                                <span class="badge bg-secondary">已完成</span>
-                                break;
-                            case DispatchOrderStatus.Terminated:
-                                <span class="badge bg-danger">已终止</span>
-                                break;
-                        }
-                    </td>
-                    <td>
-                        <a asp-action="OrderDetails" asp-route-id="@item.Id"
-                           class="btn btn-outline-primary btn-sm">查看详情</a>
-                    </td>
+                    <th>项目名称</th>
+                    <th>设备</th>
+                    <th class="text-nowrap">租期</th>
+                    <th class="d-none d-md-table-cell">日租金</th>
+                    <th class="d-none d-lg-table-cell">合同</th>
+                    <th class="d-none d-xl-table-cell">调度员</th>
+                    <th class="d-none d-xl-table-cell">创建时间</th>
+                    <th>状态</th>
+                    <th>操作</th>
                 </tr>
-            }
-            @if (!Model.Items.Any())
-            {
-                <tr>
-                    <td colspan="9" class="text-center text-muted py-4">暂无调度单</td>
-                </tr>
-            }
-        </tbody>
-    </table>
-</div>
-
-<!-- 分页 -->
-<div class="d-flex justify-content-between align-items-center">
-    <small class="text-muted">共 @Model.TotalCount 条记录</small>
-    @if (Model.TotalPages > 1)
-    {
-        <nav>
-            <ul class="pagination pagination-sm mb-0">
-                @for (int p = 1; p <= Model.TotalPages; p++)
+            </thead>
+            <tbody>
+                @foreach (var item in Model.Items)
                 {
-                    <li class="page-item @(p == Model.Page ? "active" : "")">
-                        <a class="page-link"
-                           asp-action="Orders"
-                           asp-route-status="@Model.StatusFilter"
-                           asp-route-keyword="@Model.Keyword"
-                           asp-route-page="@p">@p</a>
-                    </li>
+                    <tr>
+                        <td class="text-truncate-2" style="max-width:200px">@item.ProjectName</td>
+                        <td class="small">
+                            <div><code>@item.EquipmentNo</code></div>
+                            <div class="text-muted text-truncate-2" style="max-width:180px">@item.EquipmentName</div>
+                        </td>
+                        <td class="text-muted small text-nowrap">
+                            @DateFormatExtensions.ToDateRangeStr(item.ActualStart, item.ActualEnd)
+                        </td>
+                        <td class="text-nowrap d-none d-md-table-cell">¥ @item.UnitPrice.ToString("N2")</td>
+                        <td class="small d-none d-lg-table-cell">
+                            @if (!string.IsNullOrEmpty(item.ContractNo))
+                            {
+                                <div class="text-muted"><i class="bi bi-file-earmark-text me-1"></i>@item.ContractNo</div>
+                                if (item.ContractStatus.HasValue)
+                                {
+                                    var (ck, ct) = ContractStatusVm(item.ContractStatus.Value);
+                                    @await Html.PartialAsync("_StatusBadge", (Key: ck, Text: ct))
+                                }
+                            }
+                            else
+                            {
+                                <span class="text-muted">—</span>
+                            }
+                        </td>
+                        <td class="text-muted small d-none d-xl-table-cell">@item.DispatcherName</td>
+                        <td class="text-muted small text-nowrap d-none d-xl-table-cell">@item.CreatedAt.ToLocalTime().ToDateStr()</td>
+                        <td>
+                            @{ var (k, t) = OrderStatusVm(item.Status); }
+                            @await Html.PartialAsync("_StatusBadge", (Key: k, Text: t))
+                        </td>
+                        <td>
+                            <a asp-action="OrderDetails" asp-route-id="@item.Id"
+                               class="btn btn-outline-secondary btn-sm" title="查看详情" data-bs-toggle="tooltip">
+                                <i class="bi bi-eye"></i>
+                            </a>
+                        </td>
+                    </tr>
                 }
-            </ul>
-        </nav>
+            </tbody>
+        </table>
+    </div>
+}
+else
+{
+    @await Html.PartialAsync("_EmptyState", (
+        Icon: "bi-truck",
+        Title: "暂无调度单",
+        Hint: "筛选条件下无匹配调度单",
+        CtaText: (string?)null,
+        CtaUrl: (string?)null
+    ))
+}
+
+@await Html.PartialAsync("_Pagination", new PaginationViewModel
+{
+    Page = Model.Page,
+    TotalPages = Model.TotalPages,
+    TotalCount = Model.TotalCount,
+    ActionName = "Orders",
+    RouteValues = new Dictionary<string, string?>
+    {
+        ["status"]  = Model.StatusFilter?.ToString(),
+        ["keyword"] = Model.Keyword
     }
-</div>
+})

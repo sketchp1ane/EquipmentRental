@@ -10,6 +10,7 @@ public class UserListViewModel
     public bool? IsActive { get; set; }
     public int Page { get; set; } = 1;
     public int TotalPages { get; set; }
+    public int TotalCount { get; set; }
     public IList<string> AllRoles { get; set; } = [];
 }
 

@@ -1,0 +1,54 @@
+@*
+    Declarative confirmation modal. For an in-page modal tied to a specific form.
+    Most delete/disable actions should use the data-er-confirm attribute on the
+    form/button/link directly (handled by site.js). This partial is for cases
+    where you need a richer, pre-composed modal with a body slot.
+
+    Usage:
+    @await Html.PartialAsync("_ConfirmModal", new {
+        Id = "confirmDelete",
+        Title = "确认删除",
+        Body = "此操作不可恢复，确定删除该设备？",
+        Action = Url.Action("Delete", new { id = 42 }),
+        Method = "post",
+        Variant = "danger",
+        OkText = "确定删除",
+        CancelText = "取消"
+    })
+    Trigger: <button data-bs-toggle="modal" data-bs-target="#confirmDelete">...</button>
+*@
+@model dynamic
+@{
+    string id = Model.Id;
+    string title = Model.Title ?? "请确认";
+    string body = Model.Body ?? "确定执行此操作？";
+    string action = Model.Action ?? "#";
+    string method = Model.Method ?? "post";
+    string variant = Model.Variant ?? "danger";
+    string okText = Model.OkText ?? "确定";
+    string cancelText = Model.CancelText ?? "取消";
+    string btnCls = variant switch
+    {
+        "info" => "btn-info",
+        "warning" => "btn-warning",
+        _ => "btn-danger"
+    };
+}
+<div class="modal fade" id="@id" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header er-variant-@variant">
+                <h5 class="modal-title">@title</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">@body</div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-light" data-bs-dismiss="modal">@cancelText</button>
+                <form method="@method" action="@action" class="d-inline">
+                    @Html.AntiForgeryToken()
+                    <button type="submit" class="btn @btnCls">@okText</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

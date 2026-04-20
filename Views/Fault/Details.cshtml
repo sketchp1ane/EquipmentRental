@@ -100,10 +100,12 @@
                     <div class="row g-2">
                         @foreach (var img in Model.Images)
                         {
-                            <div class="col-auto">
-                                <a href="/files/@img.FilePath.Replace("\\", "/")" target="_blank">
+                            <div class="col-6 col-md-4 col-lg-3">
+                                <a href="/files/@img.FilePath.Replace("\\", "/")" class="er-lightbox d-block"
+                                   title="点击查看大图" data-bs-toggle="tooltip">
                                     <img src="/files/@img.FilePath.Replace("\\", "/")"
-                                         class="img-thumbnail" style="max-height:140px;max-width:180px;object-fit:cover"
+                                         class="img-thumbnail w-100"
+                                         style="height:140px;object-fit:cover"
                                          alt="故障照片" />
                                 </a>
                             </div>
@@ -123,9 +125,15 @@
                 @if (Model.CanAccept && (User.IsInRole(EquipmentRental.Constants.Roles.DeviceAdmin) || User.IsInRole(EquipmentRental.Constants.Roles.Admin)))
                 {
                     <p class="text-muted small mb-3">请确认已了解故障情况，点击受理后工单进入处理中状态。</p>
-                    <form asp-action="Accept" asp-route-id="@Model.Id" method="post">
+                    <form asp-action="Accept" asp-route-id="@Model.Id" method="post"
+                          data-er-confirm="确认受理该故障工单？工单将进入处理中状态。"
+                          data-er-confirm-title="受理故障工单"
+                          data-er-confirm-variant="info"
+                          data-er-confirm-ok="受理">
                         @Html.AntiForgeryToken()
-                        <button type="submit" class="btn btn-primary w-100">受理工单</button>
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="bi bi-play-circle me-1"></i>受理工单
+                        </button>
                     </form>
                 }
                 else if (Model.CanClose && (User.IsInRole(EquipmentRental.Constants.Roles.DeviceAdmin) || User.IsInRole(EquipmentRental.Constants.Roles.Admin)))

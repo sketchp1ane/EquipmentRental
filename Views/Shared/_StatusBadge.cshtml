@@ -1,0 +1,34 @@
+@*
+    Shared status badge.
+    Usage: @await Html.PartialAsync("_StatusBadge", (Key: "Pending", Text: "待审核"))
+
+    Key maps to a semantic token; unknown keys fall back to draft.
+*@
+@model (string Key, string Text)
+@{
+    var map = new Dictionary<string, (string cls, string icon)>(StringComparer.OrdinalIgnoreCase)
+    {
+        ["Draft"]       = ("badge-soft-draft",    "bi-file-earmark"),
+        ["Pending"]     = ("badge-soft-pending",  "bi-hourglass-split"),
+        ["InProgress"]  = ("badge-soft-progress", "bi-play-circle"),
+        ["Progress"]    = ("badge-soft-progress", "bi-play-circle"),
+        ["Approved"]    = ("badge-soft-success",  "bi-check-circle"),
+        ["Success"]     = ("badge-soft-success",  "bi-check-circle"),
+        ["Completed"]   = ("badge-soft-success",  "bi-check2-circle"),
+        ["Active"]      = ("badge-soft-success",  "bi-check-circle"),
+        ["InUse"]       = ("badge-soft-progress", "bi-arrow-right-circle"),
+        ["Idle"]        = ("badge-soft-info",     "bi-pause-circle"),
+        ["Rejected"]    = ("badge-soft-danger",   "bi-x-circle"),
+        ["Danger"]      = ("badge-soft-danger",   "bi-exclamation-octagon"),
+        ["Fault"]       = ("badge-soft-danger",   "bi-wrench-adjustable"),
+        ["Maintenance"] = ("badge-soft-warn",     "bi-tools"),
+        ["Expiring"]    = ("badge-soft-warn",     "bi-clock-history"),
+        ["Expired"]     = ("badge-soft-danger",   "bi-slash-circle"),
+        ["Warning"]     = ("badge-soft-warn",     "bi-exclamation-triangle"),
+        ["Info"]        = ("badge-soft-info",     "bi-info-circle"),
+        ["Archived"]    = ("badge-soft-info",     "bi-archive"),
+        ["Cancelled"]   = ("badge-soft-draft",    "bi-dash-circle")
+    };
+    var (cls, icon) = map.TryGetValue(Model.Key ?? "", out var v) ? v : ("badge-soft-draft", "bi-dash-circle");
+}
+<span class="badge-soft @cls"><i class="bi @icon"></i>@Model.Text</span>

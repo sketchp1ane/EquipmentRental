@@ -4,80 +4,81 @@
     ViewData["Title"] = "核验记录";
 }
 
-<div class="d-flex justify-content-between align-items-center mb-3">
-    <h4 class="mb-0">进场核验记录</h4>
+<div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+    <h4 class="mb-0"><i class="bi bi-clipboard2-check me-2"></i>进场核验记录</h4>
     @if (User.IsInRole(EquipmentRental.Constants.Roles.ProjectLead) ||
          User.IsInRole(EquipmentRental.Constants.Roles.Admin))
     {
-        <a asp-action="Verify" class="btn btn-primary btn-sm">新建核验</a>
+        <a asp-action="Verify" class="btn btn-primary btn-sm">
+            <i class="bi bi-plus-lg me-1"></i>新建核验
+        </a>
     }
 </div>
 
-@if (Model.Items.Count == 0)
+@if (Model.Items.Any())
 {
-    <div class="text-center py-5 text-muted">暂无核验记录</div>
+    <div class="table-responsive">
+        <table class="table table-hover table-sm align-middle">
+            <thead class="table-light">
+                <tr>
+                    <th>调度单</th>
+                    <th>设备编号</th>
+                    <th class="d-none d-md-table-cell">项目名称</th>
+                    <th class="d-none d-lg-table-cell">核验人员</th>
+                    <th>核验时间</th>
+                    <th>结果</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.Items)
+                {
+                    <tr>
+                        <td>
+                            <a asp-controller="Dispatch" asp-action="OrderDetails" asp-route-id="@item.OrderId">#@item.OrderId</a>
+                        </td>
+                        <td><code>@item.EquipmentNo</code></td>
+                        <td class="text-truncate-2 d-none d-md-table-cell" style="max-width:200px">@item.ProjectName</td>
+                        <td class="text-muted small d-none d-lg-table-cell">@item.VerifierName</td>
+                        <td class="text-muted small text-nowrap">@item.VerifiedAt.ToLocalTime().ToDateTimeStr()</td>
+                        <td>
+                            @if (item.IsPass)
+                            {
+                                @await Html.PartialAsync("_StatusBadge", (Key: "Success", Text: "通过"))
+                            }
+                            else
+                            {
+                                @await Html.PartialAsync("_StatusBadge", (Key: "Danger", Text: "未通过"))
+                            }
+                        </td>
+                        <td>
+                            <a asp-action="Details" asp-route-id="@item.Id"
+                               class="btn btn-outline-secondary btn-sm" title="详情" data-bs-toggle="tooltip">
+                                <i class="bi bi-eye"></i>
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
 }
 else
 {
-    <div class="card">
-        <div class="table-responsive">
-            <table class="table table-hover mb-0">
-                <thead class="table-light">
-                    <tr>
-                        <th>调度单</th>
-                        <th>设备编号</th>
-                        <th>项目名称</th>
-                        <th>核验人员</th>
-                        <th>核验时间</th>
-                        <th>结果</th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var item in Model.Items)
-                    {
-                        <tr>
-                            <td>
-                                <a asp-controller="Dispatch" asp-action="OrderDetails" asp-route-id="@item.OrderId">#@item.OrderId</a>
-                            </td>
-                            <td><code>@item.EquipmentNo</code></td>
-                            <td>@item.ProjectName</td>
-                            <td>@item.VerifierName</td>
-                            <td>@item.VerifiedAt.ToLocalTime().ToString("yyyy-MM-dd HH:mm")</td>
-                            <td>
-                                @if (item.IsPass)
-                                {
-                                    <span class="badge bg-success">通过</span>
-                                }
-                                else
-                                {
-                                    <span class="badge bg-danger">未通过</span>
-                                }
-                            </td>
-                            <td>
-                                <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-outline-secondary btn-sm">详情</a>
-                            </td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
-        </div>
-    </div>
-
-    <!-- 分页 -->
-    @if (Model.TotalPages > 1)
-    {
-        <nav class="mt-3">
-            <ul class="pagination pagination-sm justify-content-center">
-                @for (int p = 1; p <= Model.TotalPages; p++)
-                {
-                    <li class="page-item @(p == Model.Page ? "active" : "")">
-                        <a class="page-link" asp-action="List" asp-route-page="@p">@p</a>
-                    </li>
-                }
-            </ul>
-        </nav>
-    }
-
-    <div class="text-muted small text-end mt-2">共 @Model.TotalCount 条记录</div>
+    @await Html.PartialAsync("_EmptyState", (
+        Icon: "bi-clipboard2-check",
+        Title: "暂无核验记录",
+        Hint: "尚未有进场核验记录",
+        CtaText: (string?)null,
+        CtaUrl: (string?)null
+    ))
 }
+
+@await Html.PartialAsync("_Pagination", new PaginationViewModel
+{
+    Page = Model.Page,
+    TotalPages = Model.TotalPages,
+    TotalCount = Model.TotalCount,
+    ActionName = "List",
+    RouteValues = new Dictionary<string, string?>()
+})

@@ -1,0 +1,175 @@
+@*
+    Sidebar navigation — rendered once for desktop sidebar and once for mobile off-canvas.
+*@
+<ul class="nav nav-pills flex-column gap-1">
+
+    <!-- 首页看板 -->
+    <li class="nav-item">
+        <a class="nav-link text-white" asp-controller="Home" asp-action="Index">
+            <i class="bi bi-speedometer2"></i><span>首页看板</span>
+        </a>
+    </li>
+
+    <!-- 设备管理 -->
+    @if (User.IsInRole(Roles.Admin) || User.IsInRole(Roles.DeviceAdmin) ||
+         User.IsInRole(Roles.Dispatcher) || User.IsInRole(Roles.ProjectLead) ||
+         User.IsInRole(Roles.SafetyOfficer) || User.IsInRole(Roles.Auditor))
+    {
+        <li class="nav-item mt-2">
+            <span class="section-label text-secondary text-uppercase d-block">设备管理</span>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link text-white" asp-controller="Equipment" asp-action="Index">
+                <i class="bi bi-box-seam"></i><span>设备台账</span>
+            </a>
+        </li>
+    }
+    @if (User.IsInRole(Roles.Admin) || User.IsInRole(Roles.DeviceAdmin))
+    {
+        <li class="nav-item">
+            <a class="nav-link text-white" asp-controller="Audit" asp-action="Index">
+                <i class="bi bi-shield-check"></i><span>资质审核</span>
+            </a>
+        </li>
+    }
+
+    <!-- 调度管理 -->
+    @if (User.IsInRole(Roles.Admin) || User.IsInRole(Roles.Dispatcher) ||
+         User.IsInRole(Roles.ProjectLead) || User.IsInRole(Roles.Auditor))
+    {
+        <li class="nav-item mt-2">
+            <span class="section-label text-secondary text-uppercase d-block">调度管理</span>
+        </li>
+    }
+    @if (User.IsInRole(Roles.Admin) || User.IsInRole(Roles.ProjectLead))
+    {
+        <li class="nav-item">
+            <a class="nav-link text-white" asp-controller="Dispatch" asp-action="Request">
+                <i class="bi bi-plus-square"></i><span>用车申请</span>
+            </a>
+        </li>
+    }
+    @if (User.IsInRole(Roles.Admin) || User.IsInRole(Roles.Dispatcher))
+    {
+        <li class="nav-item">
+            <a class="nav-link text-white" asp-controller="Dispatch" asp-action="Index">
+                <i class="bi bi-clipboard-check"></i><span>用车申请审批</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link text-white" asp-controller="Dispatch" asp-action="Calendar">
+                <i class="bi bi-calendar3"></i><span>调度日历</span>
+            </a>
+        </li>
+    }
+    @if (User.IsInRole(Roles.Auditor))
+    {
+        <li class="nav-item">
+            <a class="nav-link text-white" asp-controller="Dispatch" asp-action="Index">
+                <i class="bi bi-clipboard-check"></i><span>用车申请审批</span>
+            </a>
+        </li>
+    }
+    @if (User.IsInRole(Roles.Admin) || User.IsInRole(Roles.Dispatcher) ||
+         User.IsInRole(Roles.ProjectLead) || User.IsInRole(Roles.Auditor))
+    {
+        <li class="nav-item">
+            <a class="nav-link text-white" asp-controller="Dispatch" asp-action="Orders">
+                <i class="bi bi-truck"></i><span>调度单</span>
+            </a>
+        </li>
+    }
+
+    <!-- 现场管理 -->
+    @if (User.IsInRole(Roles.Admin) || User.IsInRole(Roles.SafetyOfficer) ||
+         User.IsInRole(Roles.ProjectLead) || User.IsInRole(Roles.Auditor) ||
+         User.IsInRole(Roles.Dispatcher))
+    {
+        <li class="nav-item mt-2">
+            <span class="section-label text-secondary text-uppercase d-block">现场管理</span>
+        </li>
+    }
+    @if (User.IsInRole(Roles.Admin) || User.IsInRole(Roles.ProjectLead))
+    {
+        <li class="nav-item">
+            <a class="nav-link text-white" asp-controller="Verification" asp-action="Verify">
+                <i class="bi bi-qr-code-scan"></i><span>进场核验</span>
+            </a>
+        </li>
+    }
+    @if (User.IsInRole(Roles.Admin) || User.IsInRole(Roles.Dispatcher) ||
+         User.IsInRole(Roles.Auditor))
+    {
+        <li class="nav-item">
+            <a class="nav-link text-white" asp-controller="Verification" asp-action="List">
+                <i class="bi bi-card-list"></i><span>核验记录</span>
+            </a>
+        </li>
+    }
+    @if (User.IsInRole(Roles.Admin) || User.IsInRole(Roles.SafetyOfficer) ||
+         User.IsInRole(Roles.ProjectLead) || User.IsInRole(Roles.Auditor))
+    {
+        <li class="nav-item">
+            <a class="nav-link text-white" asp-controller="Safety" asp-action="List">
+                <i class="bi bi-shield-exclamation"></i><span>安全交底</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link text-white" asp-controller="Inspection" asp-action="Index">
+                <i class="bi bi-clipboard2-pulse"></i><span>巡检记录</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link text-white" asp-controller="Fault" asp-action="Index">
+                <i class="bi bi-exclamation-triangle"></i><span>故障上报</span>
+            </a>
+        </li>
+    }
+
+    <!-- 退场管理 -->
+    @if (User.IsInRole(Roles.Admin) || User.IsInRole(Roles.DeviceAdmin) ||
+         User.IsInRole(Roles.ProjectLead) || User.IsInRole(Roles.Auditor))
+    {
+        <li class="nav-item mt-2">
+            <span class="section-label text-secondary text-uppercase d-block">退场管理</span>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link text-white" asp-controller="Return" asp-action="Index">
+                <i class="bi bi-arrow-return-left"></i><span>退场评价</span>
+            </a>
+        </li>
+    }
+
+    <!-- 统计报表 -->
+    <li class="nav-item mt-2">
+        <span class="section-label text-secondary text-uppercase d-block">统计报表</span>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link text-white" asp-controller="Report" asp-action="Utilization">
+            <i class="bi bi-graph-up"></i><span>数据看板</span>
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link text-white" asp-controller="Report" asp-action="Rental">
+            <i class="bi bi-cash-coin"></i><span>租赁报表</span>
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link text-white" asp-controller="Report" asp-action="Safety">
+            <i class="bi bi-shield-fill-check"></i><span>安全统计</span>
+        </a>
+    </li>
+
+    <!-- 系统管理 -->
+    @if (User.IsInRole(Roles.Admin) || User.IsInRole(Roles.Auditor))
+    {
+        <li class="nav-item mt-2">
+            <span class="section-label text-secondary text-uppercase d-block">系统管理</span>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link text-white" asp-controller="Users" asp-action="Index">
+                <i class="bi bi-people"></i><span>用户管理</span>
+            </a>
+        </li>
+    }
+</ul>

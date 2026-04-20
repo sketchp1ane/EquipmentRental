@@ -1,0 +1,85 @@
+@*
+    Unified pagination footer: "共 N 条记录" (left) + numbered pages (right).
+
+    Usage:
+    @await Html.PartialAsync("_Pagination", new PaginationViewModel {
+        Page = Model.Page,
+        TotalPages = Model.TotalPages,
+        TotalCount = Model.TotalCount,
+        RouteValues = new Dictionary<string, string?> {
+            ["keyword"]    = Model.Keyword,
+            ["categoryId"] = Model.CategoryId?.ToString(),
+            ["status"]     = Model.Status?.ToString()
+        }
+    })
+    RouteValues may be null or empty. The current page parameter "page" is always appended.
+    If you need a different action name, set ActionName (defaults to "Index").
+*@
+@model PaginationViewModel
+@{
+    var page = Model.Page;
+    var total = Model.TotalPages;
+    var routeValues = Model.RouteValues ?? new Dictionary<string, string?>();
+    var action = string.IsNullOrEmpty(Model.ActionName) ? "Index" : Model.ActionName;
+
+    // Compute window of page numbers: show first, last, current ±2
+    var pages = new List<int>();
+    if (total <= 7)
+    {
+        for (int i = 1; i <= total; i++) pages.Add(i);
+    }
+    else
+    {
+        pages.Add(1);
+        int from = Math.Max(2, page - 2);
+        int to   = Math.Min(total - 1, page + 2);
+        if (from > 2) pages.Add(-1); // ellipsis
+        for (int i = from; i <= to; i++) pages.Add(i);
+        if (to < total - 1) pages.Add(-1);
+        pages.Add(total);
+    }
+
+    IDictionary<string, string> RouteFor(int p)
+    {
+        var rv = new Dictionary<string, string>();
+        foreach (var kv in routeValues)
+            if (!string.IsNullOrEmpty(kv.Value)) rv[kv.Key] = kv.Value!;
+        rv["page"] = p.ToString();
+        return rv;
+    }
+}
+
+<div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mt-3">
+    <small class="text-muted">共 @Model.TotalCount 条记录</small>
+
+    @if (total > 1)
+    {
+        <nav>
+            <ul class="pagination pagination-sm mb-0">
+                <li class="page-item @(page <= 1 ? "disabled" : "")">
+                    <a class="page-link" asp-action="@action" asp-all-route-data="@RouteFor(Math.Max(1, page - 1))"
+                       aria-label="上一页"><i class="bi bi-chevron-left"></i></a>
+                </li>
+
+                @foreach (var p in pages)
+                {
+                    if (p == -1)
+                    {
+                        <li class="page-item disabled"><span class="page-link">…</span></li>
+                    }
+                    else
+                    {
+                        <li class="page-item @(p == page ? "active" : "")">
+                            <a class="page-link" asp-action="@action" asp-all-route-data="@RouteFor(p)">@p</a>
+                        </li>
+                    }
+                }
+
+                <li class="page-item @(page >= total ? "disabled" : "")">
+                    <a class="page-link" asp-action="@action" asp-all-route-data="@RouteFor(Math.Min(total, page + 1))"
+                       aria-label="下一页"><i class="bi bi-chevron-right"></i></a>
+                </li>
+            </ul>
+        </nav>
+    }
+</div>

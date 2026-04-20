@@ -3,36 +3,33 @@
     ViewData["Title"] = "设备利用率报表";
 }
 
-<h4 class="mb-3">设备利用率报表</h4>
+<div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+    <h4 class="mb-0"><i class="bi bi-bar-chart-line me-2"></i>设备利用率报表</h4>
+</div>
 
-<!-- 筛选表单 -->
-<form method="get" class="row g-2 align-items-end mb-4">
-    <div class="col-auto">
-        <label class="form-label mb-1 small">开始日期</label>
-        <input type="date" name="from" class="form-control form-control-sm"
-               value="@Model.From.ToString("yyyy-MM-dd")" />
-    </div>
-    <div class="col-auto">
-        <label class="form-label mb-1 small">结束日期</label>
-        <input type="date" name="to" class="form-control form-control-sm"
-               value="@Model.To.ToString("yyyy-MM-dd")" />
-    </div>
-    <div class="col-auto">
-        <button type="submit" class="btn btn-primary btn-sm">查询</button>
-    </div>
-</form>
+@await Html.PartialAsync("_DateRangeFilter", (From: Model.From, To: Model.To, FromName: "from", ToName: "to", SubmitText: "查询"))
 
 @if (!Model.Stats.Categories.Any())
 {
-    <div class="alert alert-secondary">该时间段内暂无设备数据。</div>
+    @await Html.PartialAsync("_EmptyState", (
+        Icon: "bi-bar-chart",
+        Title: "暂无设备数据",
+        Hint: "请调整日期范围或确认是否已录入设备数据",
+        CtaText: (string?)null,
+        CtaUrl: (string?)null
+    ))
 }
 else
 {
     <!-- 水平柱状图 -->
-    <div class="card mb-4">
-        <div class="card-header fw-semibold">各分类利用率（%）</div>
+    <div class="er-card mb-4">
+        <div class="card-header fw-semibold bg-transparent border-bottom">
+            <i class="bi bi-bar-chart-steps me-2"></i>各分类利用率（%）
+        </div>
         <div class="card-body">
-            <canvas id="utilizationChart"></canvas>
+            <div class="er-chart" style="height: clamp(240px, @(Math.Max(240, Model.Stats.Categories.Count() * 32))px, 520px)">
+                <canvas id="utilizationChart"></canvas>
+            </div>
         </div>
     </div>
 
@@ -43,10 +40,7 @@ else
             var labels = cats.map(function(c){ return c.CategoryName; });
             var rates  = cats.map(function(c){ return c.UtilizationRate; });
 
-            var canvas = document.getElementById('utilizationChart');
-            canvas.height = Math.max(80, labels.length * 28);
-
-            new Chart(canvas, {
+            new Chart(document.getElementById('utilizationChart'), {
                 type: 'bar',
                 data: {
                     labels: labels,
@@ -54,14 +48,15 @@ else
                         label: '利用率 %',
                         data: rates,
                         backgroundColor: rates.map(function(r){
-                            return r >= 80 ? 'rgba(220,53,69,0.75)'
-                                 : r >= 50 ? 'rgba(255,193,7,0.75)'
-                                 : 'rgba(25,135,84,0.75)';
+                            return r >= 80 ? 'rgba(220,38,38,0.75)'
+                                 : r >= 50 ? 'rgba(245,158,11,0.75)'
+                                 : 'rgba(22,163,74,0.75)';
                         })
                     }]
                 },
                 options: {
                     indexAxis: 'y',
+                    maintainAspectRatio: false,
                     scales: {
                         x: { beginAtZero: true, max: 100,
                              ticks: { callback: function(v){ return v + '%'; } } }
@@ -73,8 +68,10 @@ else
     </script>
 
     <!-- 数据表格 -->
-    <div class="card">
-        <div class="card-header fw-semibold">分类明细</div>
+    <div class="er-card">
+        <div class="card-header fw-semibold bg-transparent border-bottom">
+            <i class="bi bi-table me-2"></i>分类明细
+        </div>
         <div class="card-body p-0">
             <div class="table-responsive">
                 <table class="table table-sm align-middle mb-0">
@@ -82,24 +79,26 @@ else
                         <tr>
                             <th>设备分类</th>
                             <th class="text-end">设备数量</th>
-                            <th class="text-end">统计天数</th>
-                            <th class="text-end">占用天数</th>
+                            <th class="text-end d-none d-md-table-cell">统计天数</th>
+                            <th class="text-end d-none d-md-table-cell">占用天数</th>
                             <th class="text-end">利用率</th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach (var c in Model.Stats.Categories)
                         {
-                            var badgeCls = c.UtilizationRate >= 80 ? "bg-danger"
-                                         : c.UtilizationRate >= 50 ? "bg-warning text-dark"
-                                         : "bg-success";
+                            var (bKey, bText) = c.UtilizationRate >= 80
+                                ? ("Danger", $"{c.UtilizationRate} %")
+                                : c.UtilizationRate >= 50
+                                    ? ("Expiring", $"{c.UtilizationRate} %")
+                                    : ("Success", $"{c.UtilizationRate} %");
                             <tr>
                                 <td>@c.CategoryName</td>
                                 <td class="text-end">@c.EquipmentCount</td>
-                                <td class="text-end">@c.TotalDays</td>
-                                <td class="text-end">@c.OccupiedDays</td>
+                                <td class="text-end d-none d-md-table-cell">@c.TotalDays</td>
+                                <td class="text-end d-none d-md-table-cell">@c.OccupiedDays</td>
                                 <td class="text-end">
-                                    <span class="badge @badgeCls">@c.UtilizationRate %</span>
+                                    @await Html.PartialAsync("_StatusBadge", (Key: bKey, Text: bText))
                                 </td>
                             </tr>
                         }

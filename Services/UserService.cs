@@ -80,7 +80,7 @@ public class UserService(
                 return new UserListViewModel
                 {
                     Keyword = keyword, Role = role, IsActive = isActive,
-                    Page = page, TotalPages = 0,
+                    Page = page, TotalPages = 0, TotalCount = 0,
                     AllRoles = Constants.Roles.All
                 };
             }
@@ -128,6 +128,7 @@ public class UserService(
             IsActive   = isActive,
             Page       = page,
             TotalPages = totalPages,
+            TotalCount = total,
             AllRoles   = Constants.Roles.All
         };
     }

@@ -4,16 +4,36 @@
 @using EquipmentRental.Models.ViewModels
 @{
     ViewData["Title"] = "故障工单";
+
+    (string Key, string Text) SeverityVm(FaultSeverity s) => s switch
+    {
+        FaultSeverity.Minor  => ("Info",      "轻微"),
+        FaultSeverity.Medium => ("Expiring",  "中等"),
+        FaultSeverity.Severe => ("Danger",    "严重"),
+        _                    => ("Draft",     s.ToString())
+    };
+
+    (string Key, string Text) StatusVm(FaultStatus s) => s switch
+    {
+        FaultStatus.Pending    => ("Draft",    "待处理"),
+        FaultStatus.InProgress => ("InUse",    "处理中"),
+        FaultStatus.Closed     => ("Success",  "已关闭"),
+        _                      => ("Draft",    s.ToString())
+    };
 }
 
-<div class="d-flex justify-content-between align-items-center mb-3">
-    <h4 class="mb-0">故障工单</h4>
+<div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+    <h4 class="mb-0"><i class="bi bi-exclamation-triangle me-2"></i>故障工单</h4>
     @if (User.IsInRole(Roles.SafetyOfficer) || User.IsInRole(Roles.ProjectLead) || User.IsInRole(Roles.Admin))
     {
         <div class="dropdown">
             <button class="btn btn-danger btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown"
                     @(Model.AvailableOrders.Count == 0 ? "disabled" : "")>
-                故障上报
+                <i class="bi bi-plus-lg me-1"></i>故障上报
+                @if (Model.AvailableOrders.Count > 0)
+                {
+                    <span class="badge bg-light text-dark ms-1">共 @Model.AvailableOrders.Count 个可选</span>
+                }
             </button>
             <ul class="dropdown-menu dropdown-menu-end" style="max-height: 320px; overflow-y: auto;">
                 @if (Model.AvailableOrders.Count == 0)
@@ -38,92 +58,70 @@
     }
 </div>
 
-@if (Model.Items.Count == 0)
+@if (Model.Items.Any())
 {
-    <div class="text-center py-5 text-muted">暂无故障工单</div>
+    <div class="table-responsive">
+        <table class="table table-hover table-sm align-middle">
+            <thead class="table-light">
+                <tr>
+                    <th>ID</th>
+                    <th>调度单</th>
+                    <th class="d-none d-md-table-cell">项目名称</th>
+                    <th>设备编号</th>
+                    <th>严重程度</th>
+                    <th class="d-none d-lg-table-cell">上报人</th>
+                    <th class="d-none d-xl-table-cell">上报时间</th>
+                    <th>状态</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.Items)
+                {
+                    <tr>
+                        <td class="text-muted small">#@item.Id</td>
+                        <td>
+                            <a asp-controller="Dispatch" asp-action="OrderDetails" asp-route-id="@item.OrderId">#@item.OrderId</a>
+                        </td>
+                        <td class="text-truncate-2 d-none d-md-table-cell" style="max-width:200px">@item.ProjectName</td>
+                        <td><code>@item.EquipmentNo</code></td>
+                        <td>
+                            @{ var (sk, st) = SeverityVm(item.Severity); }
+                            @await Html.PartialAsync("_StatusBadge", (Key: sk, Text: st))
+                        </td>
+                        <td class="text-muted small d-none d-lg-table-cell">@item.ReporterName</td>
+                        <td class="text-muted small text-nowrap d-none d-xl-table-cell">@item.ReportedAt.ToLocalTime().ToDateTimeStr()</td>
+                        <td>
+                            @{ var (k, t) = StatusVm(item.Status); }
+                            @await Html.PartialAsync("_StatusBadge", (Key: k, Text: t))
+                        </td>
+                        <td>
+                            <a asp-action="Details" asp-route-id="@item.Id"
+                               class="btn btn-outline-secondary btn-sm" title="详情" data-bs-toggle="tooltip">
+                                <i class="bi bi-eye"></i>
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
 }
 else
 {
-    <div class="card">
-        <div class="table-responsive">
-            <table class="table table-hover mb-0">
-                <thead class="table-light">
-                    <tr>
-                        <th>ID</th>
-                        <th>调度单</th>
-                        <th>项目名称</th>
-                        <th>设备编号</th>
-                        <th>严重程度</th>
-                        <th>上报人</th>
-                        <th>上报时间</th>
-                        <th>状态</th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var item in Model.Items)
-                    {
-                        <tr>
-                            <td>#@item.Id</td>
-                            <td>
-                                <a asp-controller="Dispatch" asp-action="OrderDetails" asp-route-id="@item.OrderId">#@item.OrderId</a>
-                            </td>
-                            <td>@item.ProjectName</td>
-                            <td><code>@item.EquipmentNo</code></td>
-                            <td>
-                                @switch (item.Severity)
-                                {
-                                    case FaultSeverity.Minor:
-                                        <span class="badge bg-info text-dark">轻微</span>
-                                        break;
-                                    case FaultSeverity.Medium:
-                                        <span class="badge bg-warning text-dark">中等</span>
-                                        break;
-                                    case FaultSeverity.Severe:
-                                        <span class="badge bg-danger">严重</span>
-                                        break;
-                                }
-                            </td>
-                            <td>@item.ReporterName</td>
-                            <td>@item.ReportedAt.ToLocalTime().ToString("yyyy-MM-dd HH:mm")</td>
-                            <td>
-                                @switch (item.Status)
-                                {
-                                    case FaultStatus.Pending:
-                                        <span class="badge bg-secondary">待处理</span>
-                                        break;
-                                    case FaultStatus.InProgress:
-                                        <span class="badge bg-primary">处理中</span>
-                                        break;
-                                    case FaultStatus.Closed:
-                                        <span class="badge bg-success">已关闭</span>
-                                        break;
-                                }
-                            </td>
-                            <td>
-                                <a asp-action="Details" asp-route-id="@item.Id"
-                                   class="btn btn-outline-secondary btn-sm">详情</a>
-                            </td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
-        </div>
-    </div>
-
-    @if (Model.TotalPages > 1)
-    {
-        <nav class="mt-3">
-            <ul class="pagination pagination-sm justify-content-center">
-                @for (int p = 1; p <= Model.TotalPages; p++)
-                {
-                    <li class="page-item @(p == Model.Page ? "active" : "")">
-                        <a class="page-link" asp-action="Index" asp-route-page="@p">@p</a>
-                    </li>
-                }
-            </ul>
-        </nav>
-    }
-
-    <div class="text-muted small text-end mt-2">共 @Model.TotalCount 条记录</div>
+    @await Html.PartialAsync("_EmptyState", (
+        Icon: "bi-exclamation-triangle",
+        Title: "暂无故障工单",
+        Hint: "尚未有故障上报记录",
+        CtaText: (string?)null,
+        CtaUrl: (string?)null
+    ))
 }
+
+@await Html.PartialAsync("_Pagination", new PaginationViewModel
+{
+    Page = Model.Page,
+    TotalPages = Model.TotalPages,
+    TotalCount = Model.TotalCount,
+    RouteValues = new Dictionary<string, string?>()
+})

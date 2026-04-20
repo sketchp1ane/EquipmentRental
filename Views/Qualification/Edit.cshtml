@@ -1,100 +1,136 @@
 @model QualificationFormViewModel
 @{
     ViewData["Title"] = "编辑证件";
+    bool hasFile = !string.IsNullOrEmpty(Model.ExistingFilePath);
+    string? fileUrl = hasFile ? "/files/" + Model.ExistingFilePath!.Replace('\\', '/') : null;
+    bool isImage = hasFile && (
+        Model.ExistingFilePath!.EndsWith(".jpg", StringComparison.OrdinalIgnoreCase) ||
+        Model.ExistingFilePath.EndsWith(".jpeg", StringComparison.OrdinalIgnoreCase) ||
+        Model.ExistingFilePath.EndsWith(".png", StringComparison.OrdinalIgnoreCase));
 }
 
-<div class="d-flex justify-content-between align-items-center mb-3">
-    <h4 class="mb-0">编辑证件</h4>
+<div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+    <h4 class="mb-0"><i class="bi bi-file-earmark-check me-2"></i>编辑证件</h4>
     <a asp-action="Index" asp-route-equipmentId="@Model.EquipmentId"
-       class="btn btn-outline-secondary btn-sm">返回证件列表</a>
+       class="btn btn-outline-secondary btn-sm">
+        <i class="bi bi-arrow-left me-1"></i>返回证件列表
+    </a>
 </div>
 
-<div class="card" style="max-width:640px;">
-    <div class="card-header">
-        <small class="text-muted">设备：<code>@Model.EquipmentNo</code> @Model.EquipmentName</small>
-    </div>
-    <div class="card-body">
-        <form asp-action="Edit" method="post" enctype="multipart/form-data">
-            @Html.AntiForgeryToken()
-            <input type="hidden" asp-for="Id" />
-            <input type="hidden" asp-for="EquipmentId" />
-            <input type="hidden" asp-for="EquipmentNo" />
-            <input type="hidden" asp-for="EquipmentName" />
+<div class="er-card" style="max-width:720px;">
+    <small class="text-muted d-block mb-3">
+        设备：<code>@Model.EquipmentNo</code> @Model.EquipmentName
+    </small>
 
-            <div asp-validation-summary="ModelOnly" class="alert alert-danger py-2 small" role="alert"></div>
+    <form asp-action="Edit" method="post" enctype="multipart/form-data">
+        @Html.AntiForgeryToken()
+        <input type="hidden" asp-for="Id" />
+        <input type="hidden" asp-for="EquipmentId" />
+        <input type="hidden" asp-for="EquipmentNo" />
+        <input type="hidden" asp-for="EquipmentName" />
 
-            <div class="mb-3">
-                <label asp-for="Type" class="form-label fw-semibold"></label>
-                <select asp-for="Type" class="form-select">
-                    <option value="1">产品合格证</option>
-                    <option value="2">出厂检验报告</option>
-                    <option value="3">特种设备使用登记证</option>
-                    <option value="4">年度检验报告</option>
-                    <option value="5">保险凭证</option>
-                    <option value="6">安装资质证明</option>
-                </select>
-                <span asp-validation-for="Type" class="text-danger small"></span>
+        <div asp-validation-summary="ModelOnly" class="alert alert-danger py-2 small" role="alert"></div>
+
+        <div class="mb-3">
+            <label asp-for="Type" class="form-label er-required"></label>
+            <select asp-for="Type" class="form-select">
+                <option value="1">产品合格证</option>
+                <option value="2">出厂检验报告</option>
+                <option value="3">特种设备使用登记证</option>
+                <option value="4">年度检验报告</option>
+                <option value="5">保险凭证</option>
+                <option value="6">安装资质证明</option>
+            </select>
+            <div class="form-text small text-muted">特种设备/年检/保险凭证通常为进场审核必备</div>
+            <span asp-validation-for="Type" class="text-danger small"></span>
+        </div>
+
+        <div class="row g-3 mb-3">
+            <div class="col-md-6">
+                <label asp-for="CertNo" class="form-label"></label>
+                <input asp-for="CertNo" class="form-control" />
+                <span asp-validation-for="CertNo" class="text-danger small"></span>
             </div>
-
-            <div class="row g-3 mb-3">
-                <div class="col-md-6">
-                    <label asp-for="CertNo" class="form-label fw-semibold"></label>
-                    <input asp-for="CertNo" class="form-control" />
-                    <span asp-validation-for="CertNo" class="text-danger small"></span>
-                </div>
-                <div class="col-md-6">
-                    <label asp-for="IssuedBy" class="form-label fw-semibold"></label>
-                    <input asp-for="IssuedBy" class="form-control" />
-                    <span asp-validation-for="IssuedBy" class="text-danger small"></span>
-                </div>
+            <div class="col-md-6">
+                <label asp-for="IssuedBy" class="form-label"></label>
+                <input asp-for="IssuedBy" class="form-control" />
+                <span asp-validation-for="IssuedBy" class="text-danger small"></span>
             </div>
+        </div>
 
-            <div class="row g-3 mb-3">
-                <div class="col-md-6">
-                    <label asp-for="ValidFrom" class="form-label fw-semibold"></label>
-                    <input asp-for="ValidFrom" type="date" class="form-control" />
-                    <span asp-validation-for="ValidFrom" class="text-danger small"></span>
-                </div>
-                <div class="col-md-6">
-                    <label asp-for="ValidTo" class="form-label fw-semibold"></label>
-                    <input asp-for="ValidTo" type="date" class="form-control" />
-                    <span asp-validation-for="ValidTo" class="text-danger small"></span>
-                </div>
+        <div class="row g-3 mb-3">
+            <div class="col-md-6">
+                <label asp-for="ValidFrom" class="form-label er-required"></label>
+                <input asp-for="ValidFrom" type="date" class="form-control" />
+                <span asp-validation-for="ValidFrom" class="text-danger small"></span>
             </div>
+            <div class="col-md-6">
+                <label asp-for="ValidTo" class="form-label er-required"></label>
+                <input asp-for="ValidTo" type="date" class="form-control" />
+                <span asp-validation-for="ValidTo" class="text-danger small"></span>
+            </div>
+        </div>
 
-            @if (!string.IsNullOrEmpty(Model.ExistingFilePath))
+        <fieldset class="mb-4">
+            <legend class="fs-6 fw-semibold text-muted border-bottom pb-1 mb-3">证件附件</legend>
+
+            @if (hasFile)
             {
-                <div class="mb-3">
-                    <label class="form-label fw-semibold">当前附件</label>
-                    <div class="d-flex align-items-center gap-3">
-                        <a href="/files/@Model.ExistingFilePath.Replace('\\', '/')" target="_blank"
-                           class="btn btn-outline-secondary btn-sm">查看附件</a>
-                        <div class="form-check mb-0">
-                            <input asp-for="RemoveFile" class="form-check-input" type="checkbox" />
-                            <label asp-for="RemoveFile" class="form-check-label text-danger small"></label>
+                <div class="row g-2 mb-3">
+                    <div class="col-6 col-md-4">
+                        <div class="er-card p-2 h-100 text-center">
+                            <a href="@fileUrl" target="_blank" class="text-decoration-none">
+                                @if (isImage)
+                                {
+                                    <img src="@fileUrl" class="img-fluid rounded" style="max-height:140px;object-fit:cover;width:100%" alt="证件附件" />
+                                }
+                                else
+                                {
+                                    <div class="d-flex align-items-center justify-content-center bg-light rounded" style="height:140px">
+                                        <i class="bi bi-file-earmark-pdf text-danger" style="font-size:2.5rem"></i>
+                                    </div>
+                                }
+                            </a>
+                            <div class="small text-muted mt-2">当前附件</div>
+                            <div class="form-check mt-2 d-inline-flex align-items-center gap-1">
+                                <input asp-for="RemoveFile" class="form-check-input" type="checkbox" />
+                                <label asp-for="RemoveFile" class="form-check-label text-danger small mb-0"></label>
+                            </div>
                         </div>
                     </div>
                 </div>
             }
 
-            <div class="mb-3">
-                <label asp-for="CertFile" class="form-label fw-semibold">
-                    @(string.IsNullOrEmpty(Model.ExistingFilePath) ? "证件附件" : "上传新附件（替换）")
-                </label>
-                <input asp-for="CertFile" type="file" class="form-control"
-                       accept=".jpg,.jpeg,.png,.pdf" />
-                <div class="form-text">支持 JPG、PNG、PDF，选填</div>
-            </div>
+            <label for="CertFile" class="er-dropzone d-flex flex-column align-items-center justify-content-center text-muted">
+                <i class="bi bi-cloud-upload" style="font-size:2rem"></i>
+                <div class="mt-2">@(hasFile ? "上传新附件（替换原附件）" : "点击选择文件或拖拽至此")</div>
+                <div class="small">支持 JPG / PNG / PDF，选填</div>
+                <input id="CertFile" asp-for="CertFile" type="file" accept=".jpg,.jpeg,.png,.pdf" class="d-none" />
+            </label>
+            <div id="CertFile-preview" class="small text-muted mt-2"></div>
+            <span asp-validation-for="CertFile" class="text-danger small"></span>
+        </fieldset>
 
-            <div class="d-flex gap-2">
-                <button type="submit" class="btn btn-primary">保存</button>
-                <a asp-action="Index" asp-route-equipmentId="@Model.EquipmentId"
-                   class="btn btn-outline-secondary">取消</a>
-            </div>
-        </form>
-    </div>
+        <div class="d-flex gap-2">
+            <button type="submit" class="btn btn-primary">
+                <i class="bi bi-check-lg me-1"></i>保存
+            </button>
+            <a asp-action="Index" asp-route-equipmentId="@Model.EquipmentId" class="btn btn-outline-secondary">取消</a>
+        </div>
+    </form>
 </div>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+    <script>
+        (function () {
+            const input = document.getElementById('CertFile');
+            const preview = document.getElementById('CertFile-preview');
+            if (!input || !preview) return;
+            input.addEventListener('change', () => {
+                const f = input.files && input.files[0];
+                preview.textContent = f ? `已选择：${f.name} (${(f.size / 1024).toFixed(1)} KB)` : '';
+            });
+        })();
+    </script>
 }

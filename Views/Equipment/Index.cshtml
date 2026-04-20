@@ -3,10 +3,20 @@
     ViewData["Title"] = "设备台账";
     bool canWrite  = User.IsInRole(Roles.Admin) || User.IsInRole(Roles.DeviceAdmin);
     bool canExport = canWrite || User.IsInRole(Roles.Auditor);
+
+    (string Key, string Text) StatusVm(EquipmentStatus s) => s switch
+    {
+        EquipmentStatus.PendingReview => ("Pending",     "待审核"),
+        EquipmentStatus.Idle          => ("Idle",        "闲置"),
+        EquipmentStatus.InUse         => ("InUse",       "使用中"),
+        EquipmentStatus.Maintenance   => ("Maintenance", "维修中"),
+        EquipmentStatus.Scrapped      => ("Cancelled",   "已报废"),
+        _                             => ("Draft",       s.ToString())
+    };
 }
 
-<div class="d-flex justify-content-between align-items-center mb-3">
-    <h4 class="mb-0">设备台账</h4>
+<div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+    <h4 class="mb-0"><i class="bi bi-box-seam me-2"></i>设备台账</h4>
     <div class="d-flex gap-2">
         @if (canExport)
         {
@@ -14,12 +24,18 @@
                asp-route-categoryId="@Model.CategoryId"
                asp-route-status="@Model.Status"
                asp-route-keyword="@Model.Keyword"
-               class="btn btn-outline-success btn-sm">导出 Excel</a>
+               class="btn btn-outline-success btn-sm">
+                <i class="bi bi-download me-1"></i>导出 Excel
+            </a>
         }
         @if (canWrite)
         {
-            <a asp-action="Create" class="btn btn-primary btn-sm">+ 设备入库</a>
-            <a asp-action="Categories" class="btn btn-outline-secondary btn-sm">分类管理</a>
+            <a asp-action="Create" class="btn btn-primary btn-sm">
+                <i class="bi bi-plus-lg me-1"></i>设备入库
+            </a>
+            <a asp-action="Categories" class="btn btn-outline-secondary btn-sm">
+                <i class="bi bi-tags me-1"></i>分类管理
+            </a>
         }
     </div>
 </div>
@@ -72,89 +88,81 @@
         </select>
     </div>
     <div class="col-auto">
-        <button type="submit" class="btn btn-secondary btn-sm">筛选</button>
+        <button type="submit" class="btn btn-primary btn-sm">
+            <i class="bi bi-funnel me-1"></i>筛选
+        </button>
         <a asp-action="Index" class="btn btn-outline-secondary btn-sm">重置</a>
     </div>
 </form>
 
 <!-- 设备表格 -->
-<div class="table-responsive">
-    <table class="table table-hover table-sm align-middle">
-        <thead class="table-light">
-            <tr>
-                <th>设备编号</th>
-                <th>设备名称</th>
-                <th>分类</th>
-                <th>品牌/型号</th>
-                <th>状态</th>
-                <th>录入时间</th>
-                <th>操作</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in Model.Items)
-            {
+@if (Model.Items.Any())
+{
+    <div class="table-responsive">
+        <table class="table table-hover table-sm align-middle">
+            <thead class="table-light">
                 <tr>
-                    <td><code>@item.EquipmentNo</code></td>
-                    <td>@item.Name</td>
-                    <td class="text-muted small">@item.CategoryName</td>
-                    <td class="text-muted small">@item.BrandModel</td>
-                    <td>
-                        @{
-                            var (badgeCss, badgeText) = item.Status switch
-                            {
-                                EquipmentStatus.PendingReview => ("bg-warning text-dark", "待审核"),
-                                EquipmentStatus.Idle          => ("bg-success", "闲置"),
-                                EquipmentStatus.InUse         => ("bg-primary", "使用中"),
-                                EquipmentStatus.Maintenance   => ("bg-danger", "维修中"),
-                                EquipmentStatus.Scrapped      => ("bg-secondary", "已报废"),
-                                _                             => ("bg-secondary", item.Status.ToString())
-                            };
-                        }
-                        <span class="badge @badgeCss">@badgeText</span>
-                    </td>
-                    <td class="text-muted small">@item.CreatedAt.ToLocalTime().ToString("yyyy-MM-dd")</td>
-                    <td>
-                        <a asp-action="Details" asp-route-id="@item.Id"
-                           class="btn btn-outline-secondary btn-sm">详情</a>
-                        @if (canWrite)
-                        {
-                            <a asp-action="Edit" asp-route-id="@item.Id"
-                               class="btn btn-outline-primary btn-sm">编辑</a>
-                        }
-                    </td>
+                    <th style="min-width:120px">设备编号</th>
+                    <th style="min-width:140px">设备名称</th>
+                    <th style="min-width:100px">分类</th>
+                    <th style="min-width:160px">品牌/型号</th>
+                    <th style="min-width:100px">状态</th>
+                    <th style="min-width:110px">录入时间</th>
+                    <th style="min-width:140px">操作</th>
                 </tr>
-            }
-            @if (!Model.Items.Any())
-            {
-                <tr>
-                    <td colspan="7" class="text-center text-muted py-4">暂无数据</td>
-                </tr>
-            }
-        </tbody>
-    </table>
-</div>
-
-<!-- 分页 + 记录数 -->
-<div class="d-flex justify-content-between align-items-center">
-    <small class="text-muted">共 @Model.TotalCount 条记录</small>
-
-    @if (Model.TotalPages > 1)
-    {
-        <nav>
-            <ul class="pagination pagination-sm mb-0">
-                @for (int p = 1; p <= Model.TotalPages; p++)
+            </thead>
+            <tbody>
+                @foreach (var item in Model.Items)
                 {
-                    <li class="page-item @(p == Model.Page ? "active" : "")">
-                        <a class="page-link"
-                           asp-action="Index"
-                           asp-route-keyword="@Model.Keyword"
-                           asp-route-categoryId="@Model.CategoryId"
-                           asp-route-status="@Model.Status"
-                           asp-route-page="@p">@p</a>
-                    </li>
+                    <tr>
+                        <td><code>@item.EquipmentNo</code></td>
+                        <td class="text-truncate-2" style="max-width:180px">@item.Name</td>
+                        <td class="text-muted small">@item.CategoryName</td>
+                        <td class="text-muted small text-truncate-2" style="max-width:220px">@item.BrandModel</td>
+                        <td>
+                            @{ var (k, t) = StatusVm(item.Status); }
+                            @await Html.PartialAsync("_StatusBadge", (Key: k, Text: t))
+                        </td>
+                        <td class="text-muted small">@item.CreatedAt.ToDateStr()</td>
+                        <td>
+                            <a asp-action="Details" asp-route-id="@item.Id"
+                               class="btn btn-outline-secondary btn-sm" title="详情" data-bs-toggle="tooltip">
+                                <i class="bi bi-eye"></i>
+                            </a>
+                            @if (canWrite)
+                            {
+                                <a asp-action="Edit" asp-route-id="@item.Id"
+                                   class="btn btn-outline-primary btn-sm" title="编辑" data-bs-toggle="tooltip">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+                            }
+                        </td>
+                    </tr>
                 }
-            </ul>
-        </nav>
+            </tbody>
+        </table>
+    </div>
+}
+else
+{
+    @await Html.PartialAsync("_EmptyState", (
+        Icon: "bi-box-seam",
+        Title: "暂无设备",
+        Hint: canWrite ? "点击右上角「设备入库」开始录入" : "当前筛选条件下无匹配设备",
+        CtaText: canWrite ? "设备入库" : null,
+        CtaUrl: canWrite ? Url.Action("Create") : null
+    ))
+}
+
+@await Html.PartialAsync("_Pagination", new PaginationViewModel
+{
+    Page = Model.Page,
+    TotalPages = Model.TotalPages,
+    TotalCount = Model.TotalCount,
+    RouteValues = new Dictionary<string, string?>
+    {
+        ["keyword"]    = Model.Keyword,
+        ["categoryId"] = Model.CategoryId?.ToString(),
+        ["status"]     = Model.Status?.ToString()
     }
-</div>
+})

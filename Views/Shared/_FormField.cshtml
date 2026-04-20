@@ -1,0 +1,46 @@
+@*
+    Simple text / textarea form field: label (with optional required star) + input + help + validation.
+    For select/file/rich-text fields use _RequiredLabel alongside a manual input.
+
+    Usage:
+        @await Html.PartialAsync("_FormField", new FormFieldOptions {
+            For = "Name", Label = "设备名称", Required = true, Help = "最多 40 字", Value = Model.Name
+        })
+
+        Textarea with counter:
+        @await Html.PartialAsync("_FormField", new FormFieldOptions {
+            For = "Remark", Label = "备注", Type = "textarea", Rows = 4, MaxLength = 500, Value = Model.Remark
+        })
+*@
+@model FormFieldOptions
+@{
+    var type = string.IsNullOrWhiteSpace(Model.Type) ? "text" : Model.Type;
+}
+
+<div class="mb-3">
+    <label for="@Model.For" class="form-label @(Model.Required ? "er-required" : "")">@Model.Label</label>
+
+    @if (type == "textarea")
+    {
+        <textarea id="@Model.For" name="@Model.For" class="form-control"
+                  rows="@(Model.Rows ?? 3)"
+                  placeholder="@Model.Placeholder"
+                  @(Model.Required ? "required" : "")
+                  maxlength="@(Model.MaxLength?.ToString() ?? "")">@Model.Value</textarea>
+    }
+    else
+    {
+        <input id="@Model.For" name="@Model.For" type="@type" class="form-control"
+               value="@Model.Value"
+               placeholder="@Model.Placeholder"
+               @(Model.Required ? "required" : "")
+               maxlength="@(Model.MaxLength?.ToString() ?? "")" />
+    }
+
+    @if (!string.IsNullOrWhiteSpace(Model.Help))
+    {
+        <div class="form-text small text-muted">@Model.Help</div>
+    }
+
+    <span class="text-danger small" data-valmsg-for="@Model.For" data-valmsg-replace="true"></span>
+</div>

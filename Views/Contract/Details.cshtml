@@ -6,15 +6,20 @@
     bool canUpload = User.IsInRole("Dispatcher") || User.IsInRole("Admin");
 }
 
-<div class="d-flex justify-content-between align-items-center mb-3">
-    <h4 class="mb-0">租赁合同</h4>
+<div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2 er-no-print">
+    <h4 class="mb-0"><i class="bi bi-file-earmark-text me-2"></i>租赁合同</h4>
     <div class="d-flex gap-2">
+        <button type="button" class="btn btn-outline-secondary btn-sm" onclick="window.print()">
+            <i class="bi bi-printer me-1"></i>打印
+        </button>
         <a asp-action="ExportPdf" asp-route-id="@Model.ContractId"
            class="btn btn-outline-danger btn-sm" target="_blank">
-            导出 PDF
+            <i class="bi bi-file-earmark-pdf me-1"></i>导出 PDF
         </a>
         <a asp-controller="Dispatch" asp-action="OrderDetails" asp-route-id="@Model.OrderId"
-           class="btn btn-outline-secondary btn-sm">返回调度单</a>
+           class="btn btn-outline-secondary btn-sm">
+            <i class="bi bi-arrow-left me-1"></i>返回调度单
+        </a>
     </div>
 </div>
 
@@ -86,10 +91,10 @@
         <p class="small" style="white-space:pre-line;">@Model.ViolationClauses</p>
 
         <h6 class="mt-3 mb-2 fw-bold border-bottom pb-1">六、签署</h6>
-        <div class="row mt-3">
-            <div class="col-4">签署日期：____________</div>
-            <div class="col-4 text-center">甲方签章：____________</div>
-            <div class="col-4 text-end">乙方签章：____________</div>
+        <div class="er-contract-signature">
+            <div>签署日期：</div>
+            <div class="text-center">甲方签章：</div>
+            <div class="text-end">乙方签章：</div>
         </div>
 
         <p class="text-muted small text-end mt-4">生成日期：@Model.CreatedAt.ToLocalTime().ToString("yyyy-MM-dd")</p>

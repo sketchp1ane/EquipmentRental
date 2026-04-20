@@ -5,16 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - 租赁设备管理平台</title>
     <link rel="stylesheet" href="~/lib/bootstrap/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/lib/bootstrap-icons/bootstrap-icons.min.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/lib/summernote/summernote-bs5.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <style>
-        body { overflow: hidden; }
-        .sidebar { width: 220px; min-height: 0; }
-        .sidebar .nav-link { border-radius: 6px; padding: 6px 12px; font-size: 0.9rem; }
-        .sidebar .nav-link:hover { background-color: rgba(255,255,255,0.12); }
-        .sidebar .section-label { font-size: 0.7rem; letter-spacing: 0.08em; padding: 4px 12px; }
-        #main-content { overflow-y: auto; }
-    </style>
 </head>
 <body class="d-flex flex-column vh-100">
 
@@ -24,24 +17,39 @@
     <script src="~/lib/chartjs/chart.umd.min.js" asp-append-version="true"></script>
     <script src="~/lib/summernote/summernote-bs5.min.js" asp-append-version="true"></script>
 
+    @{
+        // Sidebar markup rendered once, inserted in both desktop and mobile containers.
+        bool isAuth = User.Identity?.IsAuthenticated == true;
+    }
+
     <!-- Top Navbar -->
     <nav class="navbar navbar-dark bg-dark flex-shrink-0 px-3 py-2">
-        <a class="navbar-brand fw-semibold" href="/">&#128295; 租赁设备管理平台</a>
+        @if (isAuth)
+        {
+            <button class="btn btn-dark border-0 sidebar-mobile-toggle me-2"
+                    type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebarOffcanvas"
+                    aria-controls="sidebarOffcanvas" aria-label="菜单">
+                <i class="bi bi-list fs-4"></i>
+            </button>
+        }
+        <a class="navbar-brand fw-semibold d-flex align-items-center gap-2" href="/">
+            <i class="bi bi-tools"></i>
+            <span>租赁设备管理平台</span>
+        </a>
         <div class="d-flex align-items-center gap-3 ms-auto">
-            @if (User.Identity?.IsAuthenticated == true)
+            @if (isAuth)
             {
                 <!-- Notification bell -->
                 <div class="dropdown" id="notif-dropdown">
                     <button class="btn btn-dark btn-sm position-relative border-0"
                             data-bs-toggle="dropdown" data-bs-auto-close="outside"
                             aria-expanded="false" title="站内消息">
-                        <span aria-hidden="true" style="font-size: 1.1rem;">🔔</span>
+                        <i class="bi bi-bell-fill fs-5" aria-hidden="true"></i>
                         <span id="notif-badge"
                               class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger d-none"
                               style="font-size: 0.6rem;">0</span>
                     </button>
-                    <div class="dropdown-menu dropdown-menu-end p-0"
-                         style="width: 340px; max-height: 420px;">
+                    <div class="dropdown-menu dropdown-menu-end notif-dropdown-menu">
                         <div class="d-flex justify-content-between align-items-center px-3 py-2 border-bottom">
                             <span class="fw-semibold">站内消息</span>
                             <button type="button" id="notif-mark-all"
@@ -49,7 +57,7 @@
                                 全部标为已读
                             </button>
                         </div>
-                        <div id="notif-list" style="max-height: 340px; overflow-y: auto;">
+                        <div id="notif-list" class="notif-list">
                             <div class="text-muted small text-center py-4">加载中…</div>
                         </div>
                     </div>
@@ -57,15 +65,15 @@
                 @Html.AntiForgeryToken()
                 <div class="dropdown">
                     <button class="btn btn-outline-light btn-sm dropdown-toggle" data-bs-toggle="dropdown">
-                        @User.Identity.Name
+                        <i class="bi bi-person-circle me-1"></i>@User.Identity!.Name
                     </button>
                     <ul class="dropdown-menu dropdown-menu-end">
-                        <li><a class="dropdown-item" href="/Account/Profile">个人信息</a></li>
+                        <li><a class="dropdown-item" href="/Account/Profile"><i class="bi bi-person me-2"></i>个人信息</a></li>
                         <li><hr class="dropdown-divider" /></li>
                         <li>
                             <form action="/Account/Logout" method="post">
                                 @Html.AntiForgeryToken()
-                                <button class="dropdown-item text-danger" type="submit">退出登录</button>
+                                <button class="dropdown-item text-danger" type="submit"><i class="bi bi-box-arrow-right me-2"></i>退出登录</button>
                             </form>
                         </li>
                     </ul>
@@ -76,173 +84,37 @@
 
     <div class="d-flex flex-grow-1 overflow-hidden">
 
-        <!-- Sidebar -->
-        @if (User.Identity?.IsAuthenticated == true)
+        <!-- Sidebar (desktop ≥lg) -->
+        @if (isAuth)
         {
-            <nav class="sidebar d-flex flex-column bg-dark text-white p-2 flex-shrink-0 overflow-y-auto">
-                <ul class="nav nav-pills flex-column gap-1">
-
-                    <!-- 首页看板 -->
-                    <li class="nav-item">
-                        <a class="nav-link text-white" asp-controller="Home" asp-action="Index">首页看板</a>
-                    </li>
-
-                    <!-- 设备管理 -->
-                    @if (User.IsInRole(Roles.Admin) || User.IsInRole(Roles.DeviceAdmin) ||
-                         User.IsInRole(Roles.Dispatcher) || User.IsInRole(Roles.ProjectLead) ||
-                         User.IsInRole(Roles.SafetyOfficer) || User.IsInRole(Roles.Auditor))
-                    {
-                        <li class="nav-item mt-2">
-                            <span class="section-label text-secondary text-uppercase d-block">设备管理</span>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-white" asp-controller="Equipment" asp-action="Index">设备台账</a>
-                        </li>
-                    }
-                    @if (User.IsInRole(Roles.Admin) || User.IsInRole(Roles.DeviceAdmin))
-                    {
-                        <li class="nav-item">
-                            <a class="nav-link text-white" asp-controller="Audit" asp-action="Index">资质审核</a>
-                        </li>
-                    }
-
-                    <!-- 调度管理 -->
-                    @if (User.IsInRole(Roles.Admin) || User.IsInRole(Roles.Dispatcher) ||
-                         User.IsInRole(Roles.ProjectLead) || User.IsInRole(Roles.Auditor))
-                    {
-                        <li class="nav-item mt-2">
-                            <span class="section-label text-secondary text-uppercase d-block">调度管理</span>
-                        </li>
-                    }
-                    @if (User.IsInRole(Roles.Admin) || User.IsInRole(Roles.ProjectLead))
-                    {
-                        <li class="nav-item">
-                            <a class="nav-link text-white" asp-controller="Dispatch" asp-action="Request">用车申请</a>
-                        </li>
-                    }
-                    @if (User.IsInRole(Roles.Admin) || User.IsInRole(Roles.Dispatcher))
-                    {
-                        <li class="nav-item">
-                            <a class="nav-link text-white" asp-controller="Dispatch" asp-action="Index">用车申请审批</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-white" asp-controller="Dispatch" asp-action="Calendar">调度日历</a>
-                        </li>
-                    }
-                    @if (User.IsInRole(Roles.Auditor))
-                    {
-                        <li class="nav-item">
-                            <a class="nav-link text-white" asp-controller="Dispatch" asp-action="Index">用车申请审批</a>
-                        </li>
-                    }
-                    @if (User.IsInRole(Roles.Admin) || User.IsInRole(Roles.Dispatcher) ||
-                         User.IsInRole(Roles.ProjectLead) || User.IsInRole(Roles.Auditor))
-                    {
-                        <li class="nav-item">
-                            <a class="nav-link text-white" asp-controller="Dispatch" asp-action="Orders">调度单</a>
-                        </li>
-                    }
-
-                    <!-- 现场管理 -->
-                    @if (User.IsInRole(Roles.Admin) || User.IsInRole(Roles.SafetyOfficer) ||
-                         User.IsInRole(Roles.ProjectLead) || User.IsInRole(Roles.Auditor) ||
-                         User.IsInRole(Roles.Dispatcher))
-                    {
-                        <li class="nav-item mt-2">
-                            <span class="section-label text-secondary text-uppercase d-block">现场管理</span>
-                        </li>
-                    }
-                    @if (User.IsInRole(Roles.Admin) || User.IsInRole(Roles.ProjectLead))
-                    {
-                        <li class="nav-item">
-                            <a class="nav-link text-white" asp-controller="Verification" asp-action="Verify">进场核验</a>
-                        </li>
-                    }
-                    @if (User.IsInRole(Roles.Admin) || User.IsInRole(Roles.Dispatcher) ||
-                         User.IsInRole(Roles.Auditor))
-                    {
-                        <li class="nav-item">
-                            <a class="nav-link text-white" asp-controller="Verification" asp-action="List">核验记录</a>
-                        </li>
-                    }
-                    @if (User.IsInRole(Roles.Admin) || User.IsInRole(Roles.SafetyOfficer) ||
-                         User.IsInRole(Roles.ProjectLead) || User.IsInRole(Roles.Auditor))
-                    {
-                        <li class="nav-item">
-                            <a class="nav-link text-white" asp-controller="Safety" asp-action="List">安全交底</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-white" asp-controller="Inspection" asp-action="Index">巡检记录</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-white" asp-controller="Fault" asp-action="Index">故障上报</a>
-                        </li>
-                    }
-
-                    <!-- 退场管理 -->
-                    @if (User.IsInRole(Roles.Admin) || User.IsInRole(Roles.DeviceAdmin) ||
-                         User.IsInRole(Roles.ProjectLead) || User.IsInRole(Roles.Auditor))
-                    {
-                        <li class="nav-item mt-2">
-                            <span class="section-label text-secondary text-uppercase d-block">退场管理</span>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-white" asp-controller="Return" asp-action="Index">退场评价</a>
-                        </li>
-                    }
-
-                    <!-- 统计报表 -->
-                    <li class="nav-item mt-2">
-                        <span class="section-label text-secondary text-uppercase d-block">统计报表</span>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-white" asp-controller="Report" asp-action="Utilization">数据看板</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-white" asp-controller="Report" asp-action="Rental">租赁报表</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-white" asp-controller="Report" asp-action="Safety">安全统计</a>
-                    </li>
-
-                    <!-- 系统管理 -->
-                    @if (User.IsInRole(Roles.Admin) || User.IsInRole(Roles.Auditor))
-                    {
-                        <li class="nav-item mt-2">
-                            <span class="section-label text-secondary text-uppercase d-block">系统管理</span>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-white" asp-controller="Users" asp-action="Index">用户管理</a>
-                        </li>
-                    }
-
-                </ul>
+            <nav class="sidebar sidebar-desktop d-flex flex-column bg-dark text-white p-2 flex-shrink-0 overflow-y-auto">
+                @await Html.PartialAsync("_SidebarNav")
             </nav>
+
+            <!-- Sidebar (off-canvas <lg) -->
+            <div class="offcanvas offcanvas-start sidebar-offcanvas" tabindex="-1" id="sidebarOffcanvas" aria-labelledby="sidebarOffcanvasLabel">
+                <div class="offcanvas-header border-bottom border-secondary">
+                    <h6 class="offcanvas-title text-white mb-0" id="sidebarOffcanvasLabel">
+                        <i class="bi bi-tools me-2"></i>菜单
+                    </h6>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                </div>
+                <div class="offcanvas-body p-2">
+                    @await Html.PartialAsync("_SidebarNav")
+                </div>
+            </div>
         }
 
         <!-- Main Content -->
         <main id="main-content" class="flex-grow-1 p-4 bg-light">
-            @if (TempData["SuccessMessage"] != null)
-            {
-                <div class="alert alert-success alert-dismissible fade show" role="alert">
-                    @TempData["SuccessMessage"]
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                </div>
-            }
-            @if (TempData["ErrorMessage"] != null)
-            {
-                <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    @TempData["ErrorMessage"]
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                </div>
-            }
             @RenderBody()
         </main>
 
     </div>
 
     <script src="~/js/site.js" asp-append-version="true"></script>
-    @if (User.Identity?.IsAuthenticated == true)
+    @await Html.PartialAsync("_FlashToast")
+    @if (isAuth)
     {
         <script>
             (function () {
@@ -265,7 +137,7 @@
                 }
                 function renderItems(items) {
                     if (!items.length) {
-                        list.innerHTML = '<div class="text-muted small text-center py-4">暂无消息</div>';
+                        list.innerHTML = '<div class="er-empty py-4"><div class="er-empty-icon" style="font-size:2rem"><i class="bi bi-bell-slash"></i></div><div class="er-empty-hint">暂无消息</div></div>';
                         return;
                     }
                     list.innerHTML = items.map(n => {

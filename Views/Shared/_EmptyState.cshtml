@@ -1,0 +1,21 @@
+@*
+    Empty state block.
+    Usage: @await Html.PartialAsync("_EmptyState",
+        (Icon: "bi-inbox", Title: "暂无设备", Hint: "可点击右上角「新增设备」录入", CtaText: "新增设备", CtaUrl: Url.Action("Create")))
+    Leave CtaText/CtaUrl null to hide the button.
+*@
+@model (string Icon, string Title, string Hint, string CtaText, string CtaUrl)
+<div class="er-empty">
+    <div class="er-empty-icon"><i class="bi @(Model.Icon ?? "bi-inbox")"></i></div>
+    <div class="er-empty-title">@Model.Title</div>
+    @if (!string.IsNullOrWhiteSpace(Model.Hint))
+    {
+        <div class="er-empty-hint">@Model.Hint</div>
+    }
+    @if (!string.IsNullOrWhiteSpace(Model.CtaText) && !string.IsNullOrWhiteSpace(Model.CtaUrl))
+    {
+        <a href="@Model.CtaUrl" class="btn btn-primary btn-sm mt-3">
+            <i class="bi bi-plus-lg me-1"></i>@Model.CtaText
+        </a>
+    }
+</div>

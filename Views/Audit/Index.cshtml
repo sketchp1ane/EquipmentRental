@@ -3,9 +3,11 @@
     ViewData["Title"] = "资质审核";
 }
 
-<div class="d-flex justify-content-between align-items-center mb-3">
-    <h4 class="mb-0">资质审核</h4>
-    <small class="text-muted">待审核设备列表</small>
+<div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+    <div>
+        <h4 class="mb-0"><i class="bi bi-shield-check me-2"></i>资质审核</h4>
+        <small class="text-muted">待审核设备列表</small>
+    </div>
 </div>
 
 <!-- 筛选栏 -->
@@ -15,77 +17,78 @@
                class="form-control form-control-sm" placeholder="设备编号 / 名称" />
     </div>
     <div class="col-auto">
-        <button type="submit" class="btn btn-secondary btn-sm">筛选</button>
+        <button type="submit" class="btn btn-primary btn-sm">
+            <i class="bi bi-funnel me-1"></i>筛选
+        </button>
         <a asp-action="Index" class="btn btn-outline-secondary btn-sm">重置</a>
     </div>
 </form>
 
-<div class="table-responsive">
-    <table class="table table-hover table-sm align-middle">
-        <thead class="table-light">
-            <tr>
-                <th>设备编号</th>
-                <th>设备名称</th>
-                <th>分类</th>
-                <th>录入人</th>
-                <th>录入时间</th>
-                <th>已上传证件</th>
-                <th>操作</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in Model.Items)
-            {
+@if (Model.Items.Any())
+{
+    <div class="table-responsive">
+        <table class="table table-hover table-sm align-middle">
+            <thead class="table-light">
                 <tr>
-                    <td><code>@item.EquipmentNo</code></td>
-                    <td>@item.EquipmentName</td>
-                    <td class="text-muted small">@item.CategoryName</td>
-                    <td class="text-muted small">@item.CreatedByName</td>
-                    <td class="text-muted small">@item.CreatedAt.ToLocalTime().ToString("yyyy-MM-dd HH:mm")</td>
-                    <td>
-                        @if (item.QualificationCount > 0)
-                        {
-                            <span class="badge bg-info text-dark">@item.QualificationCount 份</span>
-                        }
-                        else
-                        {
-                            <span class="badge bg-secondary">未上传</span>
-                        }
-                    </td>
-                    <td>
-                        <a asp-action="Review" asp-route-equipmentId="@item.EquipmentId"
-                           class="btn btn-warning btn-sm">审核</a>
-                    </td>
+                    <th>设备编号</th>
+                    <th>设备名称</th>
+                    <th class="d-none d-md-table-cell">分类</th>
+                    <th class="d-none d-lg-table-cell">录入人</th>
+                    <th>录入时间</th>
+                    <th>已上传证件</th>
+                    <th>操作</th>
                 </tr>
-            }
-            @if (!Model.Items.Any())
-            {
-                <tr>
-                    <td colspan="7" class="text-center text-muted py-4">暂无待审核设备</td>
-                </tr>
-            }
-        </tbody>
-    </table>
-</div>
-
-<!-- 分页 + 记录数 -->
-<div class="d-flex justify-content-between align-items-center">
-    <small class="text-muted">共 @Model.TotalCount 条待审核记录</small>
-
-    @if (Model.TotalPages > 1)
-    {
-        <nav>
-            <ul class="pagination pagination-sm mb-0">
-                @for (int p = 1; p <= Model.TotalPages; p++)
+            </thead>
+            <tbody>
+                @foreach (var item in Model.Items)
                 {
-                    <li class="page-item @(p == Model.Page ? "active" : "")">
-                        <a class="page-link"
-                           asp-action="Index"
-                           asp-route-keyword="@Model.Keyword"
-                           asp-route-page="@p">@p</a>
-                    </li>
+                    <tr>
+                        <td><code>@item.EquipmentNo</code></td>
+                        <td class="text-truncate-2" style="max-width:200px">@item.EquipmentName</td>
+                        <td class="text-muted small d-none d-md-table-cell">@item.CategoryName</td>
+                        <td class="text-muted small d-none d-lg-table-cell">@item.CreatedByName</td>
+                        <td class="text-muted small">@item.CreatedAt.ToDateTimeStr()</td>
+                        <td>
+                            @if (item.QualificationCount > 0)
+                            {
+                                @await Html.PartialAsync("_StatusBadge",
+                                    (Key: "Info", Text: $"{item.QualificationCount} 份"))
+                            }
+                            else
+                            {
+                                @await Html.PartialAsync("_StatusBadge", (Key: "Cancelled", Text: "未上传"))
+                            }
+                        </td>
+                        <td>
+                            <a asp-action="Review" asp-route-equipmentId="@item.EquipmentId"
+                               class="btn btn-warning btn-sm">
+                                <i class="bi bi-clipboard-check me-1"></i>审核
+                            </a>
+                        </td>
+                    </tr>
                 }
-            </ul>
-        </nav>
+            </tbody>
+        </table>
+    </div>
+}
+else
+{
+    @await Html.PartialAsync("_EmptyState", (
+        Icon: "bi-clipboard-check",
+        Title: "暂无待审核设备",
+        Hint: "所有设备均已通过审核或未处于待审核状态",
+        CtaText: (string?)null,
+        CtaUrl: (string?)null
+    ))
+}
+
+@await Html.PartialAsync("_Pagination", new PaginationViewModel
+{
+    Page = Model.Page,
+    TotalPages = Model.TotalPages,
+    TotalCount = Model.TotalCount,
+    RouteValues = new Dictionary<string, string?>
+    {
+        ["keyword"] = Model.Keyword
     }
-</div>
+})

@@ -115,15 +115,17 @@ else
         @if (Model.Images.Count > 0)
         {
             <div class="card mb-3">
-                <div class="card-header fw-semibold">巡检照片</div>
+                <div class="card-header fw-semibold"><i class="bi bi-image me-2"></i>巡检照片</div>
                 <div class="card-body">
                     <div class="row g-2">
                         @foreach (var img in Model.Images)
                         {
-                            <div class="col-auto">
-                                <a href="/files/@img.FilePath.Replace("\\", "/")" target="_blank">
+                            <div class="col-6 col-md-4 col-lg-3">
+                                <a href="/files/@img.FilePath.Replace("\\", "/")" class="er-lightbox d-block"
+                                   title="点击查看大图" data-bs-toggle="tooltip">
                                     <img src="/files/@img.FilePath.Replace("\\", "/")"
-                                         class="img-thumbnail" style="max-height:140px;max-width:180px;object-fit:cover"
+                                         class="img-thumbnail w-100"
+                                         style="height:140px;object-fit:cover"
                                          alt="巡检照片" />
                                 </a>
                             </div>

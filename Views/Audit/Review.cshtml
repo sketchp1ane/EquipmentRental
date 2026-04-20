@@ -3,61 +3,63 @@
     ViewData["Title"] = "设备审核";
 }
 
-<div class="d-flex justify-content-between align-items-center mb-3">
-    <h4 class="mb-0">设备审核</h4>
-    <a asp-action="Index" class="btn btn-outline-secondary btn-sm">返回审核列表</a>
+<div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+    <h4 class="mb-0"><i class="bi bi-clipboard-check me-2"></i>设备审核</h4>
+    <a asp-action="Index" class="btn btn-outline-secondary btn-sm">
+        <i class="bi bi-arrow-left me-1"></i>返回审核列表
+    </a>
 </div>
 
 <!-- 设备基本信息 -->
-<div class="card mb-3">
-    <div class="card-header fw-semibold">设备信息</div>
-    <div class="card-body">
-        <dl class="row mb-0">
-            <dt class="col-sm-3">设备编号</dt>
-            <dd class="col-sm-9"><code>@Model.EquipmentNo</code></dd>
+<div class="er-card mb-3">
+    <h5 class="mb-3"><i class="bi bi-box-seam me-2"></i>设备信息</h5>
+    <dl class="row mb-0">
+        <dt class="col-sm-3">设备编号</dt>
+        <dd class="col-sm-9"><code>@Model.EquipmentNo</code></dd>
 
-            <dt class="col-sm-3">设备名称</dt>
-            <dd class="col-sm-9">@Model.EquipmentName</dd>
+        <dt class="col-sm-3">设备名称</dt>
+        <dd class="col-sm-9">@Model.EquipmentName</dd>
 
-            <dt class="col-sm-3">设备分类</dt>
-            <dd class="col-sm-9">@Model.CategoryName</dd>
+        <dt class="col-sm-3">设备分类</dt>
+        <dd class="col-sm-9">@Model.CategoryName</dd>
 
-            <dt class="col-sm-3">品牌/型号</dt>
-            <dd class="col-sm-9">@Model.BrandModel</dd>
+        <dt class="col-sm-3">品牌/型号</dt>
+        <dd class="col-sm-9">@Model.BrandModel</dd>
 
-            <dt class="col-sm-3">所属单位</dt>
-            <dd class="col-sm-9">@Model.OwnedBy</dd>
+        <dt class="col-sm-3">所属单位</dt>
+        <dd class="col-sm-9">@Model.OwnedBy</dd>
 
-            <dt class="col-sm-3">录入人</dt>
-            <dd class="col-sm-9">@Model.CreatedByName</dd>
+        <dt class="col-sm-3">录入人</dt>
+        <dd class="col-sm-9">@Model.CreatedByName</dd>
 
-            <dt class="col-sm-3">录入时间</dt>
-            <dd class="col-sm-9 text-muted">@Model.CreatedAt.ToLocalTime().ToString("yyyy-MM-dd HH:mm")</dd>
-        </dl>
-    </div>
+        <dt class="col-sm-3">录入时间</dt>
+        <dd class="col-sm-9 text-muted">@Model.CreatedAt.ToDateTimeStr()</dd>
+    </dl>
 </div>
 
 <!-- 证件列表（只读） -->
-<div class="card mb-3">
-    <div class="card-header fw-semibold">
-        已上传证件
+<div class="er-card mb-3">
+    <h5 class="mb-3 d-flex align-items-center flex-wrap gap-2">
+        <i class="bi bi-file-earmark-text me-1"></i>已上传证件
         @if (!Model.Qualifications.Any())
         {
-            <span class="badge bg-secondary ms-2">未上传</span>
+            @await Html.PartialAsync("_StatusBadge", (Key: "Cancelled", Text: "未上传"))
         }
         else
         {
-            <span class="badge bg-info text-dark ms-2">@Model.Qualifications.Count 份</span>
+            @await Html.PartialAsync("_StatusBadge", (Key: "Info", Text: $"{Model.Qualifications.Count} 份"))
         }
-    </div>
-    <div class="card-body p-0">
+    </h5>
+
+    @if (Model.Qualifications.Any())
+    {
         <div class="table-responsive">
             <table class="table table-sm align-middle mb-0">
                 <thead class="table-light">
                     <tr>
                         <th>证件类型</th>
                         <th>证件编号</th>
-                        <th>发证机构</th>
+                        <th class="d-none d-md-table-cell">发证机构</th>
                         <th>有效期至</th>
                         <th>状态</th>
                         <th>附件</th>
@@ -69,27 +71,29 @@
                         <tr>
                             <td>@cert.TypeName</td>
                             <td class="text-muted small">@(cert.CertNo ?? "—")</td>
-                            <td class="text-muted small">@(cert.IssuedBy ?? "—")</td>
-                            <td class="small">@cert.ValidTo.ToString("yyyy-MM-dd")</td>
+                            <td class="text-muted small d-none d-md-table-cell">@(cert.IssuedBy ?? "—")</td>
+                            <td class="small text-nowrap">@cert.ValidTo.ToDateStr()</td>
                             <td>
                                 @if (cert.IsExpired)
                                 {
-                                    <span class="badge bg-danger">已过期</span>
+                                    @await Html.PartialAsync("_StatusBadge", (Key: "Expired", Text: "已过期"))
                                 }
                                 else if (cert.IsExpiringSoon)
                                 {
-                                    <span class="badge bg-warning text-dark">即将到期</span>
+                                    @await Html.PartialAsync("_StatusBadge", (Key: "Expiring", Text: "即将到期"))
                                 }
                                 else
                                 {
-                                    <span class="badge bg-success">有效</span>
+                                    @await Html.PartialAsync("_StatusBadge", (Key: "Success", Text: "有效"))
                                 }
                             </td>
                             <td>
                                 @if (!string.IsNullOrEmpty(cert.FilePath))
                                 {
                                     <a href="/files/@cert.FilePath.Replace('\\', '/')" target="_blank"
-                                       class="btn btn-outline-secondary btn-sm">查看</a>
+                                       class="btn btn-outline-secondary btn-sm" title="查看附件" data-bs-toggle="tooltip">
+                                        <i class="bi bi-paperclip"></i>
+                                    </a>
                                 }
                                 else
                                 {
@@ -98,69 +102,108 @@
                             </td>
                         </tr>
                     }
-                    @if (!Model.Qualifications.Any())
-                    {
-                        <tr>
-                            <td colspan="6" class="text-center text-muted py-3">该设备暂未上传任何证件</td>
-                        </tr>
-                    }
                 </tbody>
             </table>
         </div>
-    </div>
+    }
+    else
+    {
+        <div class="text-muted small">该设备暂未上传任何证件</div>
+    }
 </div>
 
 <!-- 审核操作 -->
-<div class="card" style="max-width:560px;">
-    <div class="card-header fw-semibold">审核操作</div>
-    <div class="card-body">
-        <form asp-action="Review" method="post">
-            @Html.AntiForgeryToken()
-            <input type="hidden" asp-for="Form.EquipmentId" />
+<div class="er-card" style="max-width:640px;">
+    <h5 class="mb-3"><i class="bi bi-gavel me-2"></i>审核操作</h5>
 
-            <div asp-validation-summary="ModelOnly" class="alert alert-danger py-2 small" role="alert"></div>
+    <form id="auditReviewForm" asp-action="Review" method="post">
+        @Html.AntiForgeryToken()
+        <input type="hidden" asp-for="Form.EquipmentId" />
+        <input type="hidden" id="auditAction" asp-for="Form.Action" value="@((int)AuditAction.Pass)" />
+        <input type="hidden" id="auditRemark" asp-for="Form.Remark" />
 
-            <div class="mb-3">
-                <label class="form-label fw-semibold">审核结论</label>
-                <div class="d-flex gap-4">
-                    <div class="form-check">
-                        <input class="form-check-input" type="radio"
-                               name="Form.Action" id="actionPass" value="1"
-                               @(Model.Form.Action == AuditAction.Pass ? "checked" : "") />
-                        <label class="form-check-label text-success fw-semibold" for="actionPass">
-                            通过
-                        </label>
-                    </div>
-                    <div class="form-check">
-                        <input class="form-check-input" type="radio"
-                               name="Form.Action" id="actionReject" value="2"
-                               @(Model.Form.Action == AuditAction.Reject ? "checked" : "") />
-                        <label class="form-check-label text-danger fw-semibold" for="actionReject">
-                            驳回
-                        </label>
-                    </div>
+        <div asp-validation-summary="ModelOnly" class="alert alert-danger py-2 small" role="alert"></div>
+
+        <p class="text-muted small">
+            请先核对设备信息与已上传证件，然后选择「通过」放行进入闲置状态，或「驳回」并填写原因。
+        </p>
+
+        <div class="d-flex gap-2 flex-wrap">
+            <button type="button" id="btnAuditPass" class="btn btn-success">
+                <i class="bi bi-check-circle me-1"></i>通过
+            </button>
+            <button type="button" class="btn btn-outline-danger"
+                    data-bs-toggle="modal" data-bs-target="#rejectModal">
+                <i class="bi bi-x-circle me-1"></i>驳回
+            </button>
+            <a asp-action="Index" class="btn btn-outline-secondary ms-auto">取消</a>
+        </div>
+    </form>
+</div>
+
+<!-- 通过可选备注模态（保留极简流程：通过无需必填备注） -->
+
+<!-- 驳回模态 -->
+<div class="modal fade" id="rejectModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"><i class="bi bi-x-octagon text-danger me-2"></i>驳回审核</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="关闭"></button>
+            </div>
+            <div class="modal-body">
+                <label for="rejectRemark" class="form-label er-required">驳回原因</label>
+                <textarea id="rejectRemark" class="form-control" rows="4"
+                          minlength="10" maxlength="500"
+                          placeholder="请填写驳回原因（至少 10 个字符，至多 500 字）"></textarea>
+                <div class="d-flex justify-content-between mt-1">
+                    <span id="rejectRemarkError" class="text-danger small"></span>
+                    <small class="text-muted"><span id="rejectRemarkCount">0</span> / 500</small>
                 </div>
-                <span asp-validation-for="Form.Action" class="text-danger small"></span>
             </div>
-
-            <div class="mb-3">
-                <label asp-for="Form.Remark" class="form-label fw-semibold">
-                    备注 / 驳回原因
-                    <span class="text-danger small fw-normal">（驳回时必填）</span>
-                </label>
-                <textarea asp-for="Form.Remark" class="form-control" rows="3"
-                          placeholder="通过时可留空，驳回时请填写原因"></textarea>
-                <span asp-validation-for="Form.Remark" class="text-danger small"></span>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">取消</button>
+                <button type="button" id="btnRejectConfirm" class="btn btn-danger">
+                    <i class="bi bi-x-circle me-1"></i>确认驳回
+                </button>
             </div>
-
-            <div class="d-flex gap-2">
-                <button type="submit" class="btn btn-primary">提交审核</button>
-                <a asp-action="Index" class="btn btn-outline-secondary">取消</a>
-            </div>
-        </form>
+        </div>
     </div>
 </div>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+    <script>
+        (function () {
+            const form = document.getElementById('auditReviewForm');
+            const actionInput = document.getElementById('auditAction');
+            const remarkInput = document.getElementById('auditRemark');
+
+            document.getElementById('btnAuditPass').addEventListener('click', () => {
+                actionInput.value = '1';
+                remarkInput.value = '';
+                form.submit();
+            });
+
+            const textarea = document.getElementById('rejectRemark');
+            const counter = document.getElementById('rejectRemarkCount');
+            const err = document.getElementById('rejectRemarkError');
+            textarea.addEventListener('input', () => {
+                counter.textContent = textarea.value.length;
+                if (textarea.value.trim().length >= 10) err.textContent = '';
+            });
+
+            document.getElementById('btnRejectConfirm').addEventListener('click', () => {
+                const v = (textarea.value || '').trim();
+                if (v.length < 10) {
+                    err.textContent = '驳回原因至少 10 个字符';
+                    textarea.focus();
+                    return;
+                }
+                actionInput.value = '2';
+                remarkInput.value = v;
+                form.submit();
+            });
+        })();
+    </script>
 }

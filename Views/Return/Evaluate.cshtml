@@ -5,130 +5,113 @@
     ViewData["Title"] = "退场评价";
 }
 
-<div class="d-flex justify-content-between align-items-center mb-3">
-    <h4 class="mb-0">退场评价</h4>
-    <a asp-action="Details" asp-route-id="@Model.ReturnAppId"
-       class="btn btn-outline-secondary btn-sm">返回详情</a>
+<div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+    <h4 class="mb-0"><i class="bi bi-star me-2"></i>退场评价</h4>
+    <a asp-action="Details" asp-route-id="@Model.ReturnAppId" class="btn btn-outline-secondary btn-sm">
+        <i class="bi bi-arrow-left me-1"></i>返回详情
+    </a>
 </div>
 
 <div class="row justify-content-center">
-    <div class="col-lg-7">
-        <div class="card">
-            <div class="card-header fw-semibold">填写评价信息</div>
-            <div class="card-body">
+    <div class="col-lg-8">
+        <div class="er-card p-4">
 
-                <!-- 只读信息 -->
-                <dl class="row mb-3">
-                    <dt class="col-sm-4">退场申请</dt>
-                    <dd class="col-sm-8">#@Model.ReturnAppId</dd>
-                    <dt class="col-sm-4">项目名称</dt>
-                    <dd class="col-sm-8">@Model.ProjectName</dd>
-                    <dt class="col-sm-4">设备编号</dt>
-                    <dd class="col-sm-8"><code>@Model.EquipmentNo</code></dd>
-                    <dt class="col-sm-4">押金金额</dt>
-                    <dd class="col-sm-8 fw-semibold" id="depositDisplay">¥ @Model.Deposit.ToString("N2")</dd>
-                </dl>
+            <dl class="row mb-3">
+                <dt class="col-sm-4">退场申请</dt>
+                <dd class="col-sm-8">#@Model.ReturnAppId</dd>
+                <dt class="col-sm-4">项目名称</dt>
+                <dd class="col-sm-8">@Model.ProjectName</dd>
+                <dt class="col-sm-4">设备编号</dt>
+                <dd class="col-sm-8"><code>@Model.EquipmentNo</code></dd>
+                <dt class="col-sm-4">押金金额</dt>
+                <dd class="col-sm-8 fw-semibold" id="depositDisplay">¥ @Model.Deposit.ToString("N2")</dd>
+            </dl>
 
-                <hr class="my-3" />
+            <hr class="my-3" />
 
-                <form asp-action="Evaluate" method="post">
-                    @Html.AntiForgeryToken()
-                    <input type="hidden" asp-for="ReturnAppId" />
+            <form asp-action="Evaluate" method="post">
+                @Html.AntiForgeryToken()
+                <input type="hidden" asp-for="ReturnAppId" />
 
-                    <div asp-validation-summary="All" class="alert alert-danger py-2 mb-3"></div>
+                <div asp-validation-summary="All" class="alert alert-danger py-2 mb-3 small"></div>
 
-                    <!-- 外观评分 -->
-                    <div class="mb-3">
+                <div class="mb-3">
+                    <label class="form-label fw-semibold er-required d-block">外观评分</label>
+                    <div class="form-text small text-muted mb-1">1 = 极差，5 = 完好</div>
+                    <div class="er-rating" role="radiogroup" aria-label="外观评分">
+                        @for (int i = 5; i >= 1; i--)
+                        {
+                            <input type="radio" asp-for="AppearanceScore" value="@i" id="app@(i)" />
+                            <label for="app@(i)" title="@i 分"><i class="bi bi-star-fill"></i></label>
+                        }
+                    </div>
+                    <div><span asp-validation-for="AppearanceScore" class="text-danger small"></span></div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label fw-semibold er-required d-block">功能完好性评分</label>
+                    <div class="form-text small text-muted mb-1">1 = 严重故障，5 = 功能正常</div>
+                    <div class="er-rating" role="radiogroup" aria-label="功能评分">
+                        @for (int i = 5; i >= 1; i--)
+                        {
+                            <input type="radio" asp-for="FunctionScore" value="@i" id="func@(i)" />
+                            <label for="func@(i)" title="@i 分"><i class="bi bi-star-fill"></i></label>
+                        }
+                    </div>
+                    <div><span asp-validation-for="FunctionScore" class="text-danger small"></span></div>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="DamageDesc" class="form-label fw-semibold small">损耗描述与照片说明</label>
+                    <textarea asp-for="DamageDesc" rows="3" class="form-control"
+                              maxlength="500" placeholder="描述设备损耗情况（选填）"></textarea>
+                    <span asp-validation-for="DamageDesc" class="text-danger small"></span>
+                </div>
+
+                <div class="row g-3 mb-3">
+                    <div class="col-sm-6">
+                        <label asp-for="Deduction" class="form-label fw-semibold er-required">损耗扣款金额（元）</label>
+                        <input asp-for="Deduction" type="number" step="0.01" min="0" max="9999999.99"
+                               class="form-control" id="deductionInput" placeholder="0.00" />
+                        <div class="form-text small text-muted">扣款应基于损耗描述，建议 ≤ 押金金额</div>
+                        <span asp-validation-for="Deduction" class="text-danger small"></span>
+                    </div>
+                    <div class="col-sm-6">
                         <label class="form-label fw-semibold small">
-                            外观评分 <span class="text-danger">*</span>
-                            <span class="text-muted fw-normal">（1 = 极差，5 = 完好）</span>
+                            押金退还金额（元）
+                            <i class="bi bi-lock-fill text-warning ms-1" data-bs-toggle="tooltip"
+                               title="自动计算，只读"></i>
                         </label>
-                        <div class="d-flex gap-2">
-                            @for (int i = 1; i <= 5; i++)
-                            {
-                                <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio"
-                                           asp-for="AppearanceScore" value="@i" id="app@(i)" />
-                                    <label class="form-check-label" for="app@(i)">@i 分</label>
-                                </div>
-                            }
-                        </div>
-                        <span asp-validation-for="AppearanceScore" class="text-danger small"></span>
+                        <input type="text" class="form-control er-readonly-field"
+                               id="refundDisplay" readonly placeholder="自动计算" />
+                        <div class="form-text small text-muted">= 押金 − 扣款</div>
                     </div>
+                </div>
 
-                    <!-- 功能评分 -->
-                    <div class="mb-3">
-                        <label class="form-label fw-semibold small">
-                            功能完好性评分 <span class="text-danger">*</span>
-                            <span class="text-muted fw-normal">（1 = 严重故障，5 = 功能正常）</span>
-                        </label>
-                        <div class="d-flex gap-2">
-                            @for (int i = 1; i <= 5; i++)
-                            {
-                                <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio"
-                                           asp-for="FunctionScore" value="@i" id="func@(i)" />
-                                    <label class="form-check-label" for="func@(i)">@i 分</label>
-                                </div>
-                            }
-                        </div>
-                        <span asp-validation-for="FunctionScore" class="text-danger small"></span>
-                    </div>
+                <div class="mb-3">
+                    <label asp-for="NewEquipmentStatus" class="form-label fw-semibold er-required">退场后设备状态</label>
+                    <select asp-for="NewEquipmentStatus" class="form-select">
+                        <option value="">— 请选择 —</option>
+                        <option value="@((int)EquipmentStatus.Idle)">空闲（正常归库）</option>
+                        <option value="@((int)EquipmentStatus.Maintenance)">送修（需维修后归库）</option>
+                        <option value="@((int)EquipmentStatus.Scrapped)">已报废</option>
+                    </select>
+                    <span asp-validation-for="NewEquipmentStatus" class="text-danger small"></span>
+                </div>
 
-                    <!-- 损耗描述 -->
-                    <div class="mb-3">
-                        <label asp-for="DamageDesc" class="form-label fw-semibold small">损耗描述与照片说明</label>
-                        <textarea asp-for="DamageDesc" rows="3" class="form-control form-control-sm"
-                                  maxlength="500" placeholder="描述设备损耗情况（选填）"></textarea>
-                        <span asp-validation-for="DamageDesc" class="text-danger small"></span>
-                    </div>
+                <div class="mb-3">
+                    <label asp-for="Remark" class="form-label fw-semibold small">综合评价备注</label>
+                    <textarea asp-for="Remark" rows="3" class="form-control"
+                              maxlength="500" placeholder="综合评价说明（选填）"></textarea>
+                    <span asp-validation-for="Remark" class="text-danger small"></span>
+                </div>
 
-                    <!-- 损耗扣款 & 押金退还 -->
-                    <div class="row g-3 mb-3">
-                        <div class="col-sm-6">
-                            <label asp-for="Deduction" class="form-label fw-semibold small">
-                                损耗扣款金额（元）<span class="text-danger">*</span>
-                            </label>
-                            <input asp-for="Deduction" type="number" step="0.01" min="0" max="9999999.99"
-                                   class="form-control form-control-sm" id="deductionInput"
-                                   placeholder="0.00" />
-                            <span asp-validation-for="Deduction" class="text-danger small"></span>
-                        </div>
-                        <div class="col-sm-6">
-                            <label class="form-label fw-semibold small">押金退还金额（元）</label>
-                            <input type="text" class="form-control form-control-sm bg-light"
-                                   id="refundDisplay" readonly placeholder="自动计算" />
-                            <div class="form-text">= 押金 − 扣款</div>
-                        </div>
-                    </div>
-
-                    <!-- 退场后设备状态 -->
-                    <div class="mb-3">
-                        <label asp-for="NewEquipmentStatus" class="form-label fw-semibold small">
-                            退场后设备状态 <span class="text-danger">*</span>
-                        </label>
-                        <select asp-for="NewEquipmentStatus" class="form-select form-select-sm">
-                            <option value="">— 请选择 —</option>
-                            <option value="@((int)EquipmentStatus.Idle)">空闲（正常归库）</option>
-                            <option value="@((int)EquipmentStatus.Maintenance)">送修（需维修后归库）</option>
-                            <option value="@((int)EquipmentStatus.Scrapped)">已报废</option>
-                        </select>
-                        <span asp-validation-for="NewEquipmentStatus" class="text-danger small"></span>
-                    </div>
-
-                    <!-- 综合备注 -->
-                    <div class="mb-3">
-                        <label asp-for="Remark" class="form-label fw-semibold small">综合评价备注</label>
-                        <textarea asp-for="Remark" rows="3" class="form-control form-control-sm"
-                                  maxlength="500" placeholder="综合评价说明（选填）"></textarea>
-                        <span asp-validation-for="Remark" class="text-danger small"></span>
-                    </div>
-
-                    <div class="d-grid">
-                        <button type="submit" class="btn btn-primary">提交评价</button>
-                    </div>
-                </form>
-            </div>
+                <div class="d-grid">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-check-lg me-1"></i>提交评价
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 </div>
@@ -148,7 +131,7 @@
             }
 
             deductionInput.addEventListener('input', updateRefund);
-            updateRefund(); // initialise on page load
+            updateRefund();
         })();
     </script>
 }

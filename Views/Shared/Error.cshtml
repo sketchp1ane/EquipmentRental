@@ -8,36 +8,43 @@
         _   => "服务器错误"
     };
     Layout = "_Layout";
+
+    var (icon, title, hint) = Model.StatusCode switch
+    {
+        404 => ("bi-compass", "页面不存在", "您访问的页面已被移除，或地址输入有误。"),
+        403 => ("bi-shield-lock", "无访问权限", "您没有权限访问该页面，请联系管理员。"),
+        400 => ("bi-exclamation-triangle", "请求无效", "请求格式不正确，请返回重试。"),
+        _   => ("bi-bug", "服务器内部错误", "服务器处理请求时出现了问题，请稍后再试。")
+    };
 }
 
 <div class="d-flex flex-column align-items-center justify-content-center py-5 text-center">
 
-    <div class="display-1 fw-bold text-secondary mb-2">@Model.StatusCode</div>
+    <div class="text-primary mb-2" style="font-size:4rem; line-height:1">
+        <i class="bi @icon"></i>
+    </div>
+    <div class="display-2 fw-bold text-secondary mb-2">@Model.StatusCode</div>
 
-    @switch (Model.StatusCode)
+    <h4 class="mb-2">@title</h4>
+    <p class="text-muted mb-4">@hint</p>
+
+    @if (Model.StatusCode >= 500 && Model.ShowRequestId)
     {
-        case 404:
-            <h4 class="mb-2">页面不存在</h4>
-            <p class="text-muted mb-4">您访问的页面已被移除，或地址输入有误。</p>
-            break;
-        case 403:
-            <h4 class="mb-2">无访问权限</h4>
-            <p class="text-muted mb-4">您没有权限访问该页面，请联系管理员。</p>
-            break;
-        case 400:
-            <h4 class="mb-2">请求无效</h4>
-            <p class="text-muted mb-4">请求格式不正确，请返回重试。</p>
-            break;
-        default:
-            <h4 class="mb-2">服务器内部错误</h4>
-            <p class="text-muted mb-4">服务器处理请求时出现了问题，请稍后再试。</p>
-            @if (Model.ShowRequestId)
-            {
-                <p class="small text-muted mb-4">请求 ID：<code>@Model.RequestId</code></p>
-            }
-            break;
+        <p class="small text-muted mb-4">请求 ID：<code>@Model.RequestId</code></p>
     }
 
-    <a asp-controller="Home" asp-action="Index" class="btn btn-primary">返回首页</a>
-
+    <div class="d-flex gap-2 flex-wrap justify-content-center">
+        <a asp-controller="Home" asp-action="Index" class="btn btn-primary">
+            <i class="bi bi-house me-1"></i>返回首页
+        </a>
+        <button type="button" class="btn btn-outline-secondary" onclick="history.back()">
+            <i class="bi bi-arrow-left me-1"></i>返回上一页
+        </button>
+        @if (Model.StatusCode >= 500)
+        {
+            <button type="button" class="btn btn-outline-secondary" onclick="location.reload()">
+                <i class="bi bi-arrow-clockwise me-1"></i>重试
+            </button>
+        }
+    </div>
 </div>

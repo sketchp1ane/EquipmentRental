@@ -3,15 +3,25 @@
 @using EquipmentRental.Models.ViewModels
 @{
     ViewData["Title"] = "调度列表";
+
+    (string Key, string Text) StatusVm(DispatchRequestStatus s) => s switch
+    {
+        DispatchRequestStatus.Pending   => ("Pending",   "待处理"),
+        DispatchRequestStatus.Scheduled => ("Success",   "已排期"),
+        DispatchRequestStatus.Cancelled => ("Cancelled", "已取消"),
+        _                               => ("Draft",     s.ToString())
+    };
 }
 
-<div class="d-flex justify-content-between align-items-center mb-3">
-    <h4 class="mb-0">调度列表</h4>
-    <a asp-action="Calendar" class="btn btn-outline-secondary btn-sm">调度日历</a>
+<div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+    <h4 class="mb-0"><i class="bi bi-clipboard-check me-2"></i>调度列表</h4>
+    <a asp-action="Calendar" class="btn btn-outline-secondary btn-sm">
+        <i class="bi bi-calendar3 me-1"></i>调度日历
+    </a>
 </div>
 
 <!-- 状态筛选 -->
-<ul class="nav nav-pills mb-3">
+<ul class="nav nav-pills mb-3 flex-wrap">
     <li class="nav-item">
         <a class="nav-link @(Model.StatusFilter == null ? "active" : "")"
            asp-action="Index">全部</a>
@@ -30,100 +40,87 @@
     </li>
 </ul>
 
-<div class="table-responsive">
-    <table class="table table-hover table-sm align-middle">
-        <thead class="table-light">
-            <tr>
-                <th>项目名称</th>
-                <th>设备类型</th>
-                <th>数量</th>
-                <th>期望日期</th>
-                <th>申请人</th>
-                <th>联系电话</th>
-                <th>调度单数</th>
-                <th>状态</th>
-                <th>操作</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in Model.Items)
-            {
+@if (Model.Items.Any())
+{
+    <div class="table-responsive">
+        <table class="table table-hover table-sm align-middle">
+            <thead class="table-light">
                 <tr>
-                    <td>@item.ProjectName</td>
-                    <td class="text-muted small">@item.CategoryName</td>
-                    <td>@item.Quantity</td>
-                    <td class="text-muted small text-nowrap">
-                        @item.ExpectedStart.ToString("MM-dd") – @item.ExpectedEnd.ToString("MM-dd")
-                    </td>
-                    <td class="text-muted small">@item.RequesterName</td>
-                    <td class="text-muted small">@item.ContactPhone</td>
-                    <td>
-                        @if (item.OrderCount > 0)
-                        {
-                            <span class="badge bg-info text-dark">@item.OrderCount</span>
-                        }
-                        else
-                        {
-                            <span class="badge bg-secondary">0</span>
-                        }
-                    </td>
-                    <td>
-                        @switch (item.Status)
-                        {
-                            case DispatchRequestStatus.Pending:
-                                <span class="badge bg-warning text-dark">待处理</span>
-                                break;
-                            case DispatchRequestStatus.Scheduled:
-                                <span class="badge bg-success">已排期</span>
-                                break;
-                            case DispatchRequestStatus.Cancelled:
-                                <span class="badge bg-secondary">已取消</span>
-                                break;
-                        }
-                    </td>
-                    <td>
-                        @if (item.Status == DispatchRequestStatus.Pending)
-                        {
-                            <a asp-action="Order"
-                               asp-route-requestId="@item.Id"
-                               class="btn btn-primary btn-sm">调度</a>
-                        }
-                        else
-                        {
-                            <a asp-action="Order"
-                               asp-route-requestId="@item.Id"
-                               class="btn btn-outline-secondary btn-sm">补充调度</a>
-                        }
-                    </td>
+                    <th>项目名称</th>
+                    <th class="d-none d-md-table-cell">设备类型</th>
+                    <th>数量</th>
+                    <th>期望日期</th>
+                    <th class="d-none d-lg-table-cell">申请人</th>
+                    <th class="d-none d-xl-table-cell">联系电话</th>
+                    <th>调度单</th>
+                    <th>状态</th>
+                    <th>操作</th>
                 </tr>
-            }
-            @if (!Model.Items.Any())
-            {
-                <tr>
-                    <td colspan="9" class="text-center text-muted py-4">暂无调度申请</td>
-                </tr>
-            }
-        </tbody>
-    </table>
-</div>
-
-<!-- 分页 -->
-<div class="d-flex justify-content-between align-items-center">
-    <small class="text-muted">共 @Model.TotalCount 条记录</small>
-    @if (Model.TotalPages > 1)
-    {
-        <nav>
-            <ul class="pagination pagination-sm mb-0">
-                @for (int p = 1; p <= Model.TotalPages; p++)
+            </thead>
+            <tbody>
+                @foreach (var item in Model.Items)
                 {
-                    <li class="page-item @(p == Model.Page ? "active" : "")">
-                        <a class="page-link"
-                           asp-action="Index"
-                           asp-route-status="@Model.StatusFilter"
-                           asp-route-page="@p">@p</a>
-                    </li>
+                    <tr>
+                        <td class="text-truncate-2" style="max-width:200px">@item.ProjectName</td>
+                        <td class="text-muted small d-none d-md-table-cell">@item.CategoryName</td>
+                        <td>@item.Quantity</td>
+                        <td class="text-muted small text-nowrap">
+                            @DateFormatExtensions.ToDateRangeStr(item.ExpectedStart, item.ExpectedEnd)
+                        </td>
+                        <td class="text-muted small d-none d-lg-table-cell">@item.RequesterName</td>
+                        <td class="text-muted small d-none d-xl-table-cell">@item.ContactPhone</td>
+                        <td>
+                            @if (item.OrderCount > 0)
+                            {
+                                @await Html.PartialAsync("_StatusBadge", (Key: "Info", Text: item.OrderCount.ToString()))
+                            }
+                            else
+                            {
+                                @await Html.PartialAsync("_StatusBadge", (Key: "Cancelled", Text: "0"))
+                            }
+                        </td>
+                        <td>
+                            @{ var (k, t) = StatusVm(item.Status); }
+                            @await Html.PartialAsync("_StatusBadge", (Key: k, Text: t))
+                        </td>
+                        <td>
+                            @if (item.Status == DispatchRequestStatus.Pending)
+                            {
+                                <a asp-action="Order" asp-route-requestId="@item.Id" class="btn btn-primary btn-sm">
+                                    <i class="bi bi-truck me-1"></i>调度
+                                </a>
+                            }
+                            else
+                            {
+                                <a asp-action="Order" asp-route-requestId="@item.Id" class="btn btn-outline-secondary btn-sm">
+                                    <i class="bi bi-plus-circle me-1"></i>补充调度
+                                </a>
+                            }
+                        </td>
+                    </tr>
                 }
-            </ul>
-        </nav>
+            </tbody>
+        </table>
+    </div>
+}
+else
+{
+    @await Html.PartialAsync("_EmptyState", (
+        Icon: "bi-clipboard",
+        Title: "暂无调度申请",
+        Hint: "筛选条件下无匹配申请",
+        CtaText: (string?)null,
+        CtaUrl: (string?)null
+    ))
+}
+
+@await Html.PartialAsync("_Pagination", new PaginationViewModel
+{
+    Page = Model.Page,
+    TotalPages = Model.TotalPages,
+    TotalCount = Model.TotalCount,
+    RouteValues = new Dictionary<string, string?>
+    {
+        ["status"] = Model.StatusFilter?.ToString()
     }
-</div>
+})

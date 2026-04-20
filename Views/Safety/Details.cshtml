@@ -181,9 +181,15 @@
                         <div class="text-muted small mb-2">&#9711; 待签署</div>
                         @if (canSignAsSO && !Model.SafetyOfficerSigned)
                         {
-                            <form asp-action="Sign" asp-route-id="@Model.Id" method="post">
+                            <form asp-action="Sign" asp-route-id="@Model.Id" method="post"
+                                  data-er-confirm="确认以安全员身份签署此交底记录？签署后不可撤销。"
+                                  data-er-confirm-title="确认签署"
+                                  data-er-confirm-variant="warning"
+                                  data-er-confirm-ok="确认签署">
                                 @Html.AntiForgeryToken()
-                                <button type="submit" class="btn btn-success btn-sm w-100">确认签署</button>
+                                <button type="submit" class="btn btn-success btn-sm w-100">
+                                    <i class="bi bi-pen me-1"></i>确认签署
+                                </button>
                             </form>
                         }
                     }
@@ -216,9 +222,15 @@
                         <div class="text-muted small mb-2">&#9711; 待签署</div>
                         @if (canSignAsPL && !Model.ProjectLeadSigned)
                         {
-                            <form asp-action="Sign" asp-route-id="@Model.Id" method="post">
+                            <form asp-action="Sign" asp-route-id="@Model.Id" method="post"
+                                  data-er-confirm="确认以项目负责人身份签署此交底记录？签署后不可撤销。"
+                                  data-er-confirm-title="确认签署"
+                                  data-er-confirm-variant="warning"
+                                  data-er-confirm-ok="确认签署">
                                 @Html.AntiForgeryToken()
-                                <button type="submit" class="btn btn-success btn-sm w-100">确认签署</button>
+                                <button type="submit" class="btn btn-success btn-sm w-100">
+                                    <i class="bi bi-pen me-1"></i>确认签署
+                                </button>
                             </form>
                         }
                     }
