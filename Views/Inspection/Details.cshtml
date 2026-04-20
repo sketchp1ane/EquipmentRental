@@ -59,6 +59,49 @@ else
             </div>
         </div>
 
+        @if (Model.ItemResults.Count > 0)
+        {
+            <div class="card mb-3">
+                <div class="card-header fw-semibold">巡检项目</div>
+                <div class="card-body p-0">
+                    <table class="table table-sm mb-0 align-middle">
+                        <thead class="table-light">
+                            <tr>
+                                <th style="width: 40%">项目</th>
+                                <th style="width: 20%">状态</th>
+                                <th>备注</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var r in Model.ItemResults)
+                            {
+                                <tr>
+                                    <td>@r.ItemName</td>
+                                    <td>
+                                        @switch (r.Status)
+                                        {
+                                            case InspectionItemStatus.Normal:
+                                                <span class="badge bg-success">正常</span>
+                                                break;
+                                            case InspectionItemStatus.Abnormal:
+                                                <span class="badge bg-warning text-dark">异常</span>
+                                                break;
+                                            case InspectionItemStatus.NotApplicable:
+                                                <span class="badge bg-secondary">不适用</span>
+                                                break;
+                                        }
+                                    </td>
+                                    <td class="small text-muted">
+                                        @(string.IsNullOrWhiteSpace(r.Remark) ? "—" : r.Remark)
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        }
+
         @if (!string.IsNullOrWhiteSpace(Model.Remark))
         {
             <div class="card mb-3">

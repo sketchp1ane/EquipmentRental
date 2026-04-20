@@ -50,7 +50,7 @@ public class ReturnController(
         if (!ModelState.IsValid)
         {
             var form = await returnService.GetApplyFormAsync(vm.OrderId);
-            if (form != null) { vm.ProjectName = form.ProjectName; vm.EquipmentNo = form.EquipmentNo; }
+            if (form != null) { vm.ProjectName = form.ProjectName; vm.EquipmentNo = form.EquipmentNo; vm.Deposit = form.Deposit; }
             return View(vm);
         }
 
@@ -59,7 +59,7 @@ public class ReturnController(
         {
             ModelState.AddModelError(string.Empty, error!);
             var form = await returnService.GetApplyFormAsync(vm.OrderId);
-            if (form != null) { vm.ProjectName = form.ProjectName; vm.EquipmentNo = form.EquipmentNo; }
+            if (form != null) { vm.ProjectName = form.ProjectName; vm.EquipmentNo = form.EquipmentNo; vm.Deposit = form.Deposit; }
             return View(vm);
         }
 

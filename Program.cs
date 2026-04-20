@@ -71,6 +71,7 @@ builder.Services.AddScoped<FaultService>();
 builder.Services.AddScoped<ReturnService>();
 builder.Services.AddScoped<ReportService>();
 builder.Services.AddScoped<NotificationService>();
+builder.Services.AddScoped<DashboardService>();
 builder.Services.AddScoped<FileService>();
 builder.Services.AddScoped<UserService>();
 

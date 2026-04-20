@@ -58,6 +58,45 @@
             </div>
 
             <div class="card mb-4">
+                <div class="card-header fw-semibold">巡检项目（逐项勾选）</div>
+                <div class="card-body p-0">
+                    <table class="table table-sm mb-0 align-middle">
+                        <thead class="table-light">
+                            <tr>
+                                <th style="width: 40%">项目</th>
+                                <th style="width: 30%">状态</th>
+                                <th>备注（异常时填写，选填）</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @for (int i = 0; i < Model.Items.Count; i++)
+                            {
+                                <tr>
+                                    <td>
+                                        <input type="hidden" asp-for="Items[i].ItemKey" />
+                                        <input type="hidden" asp-for="Items[i].ItemName" />
+                                        <input type="hidden" asp-for="Items[i].Order" />
+                                        @Model.Items[i].ItemName
+                                    </td>
+                                    <td>
+                                        <select asp-for="Items[i].Status" class="form-select form-select-sm">
+                                            <option value="0">正常</option>
+                                            <option value="1">异常</option>
+                                            <option value="2">不适用</option>
+                                        </select>
+                                    </td>
+                                    <td>
+                                        <input asp-for="Items[i].Remark" class="form-control form-control-sm"
+                                               maxlength="200" placeholder="异常说明" />
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="card mb-4">
                 <div class="card-header fw-semibold">巡检备注</div>
                 <div class="card-body">
                     <textarea asp-for="Remark" rows="4" class="form-control"

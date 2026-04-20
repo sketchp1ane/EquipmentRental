@@ -15,4 +15,7 @@ public class HomeIndexViewModel
 {
     public IList<ExpiringCertViewModel> ExpiringCerts { get; set; } = [];
     public DashboardStatsDto? Stats { get; set; }
+    public IList<PendingActionViewModel> PendingActions { get; set; } = [];
 }
+
+public record PendingActionViewModel(string Title, int Count, string Url, string Color);

@@ -44,6 +44,7 @@ public class InspectionController(
         {
             var form = await inspectionService.GetCreateFormAsync(vm.OrderId);
             if (form != null) { vm.ProjectName = form.ProjectName; vm.EquipmentNo = form.EquipmentNo; }
+            RepopulateItemMeta(vm);
             return View(vm);
         }
 
@@ -53,6 +54,7 @@ public class InspectionController(
             ModelState.AddModelError(string.Empty, error!);
             var form = await inspectionService.GetCreateFormAsync(vm.OrderId);
             if (form != null) { vm.ProjectName = form.ProjectName; vm.EquipmentNo = form.EquipmentNo; }
+            RepopulateItemMeta(vm);
             return View(vm);
         }
 
@@ -68,5 +70,19 @@ public class InspectionController(
         var vm = await inspectionService.GetDetailAsync(id);
         if (vm == null) return NotFound();
         return View(vm);
+    }
+
+    // Re-hydrate item names/order after model binding from the form.
+    private static void RepopulateItemMeta(CreateInspectionViewModel vm)
+    {
+        foreach (var item in vm.Items)
+        {
+            var meta = Constants.InspectionChecklist.Standard.FirstOrDefault(i => i.Key == item.ItemKey);
+            if (meta != null)
+            {
+                item.ItemName = meta.Name;
+                item.Order    = meta.Order;
+            }
+        }
     }
 }

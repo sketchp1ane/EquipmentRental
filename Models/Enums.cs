@@ -38,6 +38,8 @@ public enum SafetyBriefingStatus { Draft = 0, Completed = 1 }
 
 public enum OverallInspectionStatus { Normal = 0, Abnormal = 1 }
 
+public enum InspectionItemStatus { Normal = 0, Abnormal = 1, NotApplicable = 2 }
+
 public enum FaultSeverity { Minor = 1, Medium = 2, Severe = 3 }
 
 public enum FaultStatus { Pending = 0, InProgress = 1, Closed = 2 }

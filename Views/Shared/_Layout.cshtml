@@ -24,6 +24,31 @@
         <div class="d-flex align-items-center gap-3 ms-auto">
             @if (User.Identity?.IsAuthenticated == true)
             {
+                <!-- Notification bell -->
+                <div class="dropdown" id="notif-dropdown">
+                    <button class="btn btn-dark btn-sm position-relative border-0"
+                            data-bs-toggle="dropdown" data-bs-auto-close="outside"
+                            aria-expanded="false" title="站内消息">
+                        <span aria-hidden="true" style="font-size: 1.1rem;">🔔</span>
+                        <span id="notif-badge"
+                              class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger d-none"
+                              style="font-size: 0.6rem;">0</span>
+                    </button>
+                    <div class="dropdown-menu dropdown-menu-end p-0"
+                         style="width: 340px; max-height: 420px;">
+                        <div class="d-flex justify-content-between align-items-center px-3 py-2 border-bottom">
+                            <span class="fw-semibold">站内消息</span>
+                            <button type="button" id="notif-mark-all"
+                                    class="btn btn-link btn-sm p-0 text-decoration-none">
+                                全部标为已读
+                            </button>
+                        </div>
+                        <div id="notif-list" style="max-height: 340px; overflow-y: auto;">
+                            <div class="text-muted small text-center py-4">加载中…</div>
+                        </div>
+                    </div>
+                </div>
+                @Html.AntiForgeryToken()
                 <div class="dropdown">
                     <button class="btn btn-outline-light btn-sm dropdown-toggle" data-bs-toggle="dropdown">
                         @User.Identity.Name
@@ -91,29 +116,20 @@
                         <li class="nav-item">
                             <a class="nav-link text-white" asp-controller="Dispatch" asp-action="Request">用车申请</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-white" asp-controller="Verification" asp-action="Verify">进场核验</a>
-                        </li>
                     }
                     @if (User.IsInRole(Roles.Admin) || User.IsInRole(Roles.Dispatcher))
                     {
                         <li class="nav-item">
-                            <a class="nav-link text-white" asp-controller="Dispatch" asp-action="Index">调度列表</a>
+                            <a class="nav-link text-white" asp-controller="Dispatch" asp-action="Index">用车申请审批</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link text-white" asp-controller="Dispatch" asp-action="Calendar">调度日历</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-white" asp-controller="Verification" asp-action="List">核验记录</a>
                         </li>
                     }
                     @if (User.IsInRole(Roles.Auditor))
                     {
                         <li class="nav-item">
-                            <a class="nav-link text-white" asp-controller="Dispatch" asp-action="Index">调度列表</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-white" asp-controller="Verification" asp-action="List">核验记录</a>
+                            <a class="nav-link text-white" asp-controller="Dispatch" asp-action="Index">用车申请审批</a>
                         </li>
                     }
                     @if (User.IsInRole(Roles.Admin) || User.IsInRole(Roles.Dispatcher) ||
@@ -126,11 +142,29 @@
 
                     <!-- 现场管理 -->
                     @if (User.IsInRole(Roles.Admin) || User.IsInRole(Roles.SafetyOfficer) ||
-                         User.IsInRole(Roles.ProjectLead) || User.IsInRole(Roles.Auditor))
+                         User.IsInRole(Roles.ProjectLead) || User.IsInRole(Roles.Auditor) ||
+                         User.IsInRole(Roles.Dispatcher))
                     {
                         <li class="nav-item mt-2">
                             <span class="section-label text-secondary text-uppercase d-block">现场管理</span>
                         </li>
+                    }
+                    @if (User.IsInRole(Roles.Admin) || User.IsInRole(Roles.ProjectLead))
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link text-white" asp-controller="Verification" asp-action="Verify">进场核验</a>
+                        </li>
+                    }
+                    @if (User.IsInRole(Roles.Admin) || User.IsInRole(Roles.Dispatcher) ||
+                         User.IsInRole(Roles.Auditor))
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link text-white" asp-controller="Verification" asp-action="List">核验记录</a>
+                        </li>
+                    }
+                    @if (User.IsInRole(Roles.Admin) || User.IsInRole(Roles.SafetyOfficer) ||
+                         User.IsInRole(Roles.ProjectLead) || User.IsInRole(Roles.Auditor))
+                    {
                         <li class="nav-item">
                             <a class="nav-link text-white" asp-controller="Safety" asp-action="List">安全交底</a>
                         </li>
@@ -209,6 +243,83 @@
     <script src="~/lib/chartjs/chart.umd.min.js"></script>
     <script src="~/lib/summernote/summernote-bs5.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+    @if (User.Identity?.IsAuthenticated == true)
+    {
+        <script>
+            (function () {
+                const badge = document.getElementById('notif-badge');
+                const list  = document.getElementById('notif-list');
+                const dropdown = document.getElementById('notif-dropdown');
+                if (!badge || !list || !dropdown) return;
+
+                function token() {
+                    const el = document.querySelector('input[name="__RequestVerificationToken"]');
+                    return el ? el.value : '';
+                }
+                function setBadge(n) {
+                    if (n > 0) {
+                        badge.textContent = n > 99 ? '99+' : n;
+                        badge.classList.remove('d-none');
+                    } else {
+                        badge.classList.add('d-none');
+                    }
+                }
+                function renderItems(items) {
+                    if (!items.length) {
+                        list.innerHTML = '<div class="text-muted small text-center py-4">暂无消息</div>';
+                        return;
+                    }
+                    list.innerHTML = items.map(n => {
+                        const cls = n.isRead ? 'text-muted' : 'fw-semibold';
+                        const dot = n.isRead ? '' : '<span class="badge bg-primary ms-1">新</span>';
+                        return `<a href="#" class="d-block px-3 py-2 border-bottom text-decoration-none notif-item"
+                                   data-id="${n.id}" data-url="${n.relatedUrl || ''}">
+                            <div class="${cls}">${n.title} ${dot}</div>
+                            <div class="small text-muted text-truncate">${n.content}</div>
+                            <div class="small text-muted">${n.createdAt}</div>
+                        </a>`;
+                    }).join('');
+                    list.querySelectorAll('.notif-item').forEach(el => {
+                        el.addEventListener('click', async (e) => {
+                            e.preventDefault();
+                            const id = el.getAttribute('data-id');
+                            const url = el.getAttribute('data-url');
+                            const fd = new FormData();
+                            await fetch('/Notification/MarkRead/' + id, {
+                                method: 'POST',
+                                headers: { 'RequestVerificationToken': token() },
+                                body: fd
+                            });
+                            if (url) window.location.href = url;
+                            else refresh();
+                        });
+                    });
+                }
+                async function refresh() {
+                    try {
+                        const res = await fetch('/Notification/Recent', { credentials: 'same-origin' });
+                        if (!res.ok) return;
+                        const data = await res.json();
+                        setBadge(data.unread || 0);
+                        renderItems(data.items || []);
+                    } catch { /* ignore */ }
+                }
+
+                refresh();
+                setInterval(refresh, 60000);
+
+                document.getElementById('notif-mark-all').addEventListener('click', async () => {
+                    const fd = new FormData();
+                    await fetch('/Notification/MarkAllRead', {
+                        method: 'POST',
+                        headers: { 'RequestVerificationToken': token() },
+                        body: fd
+                    });
+                    refresh();
+                });
+            })();
+        </script>
+    }
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

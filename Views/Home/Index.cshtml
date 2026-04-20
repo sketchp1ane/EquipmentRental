@@ -5,6 +5,31 @@
 
 <h4 class="mb-4">首页看板</h4>
 
+@if (Model.PendingActions.Count > 0)
+{
+    <div class="card mb-4">
+        <div class="card-header fw-semibold">待处理事项</div>
+        <div class="card-body">
+            <div class="row g-2">
+                @foreach (var a in Model.PendingActions)
+                {
+                    <div class="col-6 col-md-4 col-xl-3">
+                        <a href="@a.Url" class="text-decoration-none">
+                            <div class="border rounded p-2 d-flex justify-content-between align-items-center bg-white">
+                                <div>
+                                    <div class="small text-muted">@a.Title</div>
+                                    <div class="fs-4 fw-bold text-@a.Color">@a.Count</div>
+                                </div>
+                                <span class="btn btn-outline-@a.Color btn-sm">去处理</span>
+                            </div>
+                        </a>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+}
+
 @if (Model.Stats != null)
 {
     var s = Model.Stats;

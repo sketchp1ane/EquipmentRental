@@ -1,3 +1,4 @@
+using EquipmentRental.Constants;
 using EquipmentRental.Data;
 using EquipmentRental.Models;
 using EquipmentRental.Models.Entities;
@@ -47,7 +48,17 @@ public class InspectionService(
             OrderId      = orderId,
             ProjectName  = order.Request.ProjectName,
             EquipmentNo  = order.Equipment.EquipmentNo,
-            InspectionDate = DateOnly.FromDateTime(DateTime.Today)
+            InspectionDate = DateOnly.FromDateTime(DateTime.Today),
+            Items        = InspectionChecklist.Standard
+                .OrderBy(i => i.Order)
+                .Select(i => new InspectionItemInputViewModel
+                {
+                    ItemKey  = i.Key,
+                    ItemName = i.Name,
+                    Order    = i.Order,
+                    Status   = InspectionItemStatus.Normal
+                })
+                .ToList()
         };
     }
 
@@ -78,6 +89,19 @@ public class InspectionService(
         };
         db.InspectionRecords.Add(record);
         await db.SaveChangesAsync();  // get Id
+
+        var validKeys = InspectionChecklist.Standard.Select(i => i.Key).ToHashSet();
+        foreach (var item in vm.Items ?? [])
+        {
+            if (!validKeys.Contains(item.ItemKey)) continue;
+            db.InspectionItemResults.Add(new InspectionItemResult
+            {
+                InspectionId = record.Id,
+                ItemKey      = item.ItemKey,
+                Status       = item.Status,
+                Remark       = string.IsNullOrWhiteSpace(item.Remark) ? null : item.Remark.Trim()
+            });
+        }
 
         if (vm.Images != null)
         {
@@ -111,9 +135,24 @@ public class InspectionService(
                 .ThenInclude(o => o.Equipment)
             .Include(ir => ir.Inspector)
             .Include(ir => ir.Images)
+            .Include(ir => ir.ItemResults)
             .FirstOrDefaultAsync(ir => ir.Id == id);
 
         if (record == null) return null;
+
+        var resultByKey = record.ItemResults.ToDictionary(r => r.ItemKey);
+        var itemResults = InspectionChecklist.Standard
+            .OrderBy(i => i.Order)
+            .Select(i => new InspectionItemResultViewModel
+            {
+                ItemKey  = i.Key,
+                ItemName = i.Name,
+                Order    = i.Order,
+                Status   = resultByKey.TryGetValue(i.Key, out var r) ? r.Status : InspectionItemStatus.NotApplicable,
+                Remark   = resultByKey.TryGetValue(i.Key, out var r2) ? r2.Remark : null
+            })
+            .Where(x => resultByKey.ContainsKey(x.ItemKey))
+            .ToList();
 
         return new InspectionDetailViewModel
         {
@@ -132,7 +171,8 @@ public class InspectionService(
                 Id         = i.Id,
                 FilePath   = i.FilePath,
                 UploadedAt = i.UploadedAt
-            }).ToList()
+            }).ToList(),
+            ItemResults    = itemResults
         };
     }
 

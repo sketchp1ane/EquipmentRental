@@ -48,9 +48,11 @@ public class ReturnService(
 
         return new ApplyReturnViewModel
         {
-            OrderId     = orderId,
-            ProjectName = order.Request.ProjectName,
-            EquipmentNo = order.Equipment.EquipmentNo
+            OrderId          = orderId,
+            ProjectName      = order.Request.ProjectName,
+            EquipmentNo      = order.Equipment.EquipmentNo,
+            Deposit          = order.Deposit,
+            ActualReturnDate = DateOnly.FromDateTime(DateTime.Today)
         };
     }
 

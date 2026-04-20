@@ -48,8 +48,8 @@ public class DispatchController(
             return View(vm);
         }
 
-        TempData["SuccessMessage"] = "用车申请已提交，等待调度员安排。";
-        return RedirectToAction(nameof(Index));
+        TempData["SuccessMessage"] = "用车申请已提交，等待调度员安排。排期完成后可在「调度单」列表查看。";
+        return RedirectToAction(nameof(Orders));
     }
 
     // ── 调度列表（调度员 / 管理员 / 审计员）─────────────────────────────────

@@ -32,9 +32,10 @@ public class ApplyReturnViewModel
     // Display-only — re-populated on validation fail
     public string ProjectName { get; set; } = string.Empty;
     public string EquipmentNo { get; set; } = string.Empty;
+    public decimal Deposit { get; set; }
 
     [Required(ErrorMessage = "请填写实际退场日期")]
-    public DateOnly ActualReturnDate { get; set; }
+    public DateOnly ActualReturnDate { get; set; } = DateOnly.FromDateTime(DateTime.Today);
 
     [StringLength(500, ErrorMessage = "设备状况描述不超过 500 字")]
     public string? ConditionDesc { get; set; }

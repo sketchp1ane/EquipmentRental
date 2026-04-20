@@ -17,4 +17,5 @@ public class InspectionRecord
     public DispatchOrder Order { get; set; } = null!;
     public ApplicationUser Inspector { get; set; } = null!;
     public ICollection<InspectionImage> Images { get; set; } = new List<InspectionImage>();
+    public ICollection<InspectionItemResult> ItemResults { get; set; } = new List<InspectionItemResult>();
 }

@@ -95,20 +95,20 @@
                     <td class="small">
                         @if (!string.IsNullOrEmpty(item.ContractNo))
                         {
-                            <div>@item.ContractNo</div>
+                            <div>📄 @item.ContractNo</div>
                             @switch (item.ContractStatus)
                             {
                                 case EquipmentRental.Models.ContractStatus.Draft:
-                                    <span class="badge bg-secondary">草稿</span>
+                                    <span class="badge border border-secondary text-secondary bg-light">合同·草稿</span>
                                     break;
                                 case EquipmentRental.Models.ContractStatus.AwaitingSignature:
-                                    <span class="badge bg-warning text-dark">待签署</span>
+                                    <span class="badge border border-warning text-warning bg-light">合同·待签署</span>
                                     break;
                                 case EquipmentRental.Models.ContractStatus.Signed:
-                                    <span class="badge bg-success">已签署</span>
+                                    <span class="badge border border-success text-success bg-light">合同·已签署</span>
                                     break;
                                 case EquipmentRental.Models.ContractStatus.Terminated:
-                                    <span class="badge bg-danger">已终止</span>
+                                    <span class="badge border border-danger text-danger bg-light">合同·已终止</span>
                                     break;
                             }
                         }

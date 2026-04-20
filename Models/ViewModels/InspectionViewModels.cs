@@ -21,6 +21,28 @@ public class CreateInspectionViewModel
     public string? Remark { get; set; }
 
     public IList<IFormFile>? Images { get; set; }
+
+    public List<InspectionItemInputViewModel> Items { get; set; } = [];
+}
+
+public class InspectionItemInputViewModel
+{
+    public string ItemKey { get; set; } = string.Empty;
+    public string ItemName { get; set; } = string.Empty;
+    public int Order { get; set; }
+    public InspectionItemStatus Status { get; set; } = InspectionItemStatus.Normal;
+
+    [StringLength(200, ErrorMessage = "单项备注不超过 200 字")]
+    public string? Remark { get; set; }
+}
+
+public class InspectionItemResultViewModel
+{
+    public string ItemKey { get; set; } = string.Empty;
+    public string ItemName { get; set; } = string.Empty;
+    public int Order { get; set; }
+    public InspectionItemStatus Status { get; set; }
+    public string? Remark { get; set; }
 }
 
 public class InspectionDetailViewModel
@@ -36,6 +58,7 @@ public class InspectionDetailViewModel
     public string InspectorName { get; set; } = string.Empty;
     public DateTime CreatedAt { get; set; }
     public IList<InspectionImageViewModel> Images { get; set; } = [];
+    public IList<InspectionItemResultViewModel> ItemResults { get; set; } = [];
 }
 
 public class InspectionImageViewModel

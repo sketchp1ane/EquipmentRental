@@ -23,6 +23,7 @@ public class AppDbContext : IdentityDbContext<ApplicationUser>
     public DbSet<BriefingAttachment> BriefingAttachments { get; set; }
     public DbSet<InspectionRecord> InspectionRecords { get; set; }
     public DbSet<InspectionImage> InspectionImages { get; set; }
+    public DbSet<InspectionItemResult> InspectionItemResults { get; set; }
     public DbSet<FaultReport> FaultReports { get; set; }
     public DbSet<FaultImage> FaultImages { get; set; }
     public DbSet<ReturnApplication> ReturnApplications { get; set; }
@@ -271,6 +272,19 @@ public class AppDbContext : IdentityDbContext<ApplicationUser>
              .WithMany(ir => ir.Images)
              .HasForeignKey(ii => ii.InspectionId)
              .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        // ── InspectionItemResult ──────────────────────────────────────────
+        builder.Entity<InspectionItemResult>(e =>
+        {
+            e.HasKey(r => r.Id);
+            e.Property(r => r.ItemKey).HasMaxLength(50).IsRequired();
+            e.Property(r => r.Remark).HasMaxLength(200);
+            e.HasOne(r => r.InspectionRecord)
+             .WithMany(ir => ir.ItemResults)
+             .HasForeignKey(r => r.InspectionId)
+             .OnDelete(DeleteBehavior.Cascade);
+            e.HasIndex(r => new { r.InspectionId, r.ItemKey }).IsUnique();
         });
 
         // ── FaultReport ───────────────────────────────────────────────────
