@@ -112,3 +112,14 @@
 - [x] 审计日志记录（增删改操作）
 - [x] 权限隔离测试（各角色越权访问验证）
 - [x] 统一异常处理页面
+
+---
+
+## 11. 端到端回归 & 文档校准（2026-04-20）
+
+- [x] Playwright MCP 12-suite E2E 回归（`docs/qa/e2e-run-20260420.md`）
+- [x] Bug #1：合同未上传扫描件时订单页提示跳转
+- [x] Bug #2：Chart.js 真实库文件修复 + 脚本早加载（首页 / 利用率 / 安全统计 三页零控制台错误）
+- [x] Bug #3：审核驳回字段级错误渲染（`Form.Remark` key 对齐）
+- [x] Bug #4：退场扣款 `< 0` / `> Deposit` 服务端拒绝，不再静默钳位
+- [x] 文档按验证后行为刷新：`PRD.md` / `user-guide.md` / `demo-guide.md` / `database.md` / `architecture.md`

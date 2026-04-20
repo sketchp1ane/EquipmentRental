@@ -19,6 +19,8 @@ EquipmentRental/
 │   ├── FaultController.cs          # 故障上报
 │   ├── ReturnController.cs         # 退场评价
 │   ├── ReportController.cs         # 统计报表
+│   ├── NotificationController.cs   # 铃铛未读 / 全标已读
+│   ├── FilesController.cs          # Uploads/ 鉴权下发
 │   └── HomeController.cs           # 首页看板
 ├── Services/
 │   ├── EquipmentService.cs
@@ -31,9 +33,11 @@ EquipmentRental/
 │   ├── FaultService.cs
 │   ├── ReturnService.cs
 │   ├── ReportService.cs
+│   ├── DashboardService.cs         # 首页看板聚合 / 角色待办分支
 │   ├── UserService.cs              # 用户管理
 │   ├── NotificationService.cs      # 站内消息
-│   └── FileService.cs              # 文件上传/下载
+│   ├── ContractService.cs          # 合同生成 / PDF / 扫描件上传（联动订单 Signed）
+│   └── FileService.cs              # 文件上传/下载（5 层校验 + GUID 重命名）
 ├── Models/
 │   ├── Entities/                   # EF Core 实体（与数据库表一一对应）
 │   └── ViewModels/                 # 视图专用 DTO（不直接暴露实体）
@@ -103,20 +107,32 @@ EF Core DbContext、ASP.NET Core Identity 在 `Program.cs` 统一配置。
 
 ```
 HomeController
-  └── EquipmentService（统计数量）
-  └── QualificationService（到期预警）
-  └── NotificationService（待办事项）
+  └── DashboardService（统计数量 + 到期预警 + 角色待办聚合）
+        └── NotificationService
 
 DispatchController
   └── DispatchService
         ├── EquipmentService（可用设备查询）
         └── QualificationService（证件有效期校验）
 
+ContractController
+  └── ContractService（扫描件上传时同事务把 DispatchOrder Unsigned → Signed）
+
 VerificationController
-  └── VerificationService
-        └── DispatchService（核验码比对）
+  └── VerificationService（只允许 Signed 订单核验 → 核验通过时推进 InProgress + Equipment InUse）
+
+FaultController
+  └── FaultService（故障上报 Equipment InUse → Maintenance；关闭时恢复）
+        └── EquipmentService
+
+SafetyController
+  └── SafetyService（双签完成 Draft → Completed）
+        └── NotificationService
 
 ReturnController
-  └── ReturnService
-        └── EquipmentService（更新设备状态）
+  └── ReturnService（评价提交 → Order Complete + Equipment 按填写状态翻转；扣款校验）
+        └── EquipmentService
+
+NotificationController ── NotificationService
+FilesController ── FileService
 ```

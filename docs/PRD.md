@@ -81,7 +81,8 @@
 | 进场核验 | CRUD | R | R | CRU | R | R |
 | 安全交底 | CRUD | R | R | R | CRUD | R |
 | 故障上报 | CRUD | CRU | R | R | CRUD | R |
-| 退场评价 | CRUD | R | R | CRUD | R | R |
+| 退场申请 | CRUD | R | R | CR | R | R |
+| 退场评价 | CRUD | CRU | R | R | R | R |
 | 统计报表 | CRUD | R | R | R | R | R |
 
 ---
@@ -205,13 +206,14 @@
 - 支持在线预览（HTML 渲染）与 PDF 导出（使用 QuestPDF，纯 .NET 实现，macOS/Linux/Windows 均可运行）。
 - 合同状态：草稿 → 待签署 → 已签署 → 已终止。
 - 本期不实现电子签章，合同签署以"线下签署后上传扫描件"方式完成。
+- **扫描件上传副作用**：`ContractService.UploadScanAsync` 在同一事务中把关联 `DispatchOrder.Status` 从 `Unsigned` 推进为 `Signed`；调度单必须进入 `Signed` 状态才会显示"进场核验码"区块，也才会允许进场核验（见 4.5）。
 
 ---
 
 ### 4.5 进场核验模块
 
 #### 4.5.1 核验码生成
-- 调度单签署后，系统为本次租赁生成唯一核验码（UUID）并以二维码形式展示在调度详情页。
+- 调度单进入 `Signed` 状态后（即合同扫描件已上传），系统在订单详情页展示唯一核验码（UUID）+ 二维码。未到 `Signed` 状态时核验码区块不可见，且 `VerificationService.VerifyAsync` 会直接拒绝 `Unsigned` 单的核验请求。
 
 #### 4.5.2 核验操作
 - 项目负责人（或指定人员）在进场时，在系统中输入核验码（或扫描二维码跳转），系统自动比对：
@@ -244,7 +246,8 @@
 ### 4.7 使用监管模块
 
 #### 4.7.1 巡检记录
-- 安全员可对出租中的设备创建日常巡检记录：巡检日期、巡检人、巡检项目（勾选清单，可配置）、整体状态（正常/异常）、备注、现场照片。
+- 安全员可对出租中的设备创建日常巡检记录：巡检日期、巡检人、整体状态（正常/异常）、备注、现场照片。
+- 巡检项固化为 **8 项**（整机外观 / 液压系统 / 电气系统 / 紧固件 / 安全装置 / 控制装置 / 作业环境 / 操作记录），每项结果入 `InspectionItemResults` 子表，状态可选 `Normal / Abnormal / NotApplicable` 三态；整体状态由各项聚合（任一项 `Abnormal` 即整体 `Abnormal`）。
 
 #### 4.7.2 故障上报
 - 安全员或项目负责人可提交故障工单：故障描述、发现时间、严重程度（轻微/中等/严重）、现场图片。
@@ -267,6 +270,7 @@
   - 押金退还金额（= 押金 - 损耗扣款）
   - 综合评价备注
 - 提交后通知项目负责人，退场流程结束，设备状态更新（空闲/送修/报废）。
+- **扣款金额校验**：服务端拒绝 `Deduction < 0` 与 `Deduction > Deposit` 两种非法输入并返回字段级错误，不做静默钳位；`RefundAmount` 一律由服务端按 `Deposit - Deduction` 计算，不信任前端传值。
 
 ---
 
@@ -401,7 +405,7 @@ SQL Server 2022（Docker：mcr.microsoft.com/mssql/server:2022-latest）
 | `Users` | Id, UserName, PasswordHash, PhoneNumber, IsActive | ASP.NET Identity 扩展 |
 | `Roles` | Id, Name | 系统角色 |
 | `EquipmentCategories` | Id, ParentId, Name, Level | 多级分类（自关联） |
-| `Equipments` | Id, EquipmentNo(唯一), Name, CategoryId, BrandModel, ManufactureDate, Status, OwnedBy | 设备主表 |
+| `Equipments` | Id, EquipmentNo(唯一), Name, CategoryId, BrandModel, ManufactureDate, Status(`PendingReview/Idle/InUse/Maintenance/Scrapped`), OwnedBy | 设备主表 |
 | `EquipmentImages` | Id, EquipmentId, FilePath, UploadedAt | 设备图片 |
 | `Qualifications` | Id, EquipmentId, Type, CertNo, IssuedBy, ValidFrom, ValidTo, FilePath | 设备证件 |
 | `AuditRecords` | Id, EquipmentId, AuditorId, Action(通过/驳回), Remark, AuditedAt | 资质审核记录 |
@@ -412,6 +416,7 @@ SQL Server 2022（Docker：mcr.microsoft.com/mssql/server:2022-latest）
 | `SafetyBriefings` | Id, DispatchOrderId, CreatorId, BriefingDate, Location, ContentHtml, Status | 安全交底主表 |
 | `BriefingParticipants` | Id, BriefingId, Name, JobType, Phone, SignedAt, SignedById | 交底参与人 |
 | `InspectionRecords` | Id, EquipmentId, DispatchOrderId, InspectorId, InspectionDate, OverallStatus, Remark | 巡检记录 |
+| `InspectionItemResults` | Id, InspectionId, ItemKey, Status(`Normal/Abnormal/NotApplicable`), Remark | 巡检 8 项每项结果 |
 | `FaultReports` | Id, EquipmentId, DispatchOrderId, ReporterId, Description, Severity, ReportedAt, Status, Resolution | 故障工单 |
 | `ReturnApplications` | Id, DispatchOrderId, ApplicantId, ActualReturnDate, EquipmentCondition, Status | 退场申请 |
 | `ReturnEvaluations` | Id, ReturnAppId, EvaluatorId, AppearanceScore, FunctionScore, DamageDesc, Deduction, RefundAmount, EvaluatedAt | 退场评价 |
@@ -425,6 +430,7 @@ SQL Server 2022（Docker：mcr.microsoft.com/mssql/server:2022-latest）
 - `DispatchOrders` 1 → N `SafetyBriefings`
 - `DispatchOrders` 1 → 1 `ReturnApplications`
 - `ReturnApplications` 1 → 1 `ReturnEvaluations`
+- `InspectionRecords` 1 → N `InspectionItemResults`
 
 ---
 
@@ -447,22 +453,34 @@ SQL Server 2022（Docker：mcr.microsoft.com/mssql/server:2022-latest）
 | `/Audit` | Audit/Index | 设备管理员 | 待审核设备列表 |
 | `/Audit/{id}/Review` | Audit/Review | 设备管理员 | 审核操作页 |
 | `/Dispatch/Request` | Dispatch/Request | 项目负责人 | 提交用车申请 |
-| `/Dispatch` | Dispatch/Index | 调度员 | 调度管理列表 |
-| `/Dispatch/{id}/Order` | Dispatch/Order | 调度员 | 生成调度单 |
+| `/Dispatch` | Dispatch/Index | 调度员/审计员 | 用车申请审批列表 |
+| `/Dispatch/Orders` | Dispatch/Orders | 调度员/项目负责人/审计员 | 调度单列表 |
+| `/Dispatch/Order?requestId={id}` | Dispatch/Order | 调度员 | 生成调度单 |
+| `/Dispatch/OrderDetails/{id}` | Dispatch/OrderDetails | 调度员/项目负责人/审计员 | 调度单详情 |
 | `/Dispatch/Calendar` | Dispatch/Calendar | 调度员 | 调度日历 |
-| `/Contract/{id}` | Contract/Details | 调度员/项目负责人 | 合同详情 |
+| `/Contract/{id}` | Contract/Details | 调度员/项目负责人/审计员 | 合同详情 |
 | `/Contract/{id}/Export` | Contract/Export | 调度员 | 导出合同 PDF |
-| `/Verification/{orderId}` | Verification/Index | 项目负责人 | 进场核验操作 |
-| `/Safety/{orderId}/Create` | Safety/Create | 安全员 | 填写安全交底 |
-| `/Safety/{id}` | Safety/Details | 相关方 | 交底详情/签名 |
-| `/Inspection/Create` | Inspection/Create | 安全员 | 新增巡检记录 |
-| `/Fault/Report` | Fault/Report | 安全员/项目负责人 | 故障上报 |
-| `/Fault` | Fault/Index | 设备管理员 | 故障工单列表 |
-| `/Return/{orderId}/Apply` | Return/Apply | 项目负责人 | 退场申请 |
-| `/Return/{id}/Evaluate` | Return/Evaluate | 设备管理员 | 退场评价 |
+| `/Contract/{id}/UploadScan` | Contract/UploadScan | 调度员 | 上传签署扫描件（联动订单 Signed） |
+| `/Verification/Verify` | Verification/Verify | 项目负责人/管理员 | 进场核验操作 |
+| `/Verification/List` | Verification/List | 项目负责人/调度员/审计员/管理员 | 核验记录 |
+| `/Safety/List` | Safety/List | 安全员/项目负责人/审计员 | 安全交底列表 |
+| `/Safety/Create?orderId={id}` | Safety/Create | 安全员 | 填写安全交底 |
+| `/Safety/Details/{id}` | Safety/Details | 相关方 | 交底详情/签署 |
+| `/Inspection` | Inspection/Index | 安全员/项目负责人/审计员 | 巡检记录列表 |
+| `/Inspection/Create?orderId={id}` | Inspection/Create | 安全员/管理员 | 新增巡检记录 |
+| `/Fault` | Fault/Index | 相关方 | 故障工单列表 |
+| `/Fault/Create?orderId={id}` | Fault/Create | 安全员/项目负责人 | 故障上报 |
+| `/Fault/Close/{id}` | Fault/Close | 设备管理员 | 关闭故障工单 |
+| `/Return` | Return/Index | 项目负责人/设备管理员/审计员 | 退场列表 |
+| `/Return/Apply?orderId={id}` | Return/Apply | 项目负责人 | 退场申请 |
+| `/Return/Evaluate/{id}` | Return/Evaluate | 设备管理员 | 退场评价 |
+| `/Return/Details/{id}` | Return/Details | 相关方 | 退场详情 |
 | `/Report/Rental` | Report/Rental | 已登录 | 租赁统计报表 |
-| `/Report/Utilization` | Report/Utilization | 已登录 | 设备利用率报表 |
-| `/Report/Safety` | Report/Safety | 已登录 | 安全记录报表 |
+| `/Report/Utilization` | Report/Utilization | 已登录 | 设备利用率 / 数据看板 |
+| `/Report/Safety` | Report/Safety | 已登录 | 安全统计 |
+| `/Notification/Recent` | Notification/Recent | 已登录 | 最近未读消息 JSON（铃铛） |
+| `/Notification/MarkAllRead` | Notification/MarkAllRead | 已登录 | 一键全标已读 |
+| `/Files/{id}` | Files/Download | 已登录（鉴权下发） | Uploads/ 下的附件流式下发 |
 
 ---
 
@@ -492,7 +510,7 @@ SQL Server 2022（Docker：mcr.microsoft.com/mssql/server:2022-latest）
 | F-07 | 进场核验 | 核验码正确时核验通过，字段不匹配时显示具体失败原因 |
 | F-08 | 安全交底签署 | 所有必须签署方完成后状态变为"已完成"且不可修改 |
 | F-09 | 故障上报 | 提交后设备状态自动变更，设备管理员收到站内通知 |
-| F-10 | 退场评价 | 提交评价后押金退还金额正确计算，设备状态更新 |
+| F-10 | 退场评价 | 提交评价后押金退还金额正确计算，设备状态更新；扣款 > 押金或 < 0 时必须返回可见错误，不可写入 DB |
 | F-11 | 权限隔离 | 无权限角色访问受保护页面返回 403 |
 | F-12 | 报表导出 | 租赁统计可导出 Excel，数据与页面一致 |
 

@@ -21,6 +21,7 @@ EquipmentCategories（自关联，树形）
                │         ├──< SafetyBriefings >──< BriefingParticipants
                │         │                    └──< BriefingAttachments
                │         ├──< InspectionRecords >──< InspectionImages
+               │         │                       └──< InspectionItemResults
                │         ├──< FaultReports >──< FaultImages
                │         └── ReturnApplication ──── ReturnEvaluation
                └──< InspectionRecords
@@ -73,7 +74,7 @@ OperationLogs（操作人 → Users）
 | CreatedById | nvarchar(450) | FK NOT NULL | 录入人 |
 | CreatedAt | datetime2 | NOT NULL | |
 
-**Status 枚举**：0=待审核 1=空闲 2=出租中 3=维修中 4=已报废
+**Status 枚举（`EquipmentStatus`）**：0=PendingReview 待审核 / 1=Idle 空闲 / 2=InUse 出租中 / 3=Maintenance 维修中 / 4=Scrapped 已报废
 
 ### EquipmentImages
 | 字段 | 类型 | 约束 | 说明 |
@@ -140,7 +141,7 @@ OperationLogs（操作人 → Users）
 | Status | int | NOT NULL DEFAULT 0 | 见下方枚举 |
 | CreatedAt | datetime2 | NOT NULL | |
 
-**Status 枚举**：0=待签署 1=已签署 2=进行中 3=已完成 4=已终止
+**Status 枚举（`DispatchOrderStatus`）**：0=Unsigned 待签署 / 1=Signed 已签署 / 2=InProgress 进行中 / 3=Complete 已完成 / 4=Terminated 已终止
 
 ### Contracts（租赁合同）
 | 字段 | 类型 | 约束 | 说明 |
@@ -148,8 +149,8 @@ OperationLogs（操作人 → Users）
 | Id | int | PK IDENTITY | |
 | OrderId | int | FK UNIQUE NOT NULL | 1:1 调度单 |
 | ContractNo | nvarchar(50) | UNIQUE NOT NULL | 系统生成 |
-| Status | int | NOT NULL DEFAULT 0 | 0=草稿 1=待签署 2=已签署 3=已终止 |
-| ScanPath | nvarchar(500) | | 线下签署扫描件路径 |
+| Status | int | NOT NULL DEFAULT 0 | `ContractStatus`：0=Draft 草稿 / 1=AwaitingSignature 待签署 / 2=Signed 已签署 / 3=Terminated 已终止 |
+| ScanPath | nvarchar(500) | | 线下签署扫描件路径；上传时同事务推进关联 DispatchOrder → Signed |
 | CreatedAt | datetime2 | NOT NULL | |
 
 ### EntryVerifications（进场核验）
@@ -171,7 +172,7 @@ OperationLogs（操作人 → Users）
 | BriefingDate | date | NOT NULL | |
 | Location | nvarchar(100) | NOT NULL | 交底地点 |
 | ContentHtml | nvarchar(max) | NOT NULL | 富文本（已过 Sanitizer） |
-| Status | int | NOT NULL DEFAULT 0 | 0=草稿 1=已完成 |
+| Status | int | NOT NULL DEFAULT 0 | `SafetyBriefingStatus`：0=Draft 草稿 / 1=Completed 已完成 |
 | CreatedAt | datetime2 | NOT NULL | |
 
 ### BriefingParticipants（交底参与人）
@@ -202,7 +203,7 @@ OperationLogs（操作人 → Users）
 | OrderId | int | FK NOT NULL | |
 | InspectorId | nvarchar(450) | FK NOT NULL | |
 | InspectionDate | date | NOT NULL | |
-| OverallStatus | int | NOT NULL | 0=正常 1=异常 |
+| OverallStatus | int | NOT NULL | `OverallInspectionStatus`：0=Normal 正常 / 1=Abnormal 异常（由 `InspectionItemResults` 聚合而来） |
 | Remark | nvarchar(500) | | |
 | CreatedAt | datetime2 | NOT NULL | |
 
@@ -214,6 +215,15 @@ OperationLogs（操作人 → Users）
 | FilePath | nvarchar(500) | NOT NULL | Uploads/ 相对路径 |
 | UploadedAt | datetime2 | NOT NULL | |
 
+### InspectionItemResults（巡检项结果，8 项固定清单）
+| 字段 | 类型 | 约束 | 说明 |
+|---|---|---|---|
+| Id | int | PK IDENTITY | |
+| InspectionId | int | FK NOT NULL | 级联删除 |
+| ItemKey | nvarchar(50) | NOT NULL | 固定 8 项之一：Appearance/Hydraulic/Electrical/Fastener/SafetyDevice/ControlDevice/WorkEnv/OperationLog |
+| Status | int | NOT NULL | `InspectionItemStatus`：0=Normal 正常 / 1=Abnormal 异常 / 2=NotApplicable 不适用 |
+| Remark | nvarchar(500) | | 单项备注 |
+
 ### FaultReports（故障工单）
 | 字段 | 类型 | 约束 | 说明 |
 |---|---|---|---|
@@ -224,7 +234,7 @@ OperationLogs（操作人 → Users）
 | Description | nvarchar(500) | NOT NULL | |
 | Severity | int | NOT NULL | 1=轻微 2=中等 3=严重 |
 | ReportedAt | datetime2 | NOT NULL | |
-| Status | int | NOT NULL DEFAULT 0 | 0=待处理 1=处理中 2=已关闭 |
+| Status | int | NOT NULL DEFAULT 0 | `FaultStatus`：0=Pending 待处理 / 1=InProgress 处理中 / 2=Closed 已关闭 |
 | Resolution | nvarchar(500) | | 处理结果 |
 | RepairCost | decimal(10,2) | | 维修费用 |
 | ClosedById | nvarchar(450) | FK NULL | |
@@ -246,7 +256,7 @@ OperationLogs（操作人 → Users）
 | ApplicantId | nvarchar(450) | FK NOT NULL | 项目负责人 |
 | ActualReturnDate | date | NOT NULL | |
 | ConditionDesc | nvarchar(500) | | 设备状况描述 |
-| Status | int | NOT NULL DEFAULT 0 | 0=待评价 1=已完成 |
+| Status | int | NOT NULL DEFAULT 0 | `ReturnApplicationStatus`：0=PendingEvaluation 待评价 / 1=Complete 已完成 |
 | CreatedAt | datetime2 | NOT NULL | |
 
 ### ReturnEvaluations（退场评价）
@@ -258,8 +268,8 @@ OperationLogs（操作人 → Users）
 | AppearanceScore | int | NOT NULL | 1-5 分 |
 | FunctionScore | int | NOT NULL | 1-5 分 |
 | DamageDesc | nvarchar(500) | | 损耗描述 |
-| Deduction | decimal(10,2) | NOT NULL DEFAULT 0 | 扣款金额 |
-| RefundAmount | decimal(10,2) | NOT NULL | 退还押金（= 押金 - 扣款） |
+| Deduction | decimal(10,2) | NOT NULL DEFAULT 0 | 扣款金额；服务端强制 `0 ≤ Deduction ≤ Deposit`，超界返回错误 |
+| RefundAmount | decimal(10,2) | NOT NULL | 退还押金（= 押金 - 扣款），由服务端计算，不信任前端传值 |
 | Remark | nvarchar(500) | | |
 | EvaluatedAt | datetime2 | NOT NULL | |
 
@@ -285,6 +295,12 @@ OperationLogs（操作人 → Users）
 | Detail | nvarchar(1000) | | 变更摘要（JSON 或文本） |
 | OccurredAt | datetime2 | NOT NULL | |
 | ClientIp | nvarchar(50) | | |
+
+---
+
+## 枚举一致性说明
+
+以上所有 `Status` / `OverallStatus` / `Type` / `Severity` / `Action` 字段的数值，均与 `Models/Enums.cs` 中的 C# 枚举一一对应。**数值顺序不得变更**（EF Core 按整数入库，改顺序会导致历史数据语义错位）；新增状态只允许追加到末尾。
 
 ---
 
