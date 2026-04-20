@@ -35,23 +35,31 @@
     var s = Model.Stats;
     <!-- 数量卡片 -->
     <div class="row g-3 mb-4">
-        <div class="col-6 col-md-4 col-xl-2">
-            <div class="card text-bg-success h-100">
+        <div class="col-6 col-md-4 col-xl">
+            <div class="card text-bg-dark h-100">
                 <div class="card-body py-3">
-                    <div class="fs-2 fw-bold">@s.EquipmentIdle</div>
-                    <div class="small">空闲设备</div>
+                    <div class="fs-2 fw-bold">@s.EquipmentTotal</div>
+                    <div class="small">设备总数</div>
                 </div>
             </div>
         </div>
-        <div class="col-6 col-md-4 col-xl-2">
+        <div class="col-6 col-md-4 col-xl">
             <div class="card text-bg-primary h-100">
                 <div class="card-body py-3">
                     <div class="fs-2 fw-bold">@s.EquipmentInUse</div>
-                    <div class="small">使用中</div>
+                    <div class="small">出租中</div>
                 </div>
             </div>
         </div>
-        <div class="col-6 col-md-4 col-xl-2">
+        <div class="col-6 col-md-4 col-xl">
+            <div class="card text-bg-success h-100">
+                <div class="card-body py-3">
+                    <div class="fs-2 fw-bold">@s.EquipmentIdle</div>
+                    <div class="small">空闲</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-md-4 col-xl">
             <div class="card text-bg-warning h-100">
                 <div class="card-body py-3">
                     <div class="fs-2 fw-bold">@s.EquipmentMaintenance</div>
@@ -59,27 +67,11 @@
                 </div>
             </div>
         </div>
-        <div class="col-6 col-md-4 col-xl-2">
+        <div class="col-6 col-md-4 col-xl">
             <div class="card text-bg-secondary h-100">
                 <div class="card-body py-3">
                     <div class="fs-2 fw-bold">@s.EquipmentPendingReview</div>
                     <div class="small">待审核</div>
-                </div>
-            </div>
-        </div>
-        <div class="col-6 col-md-4 col-xl-2">
-            <div class="card text-bg-info h-100">
-                <div class="card-body py-3">
-                    <div class="fs-2 fw-bold">@s.ThisMonthOrders</div>
-                    <div class="small">本月新增租赁</div>
-                </div>
-            </div>
-        </div>
-        <div class="col-6 col-md-4 col-xl-2">
-            <div class="card text-bg-danger h-100">
-                <div class="card-body py-3">
-                    <div class="fs-2 fw-bold">@s.PendingFaults</div>
-                    <div class="small">待处理故障</div>
                 </div>
             </div>
         </div>

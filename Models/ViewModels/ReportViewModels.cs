@@ -4,14 +4,13 @@ public record MonthlyCountDto(string Month, int Count, decimal Revenue);
 
 public class DashboardStatsDto
 {
+    public int EquipmentTotal         { get; set; }
     public int EquipmentPendingReview { get; set; }
     public int EquipmentIdle          { get; set; }
     public int EquipmentInUse         { get; set; }
     public int EquipmentMaintenance   { get; set; }
     public int EquipmentScrapped      { get; set; }
     public int ActiveOrders           { get; set; }
-    public int ThisMonthOrders        { get; set; }
-    public int PendingFaults          { get; set; }
     public List<MonthlyCountDto> MonthlyTrend { get; set; } = [];
 }
 

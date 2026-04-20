@@ -96,9 +96,6 @@
                     @if (User.IsInRole(Roles.Admin) || User.IsInRole(Roles.DeviceAdmin))
                     {
                         <li class="nav-item">
-                            <a class="nav-link text-white" asp-controller="Equipment" asp-action="Create">设备入库</a>
-                        </li>
-                        <li class="nav-item">
                             <a class="nav-link text-white" asp-controller="Audit" asp-action="Index">资质审核</a>
                         </li>
                     }
@@ -193,13 +190,13 @@
                         <span class="section-label text-secondary text-uppercase d-block">统计报表</span>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link text-white" asp-controller="Report" asp-action="Rental">租赁统计</a>
+                        <a class="nav-link text-white" asp-controller="Report" asp-action="Utilization">数据看板</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link text-white" asp-controller="Report" asp-action="Utilization">利用率</a>
+                        <a class="nav-link text-white" asp-controller="Report" asp-action="Rental">租赁报表</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link text-white" asp-controller="Report" asp-action="Safety">安全记录</a>
+                        <a class="nav-link text-white" asp-controller="Report" asp-action="Safety">安全统计</a>
                     </li>
 
                     <!-- 系统管理 -->

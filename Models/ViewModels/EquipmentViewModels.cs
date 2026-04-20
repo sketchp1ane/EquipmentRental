@@ -4,48 +4,6 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace EquipmentRental.Models.ViewModels;
 
-// ── Category ViewModels ───────────────────────────────────────────────────────
-
-public class CategoryListItemViewModel
-{
-    public int Id { get; set; }
-    public string Name { get; set; } = string.Empty;
-    public string? ParentName { get; set; }
-    public int Level { get; set; }
-    public int SortOrder { get; set; }
-    public bool HasChildren { get; set; }
-    public bool HasEquipments { get; set; }
-}
-
-public class CategoryListViewModel
-{
-    public IList<CategoryListItemViewModel> Items { get; set; } = [];
-    public CategoryFormViewModel Form { get; set; } = new();
-}
-
-public class CategoryFormViewModel
-{
-    public int Id { get; set; }   // 0 = create, >0 = edit
-
-    [Required(ErrorMessage = "请输入分类名称")]
-    [StringLength(50, ErrorMessage = "名称不能超过50个字符")]
-    [Display(Name = "分类名称")]
-    public string Name { get; set; } = string.Empty;
-
-    [Display(Name = "上级分类")]
-    public int? ParentId { get; set; }
-
-    [Required(ErrorMessage = "请输入层级")]
-    [Range(1, 5, ErrorMessage = "层级范围1-5")]
-    [Display(Name = "层级")]
-    public int Level { get; set; } = 1;
-
-    [Display(Name = "排序")]
-    public int SortOrder { get; set; } = 0;
-
-    public IList<SelectListItem> ParentOptions { get; set; } = [];
-}
-
 // ── Equipment List ViewModels ─────────────────────────────────────────────────
 
 public class EquipmentListViewModel

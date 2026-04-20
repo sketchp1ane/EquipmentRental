@@ -67,36 +67,6 @@ public class EquipmentService(
 
     // ── Category Methods ──────────────────────────────────────────────────────
 
-    public async Task<IList<CategoryListItemViewModel>> GetCategoryListAsync()
-    {
-        var all = await db.EquipmentCategories
-            .OrderBy(c => c.Level)
-            .ThenBy(c => c.SortOrder)
-            .ThenBy(c => c.Name)
-            .ToListAsync();
-
-        var nameMap = all.ToDictionary(c => c.Id, c => c.Name);
-
-        // Batch check which categories have equipment (avoid N+1)
-        var categoriesWithEquipment = await db.Equipments
-            .GroupBy(e => e.CategoryId)
-            .Select(g => g.Key)
-            .ToHashSetAsync();
-
-        return all.Select(c => new CategoryListItemViewModel
-        {
-            Id           = c.Id,
-            Name         = c.Name,
-            ParentName   = c.ParentId.HasValue
-                               ? nameMap.GetValueOrDefault(c.ParentId.Value)
-                               : null,
-            Level        = c.Level,
-            SortOrder    = c.SortOrder,
-            HasChildren  = all.Any(x => x.ParentId == c.Id),
-            HasEquipments = categoriesWithEquipment.Contains(c.Id)
-        }).ToList();
-    }
-
     public async Task<IList<SelectListItem>> GetCategorySelectListAsync()
     {
         var all = await db.EquipmentCategories
@@ -132,85 +102,6 @@ public class EquipmentService(
             }
         }
         return items;
-    }
-
-    public async Task<CategoryFormViewModel?> GetCategoryForEditAsync(int id)
-    {
-        var category = await db.EquipmentCategories.FindAsync(id);
-        if (category == null) return null;
-
-        return new CategoryFormViewModel
-        {
-            Id            = category.Id,
-            Name          = category.Name,
-            ParentId      = category.ParentId,
-            Level         = category.Level,
-            SortOrder     = category.SortOrder,
-            ParentOptions = await GetCategorySelectListAsync()
-        };
-    }
-
-    public async Task<(bool Success, string? Error)> CreateCategoryAsync(
-        CategoryFormViewModel vm, string actorUserId)
-    {
-        var category = new EquipmentCategory
-        {
-            Name      = vm.Name,
-            ParentId  = vm.ParentId,
-            Level     = vm.Level,
-            SortOrder = vm.SortOrder
-        };
-
-        db.EquipmentCategories.Add(category);
-        await db.SaveChangesAsync();
-
-        await WriteOperationLogAsync(actorUserId, "CreateCategory",
-            category.Id.ToString(), $"Name={vm.Name}");
-
-        return (true, null);
-    }
-
-    public async Task<(bool Success, string? Error)> UpdateCategoryAsync(
-        CategoryFormViewModel vm, string actorUserId)
-    {
-        var category = await db.EquipmentCategories.FindAsync(vm.Id);
-        if (category == null) return (false, "分类不存在");
-
-        // Prevent setting parent to self
-        if (vm.ParentId == vm.Id)
-            return (false, "不能将自身设为上级分类");
-
-        category.Name      = vm.Name;
-        category.ParentId  = vm.ParentId;
-        category.Level     = vm.Level;
-        category.SortOrder = vm.SortOrder;
-
-        await db.SaveChangesAsync();
-        await WriteOperationLogAsync(actorUserId, "UpdateCategory",
-            category.Id.ToString(), $"Name={vm.Name}");
-
-        return (true, null);
-    }
-
-    public async Task<(bool Success, string? Error)> DeleteCategoryAsync(
-        int id, string actorUserId)
-    {
-        var hasChildren = await db.EquipmentCategories.AnyAsync(c => c.ParentId == id);
-        if (hasChildren) return (false, "该分类下存在子分类，无法删除");
-
-        var hasEquipments = await db.Equipments.AnyAsync(e => e.CategoryId == id);
-        if (hasEquipments) return (false, "该分类下存在设备，无法删除");
-
-        var category = await db.EquipmentCategories.FindAsync(id);
-        if (category == null) return (false, "分类不存在");
-
-        db.EquipmentCategories.Remove(category);
-        await db.SaveChangesAsync();
-
-        await WriteOperationLogAsync(actorUserId, "DeleteCategory",
-            id.ToString(), $"Name={category.Name}");
-
-        return (true, null);
     }
 
     // ── Equipment List ────────────────────────────────────────────────────────

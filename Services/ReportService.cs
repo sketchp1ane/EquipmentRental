@@ -45,9 +45,7 @@ public class ReportService(AppDbContext db, IHttpContextAccessor httpContextAcce
         var now        = DateTime.UtcNow;
         var monthStart = new DateTime(now.Year, now.Month, 1, 0, 0, 0, DateTimeKind.Utc);
 
-        var activeOrders    = await _db.DispatchOrders.CountAsync(o => o.Status == DispatchOrderStatus.InProgress);
-        var thisMonthOrders = await _db.DispatchOrders.CountAsync(o => o.CreatedAt >= monthStart);
-        var pendingFaults   = await _db.FaultReports.CountAsync(f => f.Status != FaultStatus.Closed);
+        var activeOrders = await _db.DispatchOrders.CountAsync(o => o.Status == DispatchOrderStatus.InProgress);
 
         // Last 6 months trend (query raw then group in-memory)
         var sixMonthsAgo = monthStart.AddMonths(-5);
@@ -69,14 +67,13 @@ public class ReportService(AppDbContext db, IHttpContextAccessor httpContextAcce
 
         return new DashboardStatsDto
         {
+            EquipmentTotal         = statusCounts.Sum(x => x.Count),
             EquipmentPendingReview = GetCount(EquipmentStatus.PendingReview),
             EquipmentIdle          = GetCount(EquipmentStatus.Idle),
             EquipmentInUse         = GetCount(EquipmentStatus.InUse),
             EquipmentMaintenance   = GetCount(EquipmentStatus.Maintenance),
             EquipmentScrapped      = GetCount(EquipmentStatus.Scrapped),
             ActiveOrders           = activeOrders,
-            ThisMonthOrders        = thisMonthOrders,
-            PendingFaults          = pendingFaults,
             MonthlyTrend           = trend
         };
     }
