@@ -45,7 +45,7 @@ public class AuditController(
 
         if (form.Action == AuditAction.Reject && string.IsNullOrWhiteSpace(form.Remark))
         {
-            ModelState.AddModelError(nameof(form.Remark), "驳回时必须填写原因");
+            ModelState.AddModelError("Form.Remark", "驳回时必须填写原因");
             var detail = await auditService.GetDetailAsync(form.EquipmentId);
             if (detail == null) return NotFound();
             detail.Form = form;

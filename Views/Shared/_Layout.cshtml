@@ -18,6 +18,12 @@
 </head>
 <body class="d-flex flex-column vh-100">
 
+    <!-- Libraries loaded early so inline <script> blocks inside views can reference them -->
+    <script src="~/lib/jquery/jquery.min.js" asp-append-version="true"></script>
+    <script src="~/lib/bootstrap/js/bootstrap.bundle.min.js" asp-append-version="true"></script>
+    <script src="~/lib/chartjs/chart.umd.min.js" asp-append-version="true"></script>
+    <script src="~/lib/summernote/summernote-bs5.min.js" asp-append-version="true"></script>
+
     <!-- Top Navbar -->
     <nav class="navbar navbar-dark bg-dark flex-shrink-0 px-3 py-2">
         <a class="navbar-brand fw-semibold" href="/">&#128295; 租赁设备管理平台</a>
@@ -235,10 +241,6 @@
 
     </div>
 
-    <script src="~/lib/jquery/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/js/bootstrap.bundle.min.js"></script>
-    <script src="~/lib/chartjs/chart.umd.min.js"></script>
-    <script src="~/lib/summernote/summernote-bs5.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     @if (User.Identity?.IsAuthenticated == true)
     {

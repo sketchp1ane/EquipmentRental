@@ -108,6 +108,12 @@
                 {
                     case DispatchOrderStatus.Unsigned:
                         <span class="badge bg-warning text-dark fs-6 px-3 py-2">待签署</span>
+                        @if (Model.ContractId.HasValue)
+                        {
+                            <div class="alert alert-warning small mt-3 mb-0 py-2">
+                                请进入<a asp-controller="Contract" asp-action="Details" asp-route-id="@Model.ContractId" class="alert-link">合同详情</a>上传签署扫描件以完成签约。
+                            </div>
+                        }
                         break;
                     case DispatchOrderStatus.Signed:
                         <span class="badge bg-info fs-6 px-3 py-2">已签署</span>

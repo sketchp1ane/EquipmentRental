@@ -197,9 +197,13 @@ public class ReturnService(
         if (vm.NewEquipmentStatus is not (EquipmentStatus.Idle or EquipmentStatus.Maintenance or EquipmentStatus.Scrapped))
             return (false, "请选择有效的退场后设备状态");
 
-        // Server-side refund calculation — never trust client value
+        if (vm.Deduction < 0)
+            return (false, "扣款金额不能为负数");
+
+        if (vm.Deduction > app.Order.Deposit)
+            return (false, $"扣款金额不能超过押金金额 ¥{app.Order.Deposit:N2}");
+
         decimal refundAmount = app.Order.Deposit - vm.Deduction;
-        if (refundAmount < 0) refundAmount = 0;
 
         var evaluation = new ReturnEvaluation
         {
