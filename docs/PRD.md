@@ -52,7 +52,6 @@
 | 使用监管与故障上报 | |
 | 退场评价与押金结算 | |
 | 用户与权限管理 | |
-| 统计报表与数据看板 | |
 
 ---
 
@@ -83,7 +82,6 @@
 | 故障上报 | CRUD | CRU | R | R | CRUD | R |
 | 退场申请 | CRUD | R | R | CR | R | R |
 | 退场评价 | CRUD | CRU | R | R | R | R |
-| 统计报表 | CRUD | R | R | R | R | R |
 
 ---
 
@@ -274,24 +272,13 @@
 
 ---
 
-### 4.9 统计报表与数据看板
+### 4.9 首页看板
 
-#### 4.9.1 首页看板（所有已登录用户可见，内容按角色过滤）
+所有已登录用户可见，内容按角色过滤：
 - 设备总数 / 出租中 / 空闲 / 维修中 / 待审核 的数量卡片。
-- 近 30 天新增租赁笔数折线图。
+- 近 6 个月新增租赁笔数折线图。
 - 即将到期证件预警列表（≤30 天）。
 - 待处理事项入口（待审核设备、待处理故障、待签署合同等）。
-
-#### 4.9.2 租赁统计报表
-- 按时间段、设备类型、项目统计出租频次、出租天数、租金收入。
-- 支持导出 Excel。
-
-#### 4.9.3 设备利用率报表
-- 各设备在指定时间段内的出租天数 / 可用天数 = 利用率，以表格+柱状图展示。
-
-#### 4.9.4 安全记录报表
-- 指定时间段内故障上报次数、严重程度分布饼图。
-- 安全交底完成率统计。
 
 ---
 
@@ -366,8 +353,7 @@ EquipmentRental/
 │   ├── InspectionController.cs
 │   ├── SafetyController.cs
 │   ├── FaultController.cs
-│   ├── ReturnController.cs
-│   └── ReportController.cs
+│   └── ReturnController.cs
 ├── Models/               # 实体模型 & ViewModel
 │   ├── Entities/         # EF Core 实体
 │   └── ViewModels/       # 视图专用 DTO
@@ -475,9 +461,6 @@ SQL Server 2022（Docker：mcr.microsoft.com/mssql/server:2022-latest）
 | `/Return/Apply?orderId={id}` | Return/Apply | 项目负责人 | 退场申请 |
 | `/Return/Evaluate/{id}` | Return/Evaluate | 设备管理员 | 退场评价 |
 | `/Return/Details/{id}` | Return/Details | 相关方 | 退场详情 |
-| `/Report/Rental` | Report/Rental | 已登录 | 租赁统计报表 |
-| `/Report/Utilization` | Report/Utilization | 已登录 | 设备利用率 / 数据看板 |
-| `/Report/Safety` | Report/Safety | 已登录 | 安全统计 |
 | `/Notification/Recent` | Notification/Recent | 已登录 | 最近未读消息 JSON（铃铛） |
 | `/Notification/MarkAllRead` | Notification/MarkAllRead | 已登录 | 一键全标已读 |
 | `/Files/{id}` | Files/Download | 已登录（鉴权下发） | Uploads/ 下的附件流式下发 |
@@ -486,7 +469,7 @@ SQL Server 2022（Docker：mcr.microsoft.com/mssql/server:2022-latest）
 
 ## 9. 约束与边界
 
-1. **开发周期**：本项目为本科毕业设计，实际开发周期约 3–4 个月，功能优先级以核心业务流程（入库→调度→核验→交底→评价）为最高优先级，报表和统计次之。
+1. **开发周期**：本项目为本科毕业设计，实际开发周期约 3–4 个月，功能优先级以核心业务流程（入库→调度→核验→交底→评价）为最高优先级。
 2. **团队规模**：单人开发，不引入微服务或分布式架构。
 3. **数据量假设**：设备数量 ≤ 1000 条，用户数 ≤ 100 人，不需要考虑大数据量优化（如分库分表）。
 4. **电子签章**：本期不集成第三方 CA 电子签章，"签署"仅为系统内账号操作的记录留存，不具备法律效力。
@@ -512,7 +495,6 @@ SQL Server 2022（Docker：mcr.microsoft.com/mssql/server:2022-latest）
 | F-09 | 故障上报 | 提交后设备状态自动变更，设备管理员收到站内通知 |
 | F-10 | 退场评价 | 提交评价后押金退还金额正确计算，设备状态更新；扣款 > 押金或 < 0 时必须返回可见错误，不可写入 DB |
 | F-11 | 权限隔离 | 无权限角色访问受保护页面返回 403 |
-| F-12 | 报表导出 | 租赁统计可导出 Excel，数据与页面一致 |
 
 ### 10.2 安全性验收
 

@@ -18,7 +18,6 @@ EquipmentRental/
 │   ├── InspectionController.cs     # 日常巡检
 │   ├── FaultController.cs          # 故障上报
 │   ├── ReturnController.cs         # 退场评价
-│   ├── ReportController.cs         # 统计报表
 │   ├── NotificationController.cs   # 铃铛未读 / 全标已读
 │   ├── FilesController.cs          # Uploads/ 鉴权下发
 │   └── HomeController.cs           # 首页看板
@@ -32,7 +31,6 @@ EquipmentRental/
 │   ├── InspectionService.cs
 │   ├── FaultService.cs
 │   ├── ReturnService.cs
-│   ├── ReportService.cs
 │   ├── DashboardService.cs         # 首页看板聚合 / 角色待办分支
 │   ├── UserService.cs              # 用户管理
 │   ├── NotificationService.cs      # 站内消息
@@ -63,7 +61,6 @@ EquipmentRental/
 │   ├── Inspection/
 │   ├── Fault/
 │   ├── Return/
-│   ├── Report/
 │   └── Users/
 ├── wwwroot/
 │   ├── css/

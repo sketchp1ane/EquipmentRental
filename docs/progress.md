@@ -95,12 +95,14 @@
 
 ---
 
-## 9. 统计报表
+## 9. 首页看板
 
-- [x] 首页看板（数量卡片 + 折线图）
-- [x] 租赁统计报表（含导出 Excel）
-- [x] 设备利用率报表（柱状图）
-- [x] 安全记录报表（饼图）
+- [x] 数量卡片（设备总数 / 出租中 / 空闲 / 维修中 / 待审核）
+- [x] 近 6 个月新增租赁趋势折线图（Chart.js）
+- [x] 证件到期预警列表
+- [x] 角色待办事项入口（DashboardService）
+
+> **备注（2026-04-20）**：原独立「统计报表」模块（`/Report/Rental`、`/Report/Utilization`、`/Report/Safety` 三页 + Excel 导出）已下线。`ReportService` 一并删除；首页看板聚合逻辑迁入 `DashboardService.GetDashboardStatsAsync()`。
 
 ---
 

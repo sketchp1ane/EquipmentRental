@@ -140,26 +140,6 @@
         </li>
     }
 
-    <!-- 统计报表 -->
-    <li class="nav-item mt-2">
-        <span class="section-label text-secondary text-uppercase d-block">统计报表</span>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link text-white" asp-controller="Report" asp-action="Utilization">
-            <i class="bi bi-graph-up"></i><span>数据看板</span>
-        </a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link text-white" asp-controller="Report" asp-action="Rental">
-            <i class="bi bi-cash-coin"></i><span>租赁报表</span>
-        </a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link text-white" asp-controller="Report" asp-action="Safety">
-            <i class="bi bi-shield-fill-check"></i><span>安全统计</span>
-        </a>
-    </li>
-
     <!-- 系统管理 -->
     @if (User.IsInRole(Roles.Admin) || User.IsInRole(Roles.Auditor))
     {

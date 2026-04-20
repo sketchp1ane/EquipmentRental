@@ -55,7 +55,7 @@ dotnet watch run   # 开发时推荐，文件变更自动重载
 
 ## 业务 Service 清单（Program.cs 已注册）
 
-`EquipmentService` / `QualificationService` / `AuditService` / `DispatchService` / `VerificationService` / `SafetyService` / `InspectionService` / `FaultService` / `ReturnService` / `ReportService` / `NotificationService` / `DashboardService` / `FileService` / `UserService`
+`EquipmentService` / `QualificationService` / `AuditService` / `DispatchService` / `VerificationService` / `SafetyService` / `InspectionService` / `FaultService` / `ReturnService` / `NotificationService` / `DashboardService` / `FileService` / `UserService`
 
 合同相关逻辑现由 `DispatchService` 承担（Controller 中的 `ContractController` 负责生成 / 预览 / PDF / 扫描件上传）。
 

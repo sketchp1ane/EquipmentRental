@@ -10,7 +10,6 @@ namespace EquipmentRental.Controllers;
 [Authorize]
 public class HomeController(
     QualificationService qualificationService,
-    ReportService reportService,
     DashboardService dashboardService) : Controller
 {
     public async Task<IActionResult> Index()
@@ -18,7 +17,7 @@ public class HomeController(
         var vm = new HomeIndexViewModel
         {
             ExpiringCerts  = await qualificationService.GetExpiringAsync(30),
-            Stats          = await reportService.GetDashboardStatsAsync(),
+            Stats          = await dashboardService.GetDashboardStatsAsync(),
             PendingActions = await dashboardService.GetPendingActionsAsync(User)
         };
         return View(vm);
