@@ -271,12 +271,36 @@ public class ReturnService(
             })
             .ToListAsync();
 
+        var availableOrdersQuery = db.DispatchOrders
+            .Where(o => o.Status == DispatchOrderStatus.InProgress
+                     && !db.ReturnApplications.Any(r => r.OrderId == o.Id));
+
+        if (restrictToUserId != null)
+        {
+            availableOrdersQuery = availableOrdersQuery
+                .Where(o => o.Request.RequesterId == restrictToUserId);
+        }
+
+        var availableOrders = await availableOrdersQuery
+            .Include(o => o.Request)
+            .Include(o => o.Equipment)
+            .OrderByDescending(o => o.CreatedAt)
+            .Select(o => new InProgressOrderOptionViewModel
+            {
+                OrderId       = o.Id,
+                ProjectName   = o.Request.ProjectName,
+                EquipmentNo   = o.Equipment.EquipmentNo,
+                EquipmentName = o.Equipment.Name
+            })
+            .ToListAsync();
+
         return new ReturnListViewModel
         {
-            Items      = items,
-            TotalCount = total,
-            Page       = page,
-            PageSize   = pageSize
+            Items           = items,
+            TotalCount      = total,
+            Page            = page,
+            PageSize        = pageSize,
+            AvailableOrders = availableOrders
         };
     }
 }

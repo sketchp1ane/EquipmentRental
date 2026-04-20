@@ -10,6 +10,7 @@ public class ReturnListViewModel
     public int Page { get; set; }
     public int PageSize { get; set; }
     public int TotalPages => (int)Math.Ceiling((double)TotalCount / PageSize);
+    public IList<InProgressOrderOptionViewModel> AvailableOrders { get; set; } = [];
 }
 
 public class ReturnListItemViewModel
