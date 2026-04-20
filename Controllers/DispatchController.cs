@@ -62,7 +62,25 @@ public class DispatchController(
         return View(vm);
     }
 
-    // ── 调度排期（调度员）────────────────────────────────────────────────────
+    // ── 调度单列表（所有相关角色）────────────────────────────────────────────
+
+    [Authorize(Roles = $"{Roles.Dispatcher},{Roles.Admin},{Roles.ProjectLead},{Roles.Auditor}")]
+    [HttpGet]
+    public async Task<IActionResult> Orders(DispatchOrderStatus? status, string? keyword, int page = 1)
+    {
+        // 项目负责人只看自己提交的申请衍生的调度单
+        var restrictToRequesterId = User.IsInRole(Roles.ProjectLead)
+            && !User.IsInRole(Roles.Admin)
+            && !User.IsInRole(Roles.Dispatcher)
+            && !User.IsInRole(Roles.Auditor)
+            ? CurrentUserId
+            : null;
+
+        var vm = await dispatchService.GetOrderListAsync(status, keyword, restrictToRequesterId, page);
+        return View(vm);
+    }
+
+    // ── 调度排期(调度员)────────────────────────────────────────────────────
 
     [Authorize(Roles = $"{Roles.Dispatcher},{Roles.Admin}")]
     [HttpGet]

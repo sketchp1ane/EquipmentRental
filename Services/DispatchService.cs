@@ -171,6 +171,75 @@ public class DispatchService(
         };
     }
 
+    // ── 4.2b 调度单列表 ───────────────────────────────────────────────────────
+
+    public async Task<DispatchOrderListViewModel> GetOrderListAsync(
+        DispatchOrderStatus? statusFilter,
+        string? keyword,
+        string? restrictToRequesterId,
+        int page,
+        int pageSize = 15)
+    {
+        var query = db.DispatchOrders
+            .Include(o => o.Request)
+            .Include(o => o.Equipment)
+            .Include(o => o.Dispatcher)
+            .Include(o => o.Contract)
+            .AsQueryable();
+
+        if (statusFilter.HasValue)
+            query = query.Where(o => o.Status == statusFilter.Value);
+
+        if (!string.IsNullOrWhiteSpace(restrictToRequesterId))
+            query = query.Where(o => o.Request.RequesterId == restrictToRequesterId);
+
+        if (!string.IsNullOrWhiteSpace(keyword))
+        {
+            var kw = keyword.Trim();
+            query = query.Where(o =>
+                o.Request.ProjectName.Contains(kw)
+                || o.Equipment.EquipmentNo.Contains(kw)
+                || o.Equipment.Name.Contains(kw)
+                || (o.Contract != null && o.Contract.ContractNo.Contains(kw)));
+        }
+
+        var totalCount = await query.CountAsync();
+        var totalPages = (int)Math.Ceiling(totalCount / (double)pageSize);
+        page = Math.Max(1, Math.Min(page, Math.Max(1, totalPages)));
+
+        var orders = await query
+            .OrderByDescending(o => o.CreatedAt)
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync();
+
+        var items = orders.Select(o => new DispatchOrderListItemViewModel
+        {
+            Id             = o.Id,
+            ProjectName    = o.Request.ProjectName,
+            EquipmentNo    = o.Equipment.EquipmentNo,
+            EquipmentName  = o.Equipment.Name,
+            ActualStart    = o.ActualStart,
+            ActualEnd      = o.ActualEnd,
+            UnitPrice      = o.UnitPrice,
+            Status         = o.Status,
+            ContractNo     = o.Contract?.ContractNo,
+            ContractStatus = o.Contract?.Status,
+            DispatcherName = o.Dispatcher.RealName,
+            CreatedAt      = o.CreatedAt
+        }).ToList();
+
+        return new DispatchOrderListViewModel
+        {
+            Items        = items,
+            StatusFilter = statusFilter,
+            Keyword      = keyword,
+            Page         = page,
+            TotalPages   = totalPages,
+            TotalCount   = totalCount
+        };
+    }
+
     // ── 4.3 调度排期 ─────────────────────────────────────────────────────────
 
     /// <summary>

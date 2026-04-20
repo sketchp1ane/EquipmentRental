@@ -115,6 +115,33 @@ public class CreateOrderViewModel
     public IList<AvailableEquipmentViewModel> AvailableEquipments { get; set; } = [];
 }
 
+// ── 调度单列表 ────────────────────────────────────────────────────────────────
+public class DispatchOrderListViewModel
+{
+    public IList<DispatchOrderListItemViewModel> Items { get; set; } = [];
+    public DispatchOrderStatus? StatusFilter { get; set; }
+    public string? Keyword { get; set; }
+    public int Page { get; set; } = 1;
+    public int TotalPages { get; set; }
+    public int TotalCount { get; set; }
+}
+
+public class DispatchOrderListItemViewModel
+{
+    public int Id { get; set; }
+    public string ProjectName { get; set; } = string.Empty;
+    public string EquipmentNo { get; set; } = string.Empty;
+    public string EquipmentName { get; set; } = string.Empty;
+    public DateOnly ActualStart { get; set; }
+    public DateOnly ActualEnd { get; set; }
+    public decimal UnitPrice { get; set; }
+    public DispatchOrderStatus Status { get; set; }
+    public string? ContractNo { get; set; }
+    public ContractStatus? ContractStatus { get; set; }
+    public string DispatcherName { get; set; } = string.Empty;
+    public DateTime CreatedAt { get; set; }
+}
+
 // ── 调度单详情 ────────────────────────────────────────────────────────────────
 public class OrderDetailViewModel
 {
