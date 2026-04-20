@@ -176,3 +176,12 @@ public class CalendarPageViewModel
     public DateOnly RangeStart { get; set; }
     public DateOnly RangeEnd { get; set; }
 }
+
+// ── 进行中调度单选项（供巡检/故障/退场下拉使用）────────────────────────────────
+public class InProgressOrderOptionViewModel
+{
+    public int OrderId { get; set; }
+    public string ProjectName { get; set; } = string.Empty;
+    public string EquipmentNo { get; set; } = string.Empty;
+    public string EquipmentName { get; set; } = string.Empty;
+}

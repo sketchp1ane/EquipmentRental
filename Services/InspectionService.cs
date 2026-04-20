@@ -165,12 +165,27 @@ public class InspectionService(
             })
             .ToListAsync();
 
+        var availableOrders = await db.DispatchOrders
+            .Where(o => o.Status == DispatchOrderStatus.InProgress)
+            .Include(o => o.Request)
+            .Include(o => o.Equipment)
+            .OrderByDescending(o => o.CreatedAt)
+            .Select(o => new InProgressOrderOptionViewModel
+            {
+                OrderId       = o.Id,
+                ProjectName   = o.Request.ProjectName,
+                EquipmentNo   = o.Equipment.EquipmentNo,
+                EquipmentName = o.Equipment.Name
+            })
+            .ToListAsync();
+
         return new InspectionListViewModel
         {
-            Items      = items,
-            TotalCount = total,
-            Page       = page,
-            PageSize   = pageSize
+            Items           = items,
+            TotalCount      = total,
+            Page            = page,
+            PageSize        = pageSize,
+            AvailableOrders = availableOrders
         };
     }
 }
