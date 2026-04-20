@@ -111,6 +111,24 @@ public static class Roles
 
 **验证要求**：UI 任务完成后必须测试黄金路径 + 关键边界，截图作为完成证明，发现 JS 错误需立即排查。
 
+## Git 提交规范（durable instruction — 覆盖默认行为）
+
+完成任务后**自动创建 git commit**，无需等待用户确认。适用于本仓库的所有工作。
+
+**流程**：
+1. 任务完成（代码改动 / 文档更新 / 配置调整均算）后立即进入提交流程
+2. 并行执行 `git status` / `git diff` / `git log -5` 了解改动与历史风格
+3. 用 HEREDOC 写 commit message（聚焦 **why**，1–2 句），末尾保留 `Co-Authored-By: Claude Opus 4.7 <noreply@anthropic.com>` trailer
+4. 只 `git add` 与本次任务相关的文件，**禁止** `git add -A` / `git add .`（避免误提交 `.env`、临时截图、未追踪的调试产物）
+5. 提交后 `git status` 确认干净
+6. **不要** `git push`（推送仍需用户显式要求）
+
+**例外情况（跳过自动提交）**：
+- 纯探索性问答 / 代码阅读 / 无文件改动
+- pre-commit hook 失败 → 修复后创建**新** commit，不要 `--amend`
+- 改动含疑似机密文件（`.env`、密钥、凭证）→ 先询问用户
+- 用户在当次任务中明确说"先不要提交"
+
 ## 参考文档（`docs/` 目录）
 
 - `docs/PRD.md` — 完整功能需求、角色权限矩阵、业务流程

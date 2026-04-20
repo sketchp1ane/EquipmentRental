@@ -55,11 +55,18 @@ dotnet watch run
 
 ## 默认账号
 
+首次启动会自动写入管理员账号 + 5 个演示角色账号，并预置 3 条完整业务链路的演示数据。
+
 | 账号 | 密码 | 角色 |
 |---|---|---|
 | admin@equiprental.com | Admin@123456 | 系统管理员 |
+| demo.deviceadmin@equiprental.com | Demo@123456 | 设备管理员 |
+| demo.dispatcher@equiprental.com | Demo@123456 | 调度员 |
+| demo.projectlead@equiprental.com | Demo@123456 | 项目负责人 |
+| demo.safetyofficer@equiprental.com | Demo@123456 | 安全员 |
+| demo.auditor@equiprental.com | Demo@123456 | 只读审计员 |
 
-登录后可在"用户管理"页面创建其他角色账号。
+登录后可在"用户管理"页面创建或调整其他账号。详细演示脚本见 [docs/demo-guide.md](docs/demo-guide.md)。
 
 ## 目录结构
 
@@ -81,6 +88,7 @@ EquipmentRental/
 
 | 文档 | 说明 |
 |---|---|
+| [CLAUDE.md](CLAUDE.md) | 面向 Claude Code 的项目上下文（技术栈、分层规则、安全约定） |
 | [docs/PRD.md](docs/PRD.md) | 产品需求文档（功能需求、角色权限矩阵） |
 | [docs/database.md](docs/database.md) | 数据库表结构与字段说明 |
 | [docs/architecture.md](docs/architecture.md) | 系统架构与分层职责 |
@@ -88,13 +96,15 @@ EquipmentRental/
 | [docs/user-guide.md](docs/user-guide.md) | 用户操作手册（按角色） |
 | [docs/demo-guide.md](docs/demo-guide.md) | 演示脚本（按模块流程） |
 | [docs/progress.md](docs/progress.md) | 开发进度 |
+| [docs/qa/](docs/qa/) | 端到端回归记录（如 `e2e-run-20260420.md`） |
 
 ## 技术栈
 
-- **后端**：C# / .NET 10 / ASP.NET Core MVC / EF Core 10
-- **数据库**：SQL Server 2022
-- **前端**：Bootstrap 5 / jQuery 3 / Chart.js 4 / Summernote
-- **认证**：ASP.NET Core Identity（RBAC，6 个角色）
-- **PDF 导出**：QuestPDF
-- **Excel 导出**：EPPlus 6
-- **安全**：HtmlSanitizer / CSRF Token / 文件类型白名单
+- **后端**：C# 13 / .NET 10 / ASP.NET Core MVC / EF Core 10
+- **数据库**：SQL Server 2022（Docker）
+- **前端**：Bootstrap 5 / jQuery 3 / Chart.js 4 / Summernote / Bootstrap Icons
+- **认证**：ASP.NET Core Identity（RBAC，6 个角色）+ BCrypt 密码哈希（workFactor=12）
+- **PDF 导出**：QuestPDF（合同、安全交底）
+- **Excel 导出**：EPPlus 6（设备台账导出）
+- **二维码**：QRCoder（进场核验码）
+- **安全**：全局 CSRF / HtmlSanitizer 富文本过滤 / 文件类型白名单 + 魔数校验
