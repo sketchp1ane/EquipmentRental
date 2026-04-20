@@ -20,6 +20,7 @@ Uploads/
 
 # Playwright test artifacts
 .playwright-mcp/
+.playwright-cli/
 
 # NuGet
 *.nupkg
