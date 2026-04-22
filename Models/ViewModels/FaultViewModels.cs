@@ -37,6 +37,7 @@ public class FaultDetailViewModel
     public decimal? RepairCost { get; set; }
     public string? ClosedByName { get; set; }
     public DateTime? ClosedAt { get; set; }
+    public string RestoredEquipmentStatusText { get; set; } = string.Empty;
     public IList<FaultImageViewModel> Images { get; set; } = [];
 
     // Status flags (role check done in view with User.IsInRole)

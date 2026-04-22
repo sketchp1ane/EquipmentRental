@@ -12,8 +12,7 @@
 
     <!-- 设备管理 -->
     @if (User.IsInRole(Roles.Admin) || User.IsInRole(Roles.DeviceAdmin) ||
-         User.IsInRole(Roles.Dispatcher) || User.IsInRole(Roles.ProjectLead) ||
-         User.IsInRole(Roles.SafetyOfficer) || User.IsInRole(Roles.Auditor))
+         User.IsInRole(Roles.Auditor))
     {
         <li class="nav-item mt-2">
             <span class="section-label text-secondary text-uppercase d-block">设备管理</span>

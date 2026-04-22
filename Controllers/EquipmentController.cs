@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace EquipmentRental.Controllers;
 
-[Authorize]
+[Authorize(Roles = $"{Roles.Admin},{Roles.DeviceAdmin},{Roles.Auditor}")]
 public class EquipmentController(
     EquipmentService equipmentService,
     UserManager<ApplicationUser> userManager) : Controller

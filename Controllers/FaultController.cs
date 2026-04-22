@@ -99,11 +99,11 @@ public class FaultController(
             return RedirectToAction(nameof(Details), new { id = vm.Id });
         }
 
-        var (success, error) = await faultService.CloseFaultAsync(vm, CurrentUserId);
+        var (success, error, restoredStatusText) = await faultService.CloseFaultAsync(vm, CurrentUserId);
         if (!success)
             TempData["ErrorMessage"] = error;
         else
-            TempData["SuccessMessage"] = "工单已关闭，设备已恢复空闲状态。";
+            TempData["SuccessMessage"] = $"工单已关闭，设备已恢复为{restoredStatusText}状态。";
 
         return RedirectToAction(nameof(Details), new { id = vm.Id });
     }

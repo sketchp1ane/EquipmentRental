@@ -25,7 +25,7 @@
         break;
     case FaultStatus.Closed:
         <div class="alert alert-success py-2 mb-3">
-            <strong>已关闭</strong> — 故障已处理完成，设备已恢复空闲状态。
+            <strong>已关闭</strong> — 故障已处理完成，设备已恢复为@(Model.RestoredEquipmentStatusText)状态。
         </div>
         break;
 }
@@ -159,7 +159,7 @@
                 else if (Model.Status == FaultStatus.Closed)
                 {
                     <div class="text-success fw-semibold">&#10003; 工单已关闭</div>
-                    <div class="text-muted small mt-1">设备已恢复空闲状态。</div>
+                    <div class="text-muted small mt-1">设备已恢复为@(Model.RestoredEquipmentStatusText)状态。</div>
                 }
                 else
                 {

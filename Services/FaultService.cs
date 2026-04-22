@@ -141,19 +141,29 @@ public class FaultService(
 
     // ── 关闭工单 + 恢复设备 ───────────────────────────────────────────────────
 
-    public async Task<(bool Success, string? Error)> CloseFaultAsync(
+    private static string GetEquipmentStatusText(EquipmentStatus status) => status switch
+    {
+        EquipmentStatus.Idle        => "空闲",
+        EquipmentStatus.InUse       => "使用中",
+        EquipmentStatus.Maintenance => "维修中",
+        EquipmentStatus.Scrapped    => "已报废",
+        _                           => "未知"
+    };
+
+    public async Task<(bool Success, string? Error, string RestoredStatusText)> CloseFaultAsync(
         CloseFaultViewModel vm, string operatorId)
     {
         var report = await db.FaultReports
             .Include(fr => fr.Equipment)
+            .Include(fr => fr.Order)
             .Include(fr => fr.Reporter)
             .FirstOrDefaultAsync(fr => fr.Id == vm.Id);
 
         if (report == null)
-            return (false, "故障工单不存在");
+            return (false, "故障工单不存在", string.Empty);
 
         if (report.Status != FaultStatus.InProgress)
-            return (false, "故障工单当前状态不可关闭");
+            return (false, "故障工单当前状态不可关闭", string.Empty);
 
         report.Status     = FaultStatus.Closed;
         report.Resolution = vm.Resolution;
@@ -161,8 +171,12 @@ public class FaultService(
         report.ClosedById = operatorId;
         report.ClosedAt   = DateTime.UtcNow;
 
-        // 设备状态恢复 → 空闲
-        report.Equipment.Status = EquipmentStatus.Idle;
+        // 活跃调度单上的故障关闭后，设备应恢复为使用中；否则恢复为空闲。
+        report.Equipment.Status = report.Order.Status == DispatchOrderStatus.InProgress
+            ? EquipmentStatus.InUse
+            : EquipmentStatus.Idle;
+
+        var restoredStatusText = GetEquipmentStatusText(report.Equipment.Status);
 
         await db.SaveChangesAsync();
 
@@ -173,10 +187,10 @@ public class FaultService(
         await notificationService.SendAsync(
             report.ReporterId,
             "故障工单已关闭",
-            $"您上报的故障（工单 #{report.Id}）已处理完成，设备已恢复空闲状态。",
+            $"您上报的故障（工单 #{report.Id}）已处理完成，设备已恢复为{restoredStatusText}状态。",
             $"/Fault/Details/{report.Id}");
 
-        return (true, null);
+        return (true, null, restoredStatusText);
     }
 
     // ── 详情 ──────────────────────────────────────────────────────────────────
@@ -211,6 +225,7 @@ public class FaultService(
             RepairCost    = report.RepairCost,
             ClosedByName  = report.ClosedBy?.RealName,
             ClosedAt      = report.ClosedAt,
+            RestoredEquipmentStatusText = GetEquipmentStatusText(report.Order.Equipment.Status),
             Images        = report.Images.Select(i => new FaultImageViewModel
             {
                 Id         = i.Id,
