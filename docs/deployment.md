@@ -99,7 +99,7 @@ dotnet run
 dotnet watch run
 ```
 
-默认监听 `http://localhost:5000`，浏览器访问后跳转到登录页。
+开发环境默认监听 `http://localhost:5085`，浏览器访问后跳转到登录页。
 
 ---
 
@@ -130,6 +130,8 @@ dotnet publish -c Release -o ./publish
 在 `Program.cs` 中，生产环境已启用 `UseHttpsRedirection()`。需在服务器（如 Nginx 反向代理 / IIS / Kestrel）上配置 SSL 证书。
 
 Nginx 反向代理示例：
+
+> 下例中的 `http://localhost:5000` 是生产环境 Kestrel 示例端口，不是 `launchSettings.json` 中的开发端口。
 
 ```nginx
 server {

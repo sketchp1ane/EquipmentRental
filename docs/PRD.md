@@ -204,7 +204,7 @@
 - 支持在线预览（HTML 渲染）与 PDF 导出（使用 QuestPDF，纯 .NET 实现，macOS/Linux/Windows 均可运行）。
 - 合同状态：草稿 → 待签署 → 已签署 → 已终止。
 - 本期不实现电子签章，合同签署以"线下签署后上传扫描件"方式完成。
-- **扫描件上传副作用**：`ContractService.UploadScanAsync` 在同一事务中把关联 `DispatchOrder.Status` 从 `Unsigned` 推进为 `Signed`；调度单必须进入 `Signed` 状态才会显示"进场核验码"区块，也才会允许进场核验（见 4.5）。
+- **扫描件上传副作用**：`DispatchService.UploadScanAsync` 在同一事务中把关联 `DispatchOrder.Status` 从 `Unsigned` 推进为 `Signed`；调度单必须进入 `Signed` 状态才会显示"进场核验码"区块，也才会允许进场核验（见 4.5）。
 
 ---
 
@@ -325,10 +325,10 @@
 
 | 层次 | 技术 |
 |---|---|
-| 开发语言 | C# 12 / .NET 8（LTS） |
-| Web 框架 | ASP.NET Core MVC 8 |
-| 视图引擎 | Razor（.cshtml） |
-| ORM | Entity Framework Core 8（Code First） |
+| 开发语言 | C# 13 / .NET 10 |
+| Web 框架 | ASP.NET Core MVC |
+| 视图引擎 | Razor Views（.cshtml） |
+| ORM | EF Core 10（Code First） |
 | 数据库 | SQL Server 2022（Docker 容器，macOS 开发环境） |
 | 前端样式 | Bootstrap 5 |
 | 前端交互 | jQuery 3 + Bootstrap JS |
@@ -336,7 +336,9 @@
 | 富文本编辑 | Summernote |
 | PDF 导出 | QuestPDF（纯 .NET，跨平台，无需系统依赖） |
 | Excel 导出 | EPPlus 6 |
-| 身份认证 | ASP.NET Core Identity |
+| 二维码生成 | QRCoder |
+| 身份认证 | ASP.NET Core Identity + BCrypt 密码哈希 |
+| 富文本过滤 | HtmlSanitizer |
 | 版本控制 | Git / GitHub |
 | 开发工具 | VS Code + C# Dev Kit 扩展（macOS） |
 
@@ -444,9 +446,9 @@ SQL Server 2022（Docker：mcr.microsoft.com/mssql/server:2022-latest）
 | `/Dispatch/Order?requestId={id}` | Dispatch/Order | 调度员 | 生成调度单 |
 | `/Dispatch/OrderDetails/{id}` | Dispatch/OrderDetails | 调度员/项目负责人/审计员 | 调度单详情 |
 | `/Dispatch/Calendar` | Dispatch/Calendar | 调度员 | 调度日历 |
-| `/Contract/{id}` | Contract/Details | 调度员/项目负责人/审计员 | 合同详情 |
-| `/Contract/{id}/Export` | Contract/Export | 调度员 | 导出合同 PDF |
-| `/Contract/{id}/UploadScan` | Contract/UploadScan | 调度员 | 上传签署扫描件（联动订单 Signed） |
+| `/Contract/Details/{id}` | Contract/Details | 调度员/项目负责人/审计员/管理员/设备管理员 | 合同详情 |
+| `/Contract/ExportPdf/{id}` | Contract/ExportPdf | 调度员/项目负责人/审计员/管理员/设备管理员 | 导出合同 PDF |
+| `/Contract/UploadScan` | Contract/UploadScan | 调度员/管理员 | 上传签署扫描件（联动订单 Signed） |
 | `/Verification/Verify` | Verification/Verify | 项目负责人/管理员 | 进场核验操作 |
 | `/Verification/List` | Verification/List | 项目负责人/调度员/审计员/管理员 | 核验记录 |
 | `/Safety/List` | Safety/List | 安全员/项目负责人/审计员 | 安全交底列表 |

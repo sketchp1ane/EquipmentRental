@@ -1,6 +1,6 @@
 # EquipmentRental — 建筑租赁设备管理平台
 
-基于 ASP.NET Core MVC 10 的建筑租赁设备全生命周期管理系统，覆盖设备入库、资质审核、线上调度、进场核验、安全交底、使用监管、退场评价的完整业务链路。
+基于 .NET 10 / ASP.NET Core MVC 的建筑租赁设备全生命周期管理系统，覆盖设备入库、资质审核、线上调度、进场核验、安全交底、使用监管、退场评价的完整业务链路。
 
 ## 环境要求
 
@@ -51,7 +51,7 @@ dotnet run
 dotnet watch run
 ```
 
-默认监听地址：`http://localhost:5000`
+默认监听地址：`http://localhost:5085`
 
 ## 默认账号
 
@@ -88,7 +88,7 @@ EquipmentRental/
 
 | 文档 | 说明 |
 |---|---|
-| [CLAUDE.md](CLAUDE.md) | 面向 Claude Code 的项目上下文（技术栈、分层规则、安全约定） |
+| [AGENTS.md](AGENTS.md) | 面向代理协作的项目上下文（技术栈、分层规则、安全约定） |
 | [docs/PRD.md](docs/PRD.md) | 产品需求文档（功能需求、角色权限矩阵） |
 | [docs/database.md](docs/database.md) | 数据库表结构与字段说明 |
 | [docs/architecture.md](docs/architecture.md) | 系统架构与分层职责 |
@@ -102,7 +102,7 @@ EquipmentRental/
 
 - **后端**：C# 13 / .NET 10 / ASP.NET Core MVC / EF Core 10
 - **数据库**：SQL Server 2022（Docker）
-- **前端**：Bootstrap 5 / jQuery 3 / Chart.js 4 / Summernote / Bootstrap Icons
+- **前端**：Razor Views / Bootstrap 5 / jQuery 3 / Chart.js 4 / Summernote / Bootstrap Icons
 - **认证**：ASP.NET Core Identity（RBAC，6 个角色）+ BCrypt 密码哈希（workFactor=12）
 - **PDF 导出**：QuestPDF（合同、安全交底）
 - **Excel 导出**：EPPlus 6（设备台账导出）

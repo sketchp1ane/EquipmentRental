@@ -6,7 +6,7 @@
 
 ## 0. 基础搭建
 
-- [x] 创建 ASP.NET Core MVC 8 项目
+- [x] 创建 ASP.NET Core MVC 项目（当前目标框架已升级至 .NET 10）
 - [x] 配置 SQL Server 连接串（appsettings.Development.json）
 - [x] 集成 ASP.NET Core Identity
 - [x] 配置 EF Core，创建 AppDbContext

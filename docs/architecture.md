@@ -4,7 +4,7 @@
 
 ```
 EquipmentRental/
-├── CLAUDE.md
+├── AGENTS.md
 ├── Controllers/
 │   ├── AccountController.cs        # 登录/注销/个人信息
 │   ├── UsersController.cs          # 用户管理（管理员）
@@ -34,7 +34,6 @@ EquipmentRental/
 │   ├── DashboardService.cs         # 首页看板聚合 / 角色待办分支
 │   ├── UserService.cs              # 用户管理
 │   ├── NotificationService.cs      # 站内消息
-│   ├── ContractService.cs          # 合同生成 / PDF / 扫描件上传（联动订单 Signed）
 │   └── FileService.cs              # 文件上传/下载（5 层校验 + GUID 重命名）
 ├── Models/
 │   ├── Entities/                   # EF Core 实体（与数据库表一一对应）
@@ -113,7 +112,8 @@ DispatchController
         └── QualificationService（证件有效期校验）
 
 ContractController
-  └── ContractService（扫描件上传时同事务把 DispatchOrder Unsigned → Signed）
+  ├── DispatchService（合同详情 / PDF / 扫描件上传；上传时同事务把 DispatchOrder Unsigned → Signed）
+  └── FileService（合同扫描件上传校验与存储）
 
 VerificationController
   └── VerificationService（只允许 Signed 订单核验 → 核验通过时推进 InProgress + Equipment InUse）

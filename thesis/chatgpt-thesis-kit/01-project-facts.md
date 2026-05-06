@@ -25,7 +25,7 @@
 | ORM | EF Core 10 |
 | 数据库 | SQL Server 2022 |
 | 认证授权 | ASP.NET Core Identity + 角色授权 |
-| 密码哈希 | BCrypt，替换 Identity 默认 PBKDF2 |
+| 密码哈希 | BCrypt，替换 Identity 内置默认哈希实现 |
 | 前端 | Razor Views + Bootstrap 5 + jQuery 3 + Chart.js 4 |
 | PDF 导出 | QuestPDF |
 | Excel 导出 | EPPlus |

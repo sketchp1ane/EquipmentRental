@@ -1,7 +1,7 @@
 # 数据库设计
 
 数据库：SQL Server 2022  
-ORM：EF Core 8，Code First  
+ORM：EF Core 10，Code First  
 命名：表名复数 PascalCase，字段 PascalCase
 
 ---
@@ -39,7 +39,7 @@ OperationLogs（操作人 → Users）
 |---|---|---|---|
 | Id | nvarchar(450) | PK | Identity 默认 |
 | UserName | nvarchar(256) | UNIQUE NOT NULL | 登录名 |
-| PasswordHash | nvarchar(max) | NOT NULL | Identity 默认 PBKDF2，不要手动修改 |
+| PasswordHash | nvarchar(max) | NOT NULL | Identity 密码哈希字段，由 `BCryptPasswordHasher` 生成，不要手动修改 |
 | RealName | nvarchar(50) | NOT NULL | 真实姓名 |
 | PhoneNumber | nvarchar(20) | | 联系电话 |
 | Email | nvarchar(256) | | 邮箱 |

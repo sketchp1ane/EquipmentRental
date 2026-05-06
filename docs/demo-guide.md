@@ -38,7 +38,7 @@ cd /path/to/EquipmentRental
 dotnet run
 ```
 
-浏览器访问 `http://localhost:5000`（或 `https://localhost:5001`）。
+浏览器访问 `http://localhost:5085`（或 `https://localhost:7290`）。
 
 ### 1.2 演示账号速查表
 
@@ -351,7 +351,7 @@ dotnet run
 | SQL 注入防护 | 全程使用 EF Core LINQ，禁止拼接 SQL |
 | 文件上传安全 | 扩展名白名单 + MIME 类型 + 文件魔数校验 + 大小上限 + 存储在 `Uploads/`（非 `wwwroot`）经鉴权下发 |
 | 富文本 XSS 防护 | 入库前经 `HtmlSanitizer` 过滤危险标签 |
-| 密码安全 | BCrypt 哈希存储（workFactor=12），覆盖 Identity 默认 PBKDF2 |
+| 密码安全 | BCrypt 哈希存储（workFactor=12），覆盖 Identity 内置默认哈希实现 |
 | 越权访问防护 | Controller/Action 级 `[Authorize(Roles=...)]` 注解 |
 
 ### 5.2 业务完整性约束
