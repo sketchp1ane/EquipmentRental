@@ -29,7 +29,7 @@
 @if (Model.Status == ReturnApplicationStatus.PendingEvaluation)
 {
     <div class="alert alert-warning py-2 mb-3">
-        <strong>待评价</strong> — 设备管理员尚未完成验收评价。
+        <strong>待评价</strong> — 设备管理员或系统管理员尚未完成验收评价。
     </div>
 }
 else
@@ -130,7 +130,9 @@ else
         <div class="card">
             <div class="card-header fw-semibold">操作</div>
             <div class="card-body">
-                @if (Model.CanEvaluate && User.IsInRole(EquipmentRental.Constants.Roles.DeviceAdmin))
+                @if (Model.CanEvaluate
+                     && (User.IsInRole(EquipmentRental.Constants.Roles.DeviceAdmin)
+                         || User.IsInRole(EquipmentRental.Constants.Roles.Admin)))
                 {
                     <p class="text-muted small mb-3">设备已退场，请完成验收后填写评价并核算押金退还金额。</p>
                     <a asp-action="Evaluate" asp-route-id="@Model.Id"
