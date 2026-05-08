@@ -3,9 +3,10 @@
 ## 来源与边界
 
 - 原始论文初稿：`/Users/sketchplane/Downloads/建筑租赁设备全生命周期管理平台论文初稿 (1).md`
+- 当前修订稿来源：`/Users/sketchplane/Downloads/论文修订版.md`
 - 仓库根目录：`/Users/sketchplane/EquipmentRental`
 - 本工作区：`thesis-writing/`
-- 拆分策略：正文按原文行号无损拆分，原始论文文件不移动、不删除、不修改。
+- 拆分策略：修订稿按一级标题拆分，源论文文件不移动、不删除、不修改。
 - 使用方式：后续 AI 写作、查证、改稿优先在本目录中进行；需要核对系统事实时，回到仓库源码与 `docs/` 文档取证。
 
 ## 项目背景
@@ -49,9 +50,10 @@ EquipmentRental 是一个面向建筑租赁设备全生命周期管理的 ASP.NE
 
 ## 拆分映射
 
-| 工作区文件 | 原文内容 |
+| 工作区文件 | 修订稿内容 |
 |---|---|
-| `01-outline.md` | 原文“目次” |
+| `00-front-matter.md` | 题名、说明、致谢、中英文摘要、关键词与分类号 |
+| `01-outline.md` | “目次”与工作区文件映射 |
 | `chapters/ch1-introduction.md` | 第 1 章 绪论 |
 | `chapters/ch2-technology.md` | 第 2 章 相关技术介绍 |
 | `chapters/ch3-requirements.md` | 第 3 章 系统需求分析 |
