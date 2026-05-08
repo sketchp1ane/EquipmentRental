@@ -7,6 +7,8 @@ using Microsoft.EntityFrameworkCore;
 using OfficeOpenXml;
 using QuestPDF.Infrastructure;
 
+var seedOnly = args.Contains("--seed-only", StringComparer.OrdinalIgnoreCase);
+
 var builder = WebApplication.CreateBuilder(args);
 
 // ── QuestPDF License ──────────────────────────────────────────────────────
@@ -106,6 +108,12 @@ using (var scope = app.Services.CreateScope())
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
     await db.Database.MigrateAsync();
     await DbInitializer.SeedAsync(scope.ServiceProvider);
+}
+
+if (seedOnly)
+{
+    Console.WriteLine("Database migrated and seeded.");
+    return;
 }
 
 await app.RunAsync();

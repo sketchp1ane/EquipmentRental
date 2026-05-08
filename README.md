@@ -53,6 +53,16 @@ dotnet watch run
 
 默认监听地址：`http://localhost:5085`
 
+### 5. 一键复原演示数据库
+
+答辩或演示前可运行：
+
+```bash
+bash scripts/reset-demo-db.sh
+```
+
+脚本会保留 `equiprental-db` 容器，只删除并重建 `EquipmentRentalDb`，随后重新应用迁移和写入演示数据。`Uploads/` 不会被清理，避免误删本地上传文件。
+
 ## 默认账号
 
 首次启动会自动写入管理员账号 + 5 个演示角色账号，并预置 3 条完整业务链路的演示数据。
