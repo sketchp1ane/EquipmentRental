@@ -59,7 +59,7 @@
 ContractController.UploadScan
   -> DispatchService.UploadScanAsync
   -> FileService 校验并保存文件
-  -> 同步更新 Contract.Status 和 DispatchOrder.Status
+  -> 同步更新 Contract.Status、DispatchOrder.Status 和 Equipment.Status
   -> 返回合同详情页
 ```
 

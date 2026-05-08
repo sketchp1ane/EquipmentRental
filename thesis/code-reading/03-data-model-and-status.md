@@ -51,7 +51,7 @@ Notifications, OperationLogs
 | `EquipmentStatus` | `PendingReview`、`Idle`、`InUse`、`Maintenance`、`Scrapped` |
 | `DispatchRequestStatus` | `Pending`、`Scheduled`、`Cancelled` |
 | `DispatchOrderStatus` | `Unsigned`、`Signed`、`InProgress`、`Complete`、`Terminated` |
-| `ContractStatus` | `Draft`、`AwaitingSignature`、`Signed`、`Terminated` |
+| `ContractStatus` | `Draft`、`AwaitingSignature`（枚举保留，当前主流程未写入）、`Signed`、`Terminated` |
 | `SafetyBriefingStatus` | `Draft`、`Completed` |
 | `FaultStatus` | `Pending`、`InProgress`、`Closed` |
 | `ReturnApplicationStatus` | `PendingEvaluation`、`Complete` |
@@ -61,7 +61,7 @@ Notifications, OperationLogs
 ```text
 PendingReview
   -> Idle          审核通过
-  -> InUse         合同扫描件上传/进场核验相关流程
+  -> InUse         合同扫描件上传
   -> Maintenance   故障上报
   -> Idle/InUse    故障关闭后按订单状态恢复
   -> Idle/Maintenance/Scrapped 退场评价时选择后续状态

@@ -19,7 +19,7 @@
 | 设备入库默认状态 | `EquipmentService.CreateEquipmentAsync` |
 | 审核通过/驳回规则 | `AuditService.PassAsync`、`AuditService.RejectAsync` |
 | 可调度设备筛选 | `DispatchService.GetAvailableEquipmentsAsync`、`CreateOrderAsync` |
-| 合同扫描件上传后状态 | `DispatchService.UploadScanAsync` |
+| 合同扫描件上传后合同、调度单、设备状态 | `DispatchService.UploadScanAsync` |
 | 核验码规则 | `VerificationService.PerformVerifyAsync` |
 | 安全交底完成规则 | `SafetyService.SignAsync` |
 | 巡检项固定清单 | `Constants/InspectionChecklist.cs` + `InspectionService` |

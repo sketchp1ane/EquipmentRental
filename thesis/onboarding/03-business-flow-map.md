@@ -18,10 +18,11 @@
 | 资质审核 | 设备管理员/管理员 | 审核动作、备注 | `AuditRecords` | 通过后设备 `PendingReview -> Idle` |
 | 用车申请 | 项目负责人/管理员 | 项目、地址、设备类型、用车日期、联系人 | `DispatchRequests` | 申请进入 `Pending` |
 | 调度排期 | 调度员/管理员 | 设备、实际租期、日租金、押金 | `DispatchOrders`、`Contracts` | 申请 `Scheduled`，调度单 `Unsigned` |
-| 合同签署 | 调度员/管理员 | 上传线下签署扫描件 | 合同扫描件 | 合同 `Signed`，调度单 `Signed` |
-| 进场核验 | 项目负责人/管理员 | 核验码 | `EntryVerifications` | 核验通过后调度单 `InProgress`，设备 `InUse` |
+| 合同签署 | 调度员/管理员 | 上传线下签署扫描件 | 合同扫描件 | 合同 `Signed`，调度单 `Signed`，设备 `InUse` |
+| 进场核验 | 项目负责人/管理员 | 核验码 | `EntryVerifications` | 核验通过后调度单 `InProgress`，设备保持 `InUse` |
 | 安全交底 | 安全员/管理员 | 交底内容、参与人、附件 | `SafetyBriefings`、参与人、附件 | 参与方签署完成后 `Completed` |
-| 使用监管 | 安全员/项目负责人/设备管理员 | 巡检记录、故障描述、维修结果 | `InspectionRecords`、`FaultReports` | 故障可使设备进入 `Maintenance`，关闭后恢复 |
+| 日常巡检 | 安全员/管理员 | 固定检查项、整体状态、备注、照片 | `InspectionRecords` | 记录使用过程检查结果 |
+| 故障处理 | 安全员/项目负责人/设备管理员/管理员 | 故障描述、维修结果 | `FaultReports` | 故障可使设备进入 `Maintenance`，关闭后恢复 |
 | 退场申请 | 项目负责人/管理员 | 实际退场日期、设备状况 | `ReturnApplications` | 进入 `PendingEvaluation` |
 | 退场评价 | 设备管理员/管理员 | 评分、扣款、设备后续状态 | `ReturnEvaluations` | 调度单 `Complete`，设备回到空闲/维修/报废等状态 |
 
@@ -44,7 +45,7 @@ Unsigned -> Signed -> InProgress -> Complete
                          -> Terminated
 ```
 
-答辩重点：未上传合同扫描件时，调度单不能进场核验；进场核验必须基于已签署调度单。
+答辩重点：未上传合同扫描件时，调度单不能进场核验；上传扫描件时设备已进入 `InUse`，进场核验主要推进调度单和生成核验记录。
 
 ### 安全与故障线
 

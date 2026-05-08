@@ -29,7 +29,7 @@
 
 ## 2. 设备台账
 
-- [x] 设备分类管理
+- [x] 设备分类基础字典（种子数据预置 + 入库/申请/筛选复用；当前无独立分类 CRUD 页面）
 - [x] 设备入库登记（含图片上传）
 - [x] 设备列表（筛选 + 分页）
 - [x] 设备详情页
@@ -125,3 +125,14 @@
 - [x] Bug #3：审核驳回字段级错误渲染（`Form.Remark` key 对齐）
 - [x] Bug #4：退场扣款 `< 0` / `> Deposit` 服务端拒绝，不再静默钳位
 - [x] 文档按验证后行为刷新：`PRD.md` / `user-guide.md` / `demo-guide.md` / `database.md` / `architecture.md`
+
+---
+
+## 12. 文档事实一致性校准（2026-05-08）
+
+- [x] 以当前 Controller 授权为准校准 PRD、用户手册和页面清单。
+- [x] 统一合同扫描件上传后的状态口径：Contract → Signed、DispatchOrder → Signed、Equipment → InUse。
+- [x] 统一进场核验口径：核验通过后写入 EntryVerification，并推进 DispatchOrder → InProgress。
+- [x] 标注 `ContractStatus.AwaitingSignature` 为枚举保留状态，当前主流程未实际写入。
+- [x] 统一文件上传限制为 JPG/JPEG/PNG/PDF、单文件 10 MB、扩展名 + MIME + 魔数校验。
+- [x] 保留历史 QA 报告原貌，新增一致性审计记录说明旧报告中的权限/状态口径以当前文档为准。

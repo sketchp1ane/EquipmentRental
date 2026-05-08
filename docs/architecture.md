@@ -112,11 +112,11 @@ DispatchController
         └── QualificationService（证件有效期校验）
 
 ContractController
-  ├── DispatchService（合同详情 / PDF / 扫描件上传；上传时同事务把 DispatchOrder Unsigned → Signed）
+  ├── DispatchService（合同详情 / PDF / 扫描件上传；上传时把 Contract → Signed、DispatchOrder Unsigned → Signed、Equipment → InUse）
   └── FileService（合同扫描件上传校验与存储）
 
 VerificationController
-  └── VerificationService（只允许 Signed 订单核验 → 核验通过时推进 InProgress + Equipment InUse）
+  └── VerificationService（只允许 Signed 订单核验 → 校验 Equipment 已为 InUse，核验通过时推进 DispatchOrder → InProgress 并写 EntryVerification）
 
 FaultController
   └── FaultService（故障上报 Equipment InUse → Maintenance；关闭时恢复）

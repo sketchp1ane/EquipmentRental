@@ -50,7 +50,7 @@
 | 新建设备后进入待审核状态 | `EquipmentService.CreateEquipmentAsync` |
 | 审核通过后设备变为空闲 | `AuditService.PassAsync` |
 | 调度前需要筛选可用设备 | `DispatchService.GetAvailableEquipmentsAsync`、`DispatchService.CreateOrderAsync` |
-| 合同扫描件上传会推进合同和调度单状态 | `DispatchService.UploadScanAsync` |
+| 合同扫描件上传会推进合同、调度单和设备状态 | `DispatchService.UploadScanAsync` |
 | 进场核验要求调度单已签署 | `VerificationService.PerformVerifyAsync` |
 | 安全交底富文本需要过滤 | `SafetyService` 和 `Program.cs` 中的 `HtmlSanitizer` |
 | 巡检项来自固定清单 | `Constants/InspectionChecklist.cs`、`InspectionService` |

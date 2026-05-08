@@ -1,9 +1,9 @@
 # 产品需求文档（PRD）
 ## 基于 ASP.NET MVC 的建筑租赁设备管理平台
 
-**文档版本**：v1.1  
+**文档版本**：v1.2  
 **创建日期**：2026-04-13  
-**更新日期**：2026-04-16  
+**更新日期**：2026-05-08  
 **作者**：Evan Chen  
 **文档状态**：已完成
 
@@ -47,8 +47,8 @@
 | 设备台账管理 | GPS 实时轨迹追踪（硬件对接） |
 | 设备入库与资质审核 | 财务对账与发票系统集成 |
 | 线上调度与合同管理 | 移动端 App |
-| 进场自动核验（二维码/编号扫描） | 第三方 ERP 集成 |
-| 现场安全交底电子签名 | 多语言国际化 |
+| 进场核验码 / 二维码展示与系统内核验 | 第三方 ERP 集成 |
+| 现场安全交底系统内签署确认 | 多语言国际化 |
 | 使用监管与故障上报 | |
 | 退场评价与押金结算 | |
 | 用户与权限管理 | |
@@ -64,22 +64,26 @@
 | **系统管理员** | 平台运维人员，拥有最高权限 | 用户管理、角色配置、系统参数设置 |
 | **设备管理员** | 租赁公司内部设备主管 | 设备入库、资质审核、台账维护 |
 | **调度员** | 负责设备排期与派单 | 线上调度、合同生成、调度日历 |
-| **项目负责人** | 建筑工地甲方代表 | 提交用车申请、进场核验确认、退场评价 |
-| **安全员** | 现场安全管理人员 | 安全交底填写与电子签名、故障上报 |
-| **只读审计员** | 监管/审计人员 | 查看所有记录，无写权限 |
+| **项目负责人** | 建筑工地甲方代表 | 提交用车申请、进场核验确认、退场申请 |
+| **安全员** | 现场安全管理人员 | 安全交底填写与签署、巡检记录、故障上报 |
+| **只读审计员** | 监管/审计人员 | 查看授权范围内的历史记录，无写权限 |
 
 ### 2.2 权限矩阵（CRUD，C=创建 R=查看 U=修改 D=删除）
 
 | 模块 | 系统管理员 | 设备管理员 | 调度员 | 项目负责人 | 安全员 | 审计员 |
 |---|:---:|:---:|:---:|:---:|:---:|:---:|
 | 用户管理 | CRUD | - | - | - | - | R |
-| 设备台账 | CRUD | CRUD | R | R | R | R |
-| 资质审核 | CRUD | CRUD | R | R | - | R |
-| 调度管理 | CRUD | R | CRUD | R | - | R |
+| 设备台账 | CRUD | CRUD | - | - | - | R |
+| 设备证件 | CRUD | CRUD | - | - | - | - |
+| 资质审核 | CRU | CRU | - | - | - | - |
+| 用车申请审批 | R | - | R | - | - | R |
+| 调度单 | R | - | CRUD | R | - | R |
+| 调度日历 | R | - | R | - | - | - |
 | 合同管理 | CRUD | R | CRUD | R | - | R |
-| 进场核验 | CRUD | R | R | CRU | R | R |
-| 安全交底 | CRUD | R | R | R | CRUD | R |
-| 故障上报 | CRUD | CRU | R | R | CRUD | R |
+| 进场核验 | CRUD | - | R | CRU | - | R |
+| 安全交底 | CRUD | - | - | R/签署 | CRUD | - |
+| 巡检记录 | CRUD | R | - | R | CR | R |
+| 故障工单 | CRUD | 处理 | R | CR | CR | R |
 | 退场申请 | CRUD | R | R | CR | R | R |
 | 退场评价 | CRUD | CRU | R | R | R | R |
 
@@ -101,7 +105,7 @@
 线上调度（调度员排期 → 生成调度单 → 生成租赁合同）
      │ 合同签署
      ▼
-进场自动核验（扫码/编号比对，核验设备编号、有效期）
+进场核验（输入核验码或扫描二维码，核验订单状态、设备状态与证件有效期）
      │ 核验通过
      ▼
 现场安全交底（安全员填写交底记录 → 相关方电子签名）
@@ -126,12 +130,12 @@
 - 支持用户名+密码登录，密码使用 BCrypt 哈希存储。
 - 登录失败连续 5 次后锁定账号 30 分钟，并记录日志。
 - 支持"记住我"功能（持久化 Cookie，有效期 7 天）。
-- 退出登录后销毁 Session，重定向至登录页。
+- 退出登录后清除认证 Cookie，重定向至登录页。
 
 #### 4.1.2 用户管理（系统管理员）
 - 新增、编辑、停用/启用用户账号。
 - 为用户分配一个或多个角色。
-- 重置用户密码（发送邮件或直接设置临时密码）。
+- 重置用户密码（管理员直接设置临时密码）。
 - 分页查询用户列表，支持按姓名、角色、状态筛选。
 
 #### 4.1.3 个人信息
@@ -142,27 +146,28 @@
 
 ### 4.2 设备台账模块
 
-#### 4.2.1 设备分类管理
-- 支持多级设备分类（例：起重机械 > 塔式起重机 > QTZ80）。
-- 系统管理员可新增/编辑/禁用分类。
+#### 4.2.1 设备分类基础字典
+- 支持预置的多级设备分类（例：起重机械 > 塔式起重机），用于设备入库选择、用车申请选择和列表筛选。
+- 当前版本分类由种子数据初始化，不提供独立的分类新增、编辑和禁用页面。
 
 #### 4.2.2 设备入库登记
 - 填写字段：设备名称、设备编号（唯一）、设备分类、品牌型号、出厂日期、出厂编号、额定载荷/技术参数、购置日期、原值（元）、所属公司、备注。
-- 支持上传设备图片（最多 5 张，单张不超过 5 MB，格式 JPG/PNG）。
-- 上传设备相关证件（PDF/图片，见 4.3）。
+- 支持上传设备图片，遵循全局文件上传限制（JPG/JPEG/PNG/PDF，单文件不超过 10 MB）。
+- 设备创建后可在证件管理模块维护设备相关证件（PDF/图片，见 4.3）。
 - 提交后状态置为"待审核"。
 
 #### 4.2.3 设备台账查询
-- 列表展示所有设备，支持按编号、名称、分类、状态、所属公司模糊/精确筛选。
+- 列表展示授权范围内的设备，支持按编号、名称、品牌型号、分类和状态筛选。
 - 导出筛选结果为 Excel（使用 EPPlus 库）。
-- 点击设备进入详情页，展示完整信息与历史租赁记录。
+- 点击设备进入详情页，展示设备基础信息、状态和图片等资料。
 
 #### 4.2.4 设备状态流转
 
 ```
-待审核 ──审核通过──> 空闲 ──调度──> 出租中 ──退场──> 空闲
-                              └──故障上报──> 维修中 ──维修完成──> 空闲
-空闲/维修中 ──报废申请──审批──> 已报废
+设备：待审核 ──审核通过──> 空闲 ──合同扫描件上传──> 出租中
+调度单：未签署 ──合同扫描件上传──> 已签署 ──进场核验──> 进行中
+出租中 ──故障上报──> 维修中 ──维修关闭──> 出租中/空闲
+出租中 ──退场评价──> 空闲/维修中/已报废
 ```
 
 ---
@@ -197,14 +202,14 @@
 #### 4.4.2 调度排期
 - 调度员查看可用设备列表（已过资质审核、状态为"空闲"、无时间冲突）。
 - 选择设备、确认用车周期、填写租金单价及押金，生成调度单。
-- 调度日历视图：横轴为日期，纵轴为设备，直观展示占用情况。
+- 调度日历视图：横轴为日期，纵轴为设备，直观展示调度占用情况（调度员/管理员可访问）。
 
 #### 4.4.3 租赁合同
 - 调度单确认后系统自动生成租赁合同草稿，包含：合同编号（系统生成）、甲乙方信息、设备信息、租期、租金、押金、违约条款（模板文本）。
 - 支持在线预览（HTML 渲染）与 PDF 导出（使用 QuestPDF，纯 .NET 实现，macOS/Linux/Windows 均可运行）。
-- 合同状态：草稿 → 待签署 → 已签署 → 已终止。
+- 合同状态：草稿 → 已签署 → 已终止。枚举中保留 `AwaitingSignature`（待签署）状态，但当前主流程未实际写入该中间状态。
 - 本期不实现电子签章，合同签署以"线下签署后上传扫描件"方式完成。
-- **扫描件上传副作用**：`DispatchService.UploadScanAsync` 在同一事务中把关联 `DispatchOrder.Status` 从 `Unsigned` 推进为 `Signed`；调度单必须进入 `Signed` 状态才会显示"进场核验码"区块，也才会允许进场核验（见 4.5）。
+- **扫描件上传副作用**：`DispatchService.UploadScanAsync` 会把合同状态置为 `Signed`，把关联 `DispatchOrder.Status` 从 `Unsigned` 推进为 `Signed`，并将设备状态置为 `InUse`；调度单必须进入 `Signed` 状态才会显示"进场核验码"区块，也才会允许进场核验（见 4.5）。
 
 ---
 
@@ -214,12 +219,12 @@
 - 调度单进入 `Signed` 状态后（即合同扫描件已上传），系统在订单详情页展示唯一核验码（UUID）+ 二维码。未到 `Signed` 状态时核验码区块不可见，且 `VerificationService.VerifyAsync` 会直接拒绝 `Unsigned` 单的核验请求。
 
 #### 4.5.2 核验操作
-- 项目负责人（或指定人员）在进场时，在系统中输入核验码（或扫描二维码跳转），系统自动比对：
-  - 设备编号是否与调度单一致；
+- 项目负责人（或管理员）在进场时，在系统中输入核验码（或扫描二维码跳转），系统自动比对：
+  - 调度单是否处于已签署状态；
   - 设备证件是否均在有效期内；
   - 设备状态是否为"出租中"；
   - 核验码是否未被使用且未过期（有效期为租赁开始日起 3 天）。
-- 比对全部通过 → 核验状态标记为"已核验"，记录核验时间和操作人。
+- 比对全部通过 → 生成或更新核验记录，调度单状态推进为"进行中"，记录核验时间和操作人。
 - 任一项不通过 → 提示具体失败原因，核验不通过，记录异常日志。
 
 ---
@@ -244,7 +249,7 @@
 ### 4.7 使用监管模块
 
 #### 4.7.1 巡检记录
-- 安全员可对出租中的设备创建日常巡检记录：巡检日期、巡检人、整体状态（正常/异常）、备注、现场照片。
+- 安全员或管理员可对进行中的调度单创建日常巡检记录：巡检日期、巡检人、整体状态（正常/异常）、备注、现场照片（最多 5 张）。
 - 巡检项固化为 **8 项**（整机外观 / 液压系统 / 电气系统 / 紧固件 / 安全装置 / 控制装置 / 作业环境 / 操作记录），每项结果入 `InspectionItemResults` 子表，状态可选 `Normal / Abnormal / NotApplicable` 三态；整体状态由各项聚合（任一项 `Abnormal` 即整体 `Abnormal`）。
 
 #### 4.7.2 故障上报
@@ -294,15 +299,15 @@
 | 防注入 | 全部数据库操作使用 Entity Framework 参数化查询，禁止拼接 SQL |
 | XSS | Razor 视图默认 HTML 编码，富文本字段使用 HtmlSanitizer 过滤 |
 | CSRF | 所有表单使用 `@Html.AntiForgeryToken()`，POST/PUT/DELETE 验证 `[ValidateAntiForgeryToken]` |
-| 文件上传 | 校验文件扩展名白名单（jpg/png/pdf）+ MIME 类型，文件存储在 Web 根目录之外 |
+| 文件上传 | 校验扩展名白名单（jpg/jpeg/png/pdf）+ MIME 类型 + 文件魔数，单文件不超过 10 MB，文件存储在 Web 根目录之外 |
 | 审计日志 | 记录所有增删改操作（操作人、时间、实体类型、变更内容摘要），日志只写不删 |
 | HTTPS | 生产环境强制 HTTPS，开发环境可用 HTTP |
 
 ### 5.2 性能
 
 - 列表页面加载时间（后端响应）：P95 < 1 秒（数据量 ≤ 10,000 条）。
-- 文件上传最大支持单文件 20 MB（证件 PDF）。
-- 数据库使用分页查询，每页默认 20 条，最大不超过 100 条。
+- 文件上传最大支持单文件 10 MB。
+- 数据库使用分页查询，列表默认每页 15 条。
 
 ### 5.3 可用性
 
@@ -315,7 +320,7 @@
 - 遵循 MVC 分层原则，Controller 只负责请求路由与响应，业务逻辑封装在 Service 层。
 - 数据库迁移使用 EF Core Migrations 管理，禁止手动执行 DDL。
 - 敏感配置（数据库连接串、密钥）存放于 `appsettings.json` 的对应节，不硬编码于代码。
-- 关键方法添加 XML 注释，便于生成文档。
+- 关键业务方法和复杂逻辑保留必要注释，便于维护。
 
 ---
 
@@ -397,16 +402,16 @@ SQL Server 2022（Docker：mcr.microsoft.com/mssql/server:2022-latest）
 | `EquipmentImages` | Id, EquipmentId, FilePath, UploadedAt | 设备图片 |
 | `Qualifications` | Id, EquipmentId, Type, CertNo, IssuedBy, ValidFrom, ValidTo, FilePath | 设备证件 |
 | `AuditRecords` | Id, EquipmentId, AuditorId, Action(通过/驳回), Remark, AuditedAt | 资质审核记录 |
-| `DispatchRequests` | Id, ProjectName, ProjectAddress, RequesterId, EquipmentTypeNeeded, StartDate, EndDate, Status | 用车申请 |
+| `DispatchRequests` | Id, ProjectName, ProjectAddress, RequesterId, CategoryId, ExpectedStart, ExpectedEnd, Status | 用车申请 |
 | `DispatchOrders` | Id, RequestId, EquipmentId, DispatcherId, ActualStart, ActualEnd, UnitPrice, Deposit, Status, VerifyCode | 调度单 |
-| `Contracts` | Id, DispatchOrderId, ContractNo, Status, ScanPath | 租赁合同 |
-| `EntryVerifications` | Id, DispatchOrderId, VerifierId, VerifiedAt, IsPass, FailReason | 进场核验 |
-| `SafetyBriefings` | Id, DispatchOrderId, CreatorId, BriefingDate, Location, ContentHtml, Status | 安全交底主表 |
+| `Contracts` | Id, OrderId, ContractNo, Status, ScanPath | 租赁合同 |
+| `EntryVerifications` | Id, OrderId, VerifierId, VerifiedAt, IsPass, FailReason | 进场核验 |
+| `SafetyBriefings` | Id, OrderId, CreatorId, BriefingDate, Location, ContentHtml, Status | 安全交底主表 |
 | `BriefingParticipants` | Id, BriefingId, Name, JobType, Phone, SignedAt, SignedById | 交底参与人 |
-| `InspectionRecords` | Id, EquipmentId, DispatchOrderId, InspectorId, InspectionDate, OverallStatus, Remark | 巡检记录 |
+| `InspectionRecords` | Id, EquipmentId, OrderId, InspectorId, InspectionDate, OverallStatus, Remark | 巡检记录 |
 | `InspectionItemResults` | Id, InspectionId, ItemKey, Status(`Normal/Abnormal/NotApplicable`), Remark | 巡检 8 项每项结果 |
-| `FaultReports` | Id, EquipmentId, DispatchOrderId, ReporterId, Description, Severity, ReportedAt, Status, Resolution | 故障工单 |
-| `ReturnApplications` | Id, DispatchOrderId, ApplicantId, ActualReturnDate, EquipmentCondition, Status | 退场申请 |
+| `FaultReports` | Id, EquipmentId, OrderId, ReporterId, Description, Severity, ReportedAt, Status, Resolution | 故障工单 |
+| `ReturnApplications` | Id, OrderId, ApplicantId, ActualReturnDate, ConditionDesc, Status | 退场申请 |
 | `ReturnEvaluations` | Id, ReturnAppId, EvaluatorId, AppearanceScore, FunctionScore, DamageDesc, Deduction, RefundAmount, EvaluatedAt | 退场评价 |
 | `OperationLogs` | Id, UserId, Action, EntityType, EntityId, Detail, OccurredAt, ClientIp | 审计日志 |
 
@@ -431,41 +436,41 @@ SQL Server 2022（Docker：mcr.microsoft.com/mssql/server:2022-latest）
 | `/` | Home/Index | 已登录 | 首页看板 |
 | `/Account/Login` | Account/Login | 匿名 | 登录页 |
 | `/Account/Logout` | Account/Logout | 已登录 | 退出 |
-| `/Users` | Users/Index | 管理员 | 用户列表 |
+| `/Users` | Users/Index | 管理员/审计员 | 用户列表（审计员只读） |
 | `/Users/Create` | Users/Create | 管理员 | 新增用户 |
-| `/Equipment` | Equipment/Index | 已登录 | 设备台账列表 |
-| `/Equipment/Create` | Equipment/Create | 设备管理员 | 设备入库登记 |
-| `/Equipment/{id}` | Equipment/Details | 已登录 | 设备详情 |
-| `/Equipment/{id}/Edit` | Equipment/Edit | 设备管理员 | 编辑设备 |
-| `/Qualification/{equipmentId}` | Qualification/Index | 设备管理员 | 证件管理 |
-| `/Audit` | Audit/Index | 设备管理员 | 待审核设备列表 |
-| `/Audit/{id}/Review` | Audit/Review | 设备管理员 | 审核操作页 |
-| `/Dispatch/Request` | Dispatch/Request | 项目负责人 | 提交用车申请 |
-| `/Dispatch` | Dispatch/Index | 调度员/审计员 | 用车申请审批列表 |
+| `/Equipment` | Equipment/Index | 管理员/设备管理员/审计员 | 设备台账列表 |
+| `/Equipment/Create` | Equipment/Create | 管理员/设备管理员 | 设备入库登记 |
+| `/Equipment/{id}` | Equipment/Details | 管理员/设备管理员/审计员 | 设备详情 |
+| `/Equipment/{id}/Edit` | Equipment/Edit | 管理员/设备管理员 | 编辑设备 |
+| `/Qualification?equipmentId={id}` | Qualification/Index | 管理员/设备管理员 | 证件管理 |
+| `/Audit` | Audit/Index | 管理员/设备管理员 | 待审核设备列表 |
+| `/Audit/Review?equipmentId={id}` | Audit/Review | 管理员/设备管理员 | 审核操作页 |
+| `/Dispatch/Request` | Dispatch/Request | 项目负责人/管理员 | 提交用车申请 |
+| `/Dispatch` | Dispatch/Index | 调度员/管理员/审计员 | 用车申请审批列表 |
 | `/Dispatch/Orders` | Dispatch/Orders | 调度员/项目负责人/审计员 | 调度单列表 |
-| `/Dispatch/Order?requestId={id}` | Dispatch/Order | 调度员 | 生成调度单 |
-| `/Dispatch/OrderDetails/{id}` | Dispatch/OrderDetails | 调度员/项目负责人/审计员 | 调度单详情 |
-| `/Dispatch/Calendar` | Dispatch/Calendar | 调度员 | 调度日历 |
+| `/Dispatch/Order?requestId={id}` | Dispatch/Order | 调度员/管理员 | 生成调度单 |
+| `/Dispatch/OrderDetails/{id}` | Dispatch/OrderDetails | 调度员/管理员/项目负责人/审计员 | 调度单详情 |
+| `/Dispatch/Calendar` | Dispatch/Calendar | 调度员/管理员 | 调度日历 |
 | `/Contract/Details/{id}` | Contract/Details | 调度员/项目负责人/审计员/管理员/设备管理员 | 合同详情 |
 | `/Contract/ExportPdf/{id}` | Contract/ExportPdf | 调度员/项目负责人/审计员/管理员/设备管理员 | 导出合同 PDF |
-| `/Contract/UploadScan` | Contract/UploadScan | 调度员/管理员 | 上传签署扫描件（联动订单 Signed） |
+| `/Contract/UploadScan` | Contract/UploadScan | 调度员/管理员 | 上传签署扫描件（联动合同 Signed、订单 Signed、设备 InUse） |
 | `/Verification/Verify` | Verification/Verify | 项目负责人/管理员 | 进场核验操作 |
 | `/Verification/List` | Verification/List | 项目负责人/调度员/审计员/管理员 | 核验记录 |
-| `/Safety/List` | Safety/List | 安全员/项目负责人/审计员 | 安全交底列表 |
-| `/Safety/Create?orderId={id}` | Safety/Create | 安全员 | 填写安全交底 |
-| `/Safety/Details/{id}` | Safety/Details | 相关方 | 交底详情/签署 |
-| `/Inspection` | Inspection/Index | 安全员/项目负责人/审计员 | 巡检记录列表 |
+| `/Safety/List` | Safety/List | 已登录 | 安全交底列表 |
+| `/Safety/Create?orderId={id}` | Safety/Create | 安全员/管理员 | 填写安全交底 |
+| `/Safety/Details/{id}` | Safety/Details | 已登录 | 交底详情/签署（签署操作限安全员/项目负责人/管理员） |
+| `/Inspection` | Inspection/Index | 已登录 | 巡检记录列表 |
 | `/Inspection/Create?orderId={id}` | Inspection/Create | 安全员/管理员 | 新增巡检记录 |
-| `/Fault` | Fault/Index | 相关方 | 故障工单列表 |
-| `/Fault/Create?orderId={id}` | Fault/Create | 安全员/项目负责人 | 故障上报 |
-| `/Fault/Close/{id}` | Fault/Close | 设备管理员 | 关闭故障工单 |
-| `/Return` | Return/Index | 项目负责人/设备管理员/审计员 | 退场列表 |
-| `/Return/Apply?orderId={id}` | Return/Apply | 项目负责人 | 退场申请 |
-| `/Return/Evaluate/{id}` | Return/Evaluate | 设备管理员 | 退场评价 |
-| `/Return/Details/{id}` | Return/Details | 相关方 | 退场详情 |
+| `/Fault` | Fault/Index | 已登录 | 故障工单列表 |
+| `/Fault/Create?orderId={id}` | Fault/Create | 安全员/项目负责人/管理员 | 故障上报 |
+| `/Fault/Close` | Fault/Close | 设备管理员/管理员 | 关闭故障工单 |
+| `/Return` | Return/Index | 已登录 | 退场列表（项目负责人默认只看自己的申请） |
+| `/Return/Apply?orderId={id}` | Return/Apply | 项目负责人/管理员 | 退场申请 |
+| `/Return/Evaluate/{id}` | Return/Evaluate | 设备管理员/管理员 | 退场评价 |
+| `/Return/Details/{id}` | Return/Details | 已登录 | 退场详情 |
 | `/Notification/Recent` | Notification/Recent | 已登录 | 最近未读消息 JSON（铃铛） |
 | `/Notification/MarkAllRead` | Notification/MarkAllRead | 已登录 | 一键全标已读 |
-| `/Files/{id}` | Files/Download | 已登录（鉴权下发） | Uploads/ 下的附件流式下发 |
+| `/files/{*filePath}` | Files/Get | 已登录（鉴权下发） | Uploads/ 下的附件流式下发，并限制路径仍在 Uploads 内 |
 
 ---
 

@@ -74,7 +74,7 @@ OperationLogs（操作人 → Users）
 | CreatedById | nvarchar(450) | FK NOT NULL | 录入人 |
 | CreatedAt | datetime2 | NOT NULL | |
 
-**Status 枚举（`EquipmentStatus`）**：0=PendingReview 待审核 / 1=Idle 空闲 / 2=InUse 出租中 / 3=Maintenance 维修中 / 4=Scrapped 已报废
+**Status 枚举（`EquipmentStatus`）**：0=PendingReview 待审核 / 1=Idle 空闲 / 2=InUse 使用中 / 3=Maintenance 维修中 / 4=Scrapped 已报废
 
 ### EquipmentImages
 | 字段 | 类型 | 约束 | 说明 |
@@ -149,8 +149,8 @@ OperationLogs（操作人 → Users）
 | Id | int | PK IDENTITY | |
 | OrderId | int | FK UNIQUE NOT NULL | 1:1 调度单 |
 | ContractNo | nvarchar(50) | UNIQUE NOT NULL | 系统生成 |
-| Status | int | NOT NULL DEFAULT 0 | `ContractStatus`：0=Draft 草稿 / 1=AwaitingSignature 待签署 / 2=Signed 已签署 / 3=Terminated 已终止 |
-| ScanPath | nvarchar(500) | | 线下签署扫描件路径；上传时同事务推进关联 DispatchOrder → Signed |
+| Status | int | NOT NULL DEFAULT 0 | `ContractStatus`：0=Draft 草稿 / 1=AwaitingSignature 待签署（枚举保留，当前主流程未写入） / 2=Signed 已签署 / 3=Terminated 已终止 |
+| ScanPath | nvarchar(500) | | 线下签署扫描件路径；上传时推进关联 DispatchOrder → Signed，并将 Equipment → InUse |
 | CreatedAt | datetime2 | NOT NULL | |
 
 ### EntryVerifications（进场核验）
