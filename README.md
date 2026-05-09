@@ -65,7 +65,7 @@ bash scripts/reset-demo-db.sh
 
 ## 默认账号
 
-首次启动会自动写入管理员账号 + 5 个演示角色账号，并预置 3 条完整业务链路的演示数据。
+首次启动会自动写入管理员账号 + 4 个演示角色账号，并预置 3 条完整业务链路的演示数据。
 
 | 账号 | 密码 | 角色 |
 |---|---|---|
@@ -74,7 +74,6 @@ bash scripts/reset-demo-db.sh
 | demo.dispatcher@equiprental.com | Demo@123456 | 调度员 |
 | demo.projectlead@equiprental.com | Demo@123456 | 项目负责人 |
 | demo.safetyofficer@equiprental.com | Demo@123456 | 安全员 |
-| demo.auditor@equiprental.com | Demo@123456 | 只读审计员 |
 
 登录后可在"用户管理"页面创建或调整其他账号。详细演示脚本见 [docs/demo-guide.md](docs/demo-guide.md)。
 
@@ -113,7 +112,7 @@ EquipmentRental/
 - **后端**：C# 13 / .NET 10 / ASP.NET Core MVC / EF Core 10
 - **数据库**：SQL Server 2022（Docker）
 - **前端**：Razor Views / Bootstrap 5 / jQuery 3 / Chart.js 4 / Summernote / Bootstrap Icons
-- **认证**：ASP.NET Core Identity（RBAC，6 个角色）+ BCrypt 密码哈希（workFactor=12）
+- **认证**：ASP.NET Core Identity（RBAC，5 个角色）+ BCrypt 密码哈希（workFactor=12）
 - **PDF 导出**：QuestPDF（合同、安全交底）
 - **Excel 导出**：EPPlus 6（设备台账导出）
 - **二维码**：QRCoder（进场核验码）

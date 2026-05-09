@@ -18,7 +18,6 @@
 | 调度员 | `demo.dispatcher@equiprental.com` | 刘明远 |
 | 项目负责人 | `demo.projectlead@equiprental.com` | 王建华 |
 | 安全员 | `demo.safetyofficer@equiprental.com` | 张秀英 |
-| 只读审计员 | `demo.auditor@equiprental.com` | 李文博 |
 
 > 想偷懒的话：**全程使用 admin 账号** 也可以完成所有步骤（管理员拥有全部权限），但切角色能更真实地体现业务流转。
 

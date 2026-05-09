@@ -11,8 +11,7 @@
     </li>
 
     <!-- 设备管理 -->
-    @if (User.IsInRole(Roles.Admin) || User.IsInRole(Roles.DeviceAdmin) ||
-         User.IsInRole(Roles.Auditor))
+    @if (User.IsInRole(Roles.Admin) || User.IsInRole(Roles.DeviceAdmin))
     {
         <li class="nav-item mt-2">
             <span class="section-label text-secondary text-uppercase d-block">设备管理</span>
@@ -34,7 +33,7 @@
 
     <!-- 调度管理 -->
     @if (User.IsInRole(Roles.Admin) || User.IsInRole(Roles.Dispatcher) ||
-         User.IsInRole(Roles.ProjectLead) || User.IsInRole(Roles.Auditor))
+         User.IsInRole(Roles.ProjectLead))
     {
         <li class="nav-item mt-2">
             <span class="section-label text-secondary text-uppercase d-block">调度管理</span>
@@ -61,16 +60,8 @@
             </a>
         </li>
     }
-    @if (User.IsInRole(Roles.Auditor))
-    {
-        <li class="nav-item">
-            <a class="nav-link text-white" asp-controller="Dispatch" asp-action="Index">
-                <i class="bi bi-clipboard-check"></i><span>用车申请审批</span>
-            </a>
-        </li>
-    }
     @if (User.IsInRole(Roles.Admin) || User.IsInRole(Roles.Dispatcher) ||
-         User.IsInRole(Roles.ProjectLead) || User.IsInRole(Roles.Auditor))
+         User.IsInRole(Roles.ProjectLead))
     {
         <li class="nav-item">
             <a class="nav-link text-white" asp-controller="Dispatch" asp-action="Orders">
@@ -81,7 +72,7 @@
 
     <!-- 现场管理 -->
     @if (User.IsInRole(Roles.Admin) || User.IsInRole(Roles.SafetyOfficer) ||
-         User.IsInRole(Roles.ProjectLead) || User.IsInRole(Roles.Auditor) ||
+         User.IsInRole(Roles.ProjectLead) ||
          User.IsInRole(Roles.Dispatcher))
     {
         <li class="nav-item mt-2">
@@ -96,8 +87,7 @@
             </a>
         </li>
     }
-    @if (User.IsInRole(Roles.Admin) || User.IsInRole(Roles.Dispatcher) ||
-         User.IsInRole(Roles.Auditor))
+    @if (User.IsInRole(Roles.Admin) || User.IsInRole(Roles.Dispatcher))
     {
         <li class="nav-item">
             <a class="nav-link text-white" asp-controller="Verification" asp-action="List">
@@ -106,7 +96,7 @@
         </li>
     }
     @if (User.IsInRole(Roles.Admin) || User.IsInRole(Roles.SafetyOfficer) ||
-         User.IsInRole(Roles.ProjectLead) || User.IsInRole(Roles.Auditor))
+         User.IsInRole(Roles.ProjectLead))
     {
         <li class="nav-item">
             <a class="nav-link text-white" asp-controller="Safety" asp-action="List">
@@ -127,7 +117,7 @@
 
     <!-- 退场管理 -->
     @if (User.IsInRole(Roles.Admin) || User.IsInRole(Roles.DeviceAdmin) ||
-         User.IsInRole(Roles.ProjectLead) || User.IsInRole(Roles.Auditor))
+         User.IsInRole(Roles.ProjectLead))
     {
         <li class="nav-item mt-2">
             <span class="section-label text-secondary text-uppercase d-block">退场管理</span>
@@ -140,7 +130,7 @@
     }
 
     <!-- 系统管理 -->
-    @if (User.IsInRole(Roles.Admin) || User.IsInRole(Roles.Auditor))
+    @if (User.IsInRole(Roles.Admin))
     {
         <li class="nav-item mt-2">
             <span class="section-label text-secondary text-uppercase d-block">系统管理</span>

@@ -104,7 +104,7 @@ OperationLogs（操作人 → Users）
 |---|---|---|---|
 | Id | int | PK IDENTITY | |
 | EquipmentId | int | FK NOT NULL | |
-| AuditorId | nvarchar(450) | FK NOT NULL | 审核人 |
+| AuditorId | nvarchar(450) | FK NOT NULL | 审核人用户 Id；保留为资质审核记录字段，不代表 RBAC 角色 |
 | Action | int | NOT NULL | 1=通过 2=驳回 |
 | Remark | nvarchar(500) | | 驳回原因 |
 | AuditedAt | datetime2 | NOT NULL | |

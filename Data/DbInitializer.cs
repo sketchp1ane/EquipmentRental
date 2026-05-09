@@ -8,6 +8,10 @@ namespace EquipmentRental.Data;
 
 public static class DbInitializer
 {
+    private const string RemovedAuditorRoleName = "Auditor";
+    private static readonly string RemovedDemoAuditorEmail =
+        $"demo.{RemovedAuditorRoleName.ToLowerInvariant()}@equiprental.com";
+
     public static async Task SeedAsync(IServiceProvider services)
     {
         var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
@@ -49,8 +53,89 @@ public static class DbInitializer
             await userManager.AddPasswordAsync(admin, adminPassword);
         }
 
+        await CleanupRemovedAuditorRoleAsync(db, roleManager, userManager, admin);
         await SeedCategoriesAsync(db);
         await SeedDemoDataAsync(db, userManager);
+    }
+
+    private static async Task CleanupRemovedAuditorRoleAsync(
+        AppDbContext db,
+        RoleManager<IdentityRole> roleManager,
+        UserManager<ApplicationUser> userManager,
+        ApplicationUser fallbackUser)
+    {
+        if (!await roleManager.RoleExistsAsync(RemovedAuditorRoleName))
+            return;
+
+        var auditorUsers = await userManager.GetUsersInRoleAsync(RemovedAuditorRoleName);
+        foreach (var user in auditorUsers)
+        {
+            if (string.Equals(user.UserName, RemovedDemoAuditorEmail, StringComparison.OrdinalIgnoreCase))
+            {
+                await ReassignRemovedDemoAuditorReferencesAsync(db, user.Id, fallbackUser.Id);
+
+                var deleteResult = await userManager.DeleteAsync(user);
+                if (deleteResult.Succeeded)
+                    continue;
+
+                user.IsActive = false;
+                ThrowIfFailed(await userManager.UpdateAsync(user), $"停用旧演示审计员账号 {user.UserName} 失败");
+            }
+            else
+            {
+                var roles = await userManager.GetRolesAsync(user);
+                if (roles.Count == 1 && roles.Contains(RemovedAuditorRoleName))
+                {
+                    user.IsActive = false;
+                    ThrowIfFailed(await userManager.UpdateAsync(user), $"停用旧审计员账号 {user.UserName} 失败");
+                }
+            }
+
+            if (await userManager.IsInRoleAsync(user, RemovedAuditorRoleName))
+            {
+                ThrowIfFailed(
+                    await userManager.RemoveFromRoleAsync(user, RemovedAuditorRoleName),
+                    $"移除旧审计员角色关系 {user.UserName} 失败");
+            }
+        }
+
+        if (!(await userManager.GetUsersInRoleAsync(RemovedAuditorRoleName)).Any())
+        {
+            var role = await roleManager.FindByNameAsync(RemovedAuditorRoleName);
+            if (role != null)
+                ThrowIfFailed(await roleManager.DeleteAsync(role), "删除旧 Auditor 角色失败");
+        }
+    }
+
+    private static async Task ReassignRemovedDemoAuditorReferencesAsync(
+        AppDbContext db,
+        string removedUserId,
+        string fallbackUserId)
+    {
+        var auditRecords = await db.AuditRecords
+            .Where(a => a.AuditorId == removedUserId)
+            .ToListAsync();
+        foreach (var record in auditRecords)
+            record.AuditorId = fallbackUserId;
+
+        var operationLogs = await db.OperationLogs
+            .Where(log => log.UserId == removedUserId)
+            .ToListAsync();
+        foreach (var log in operationLogs)
+            log.UserId = fallbackUserId;
+
+        var notifications = await db.Notifications
+            .Where(n => n.RecipientId == removedUserId)
+            .ToListAsync();
+        db.Notifications.RemoveRange(notifications);
+
+        await db.SaveChangesAsync();
+    }
+
+    private static void ThrowIfFailed(IdentityResult result, string message)
+    {
+        if (!result.Succeeded)
+            throw new Exception($"{message}：{string.Join(", ", result.Errors.Select(e => e.Description))}");
     }
 
     // ── 预置设备分类 ──────────────────────────────────────────────────────────
@@ -158,7 +243,6 @@ public static class DbInitializer
         var dispatcherUser     = MakeUser("demo.dispatcher@equiprental.com",     "刘明远");
         var projectLeadUser    = MakeUser("demo.projectlead@equiprental.com",    "王建华");
         var safetyOfficerUser  = MakeUser("demo.safetyofficer@equiprental.com",  "张秀英");
-        var auditorUser        = MakeUser("demo.auditor@equiprental.com",        "李文博");
 
         var demoUsers = new[]
         {
@@ -166,7 +250,6 @@ public static class DbInitializer
             (dispatcherUser,    Roles.Dispatcher),
             (projectLeadUser,   Roles.ProjectLead),
             (safetyOfficerUser, Roles.SafetyOfficer),
-            (auditorUser,       Roles.Auditor),
         };
 
         foreach (var (user, role) in demoUsers)
@@ -294,25 +377,25 @@ public static class DbInitializer
         db.AuditRecords.AddRange(
             new AuditRecord
             {
-                EquipmentId = eq1.Id, AuditorId = auditorUser.Id,
+                EquipmentId = eq1.Id, AuditorId = deviceAdminUser.Id,
                 Action = AuditAction.Pass, Remark = "设备资质齐全，技术规格符合要求，审核通过。",
                 AuditedAt = now.AddDays(-85),
             },
             new AuditRecord
             {
-                EquipmentId = eq2.Id, AuditorId = auditorUser.Id,
+                EquipmentId = eq2.Id, AuditorId = deviceAdminUser.Id,
                 Action = AuditAction.Pass, Remark = "设备资质齐全，技术规格符合要求，审核通过。",
                 AuditedAt = now.AddDays(-75),
             },
             new AuditRecord
             {
-                EquipmentId = eq3.Id, AuditorId = auditorUser.Id,
+                EquipmentId = eq3.Id, AuditorId = deviceAdminUser.Id,
                 Action = AuditAction.Pass, Remark = "设备资质齐全，技术规格符合要求，审核通过。",
                 AuditedAt = now.AddDays(-65),
             },
             new AuditRecord
             {
-                EquipmentId = eq5.Id, AuditorId = auditorUser.Id,
+                EquipmentId = eq5.Id, AuditorId = deviceAdminUser.Id,
                 Action = AuditAction.Pass, Remark = "设备资质齐全，审核通过。（设备已超出使用年限，后续报废处理）",
                 AuditedAt = now.AddDays(-360),
             }

@@ -56,7 +56,7 @@ public class VerificationController(
 
     // ── 核验结果详情 ──────────────────────────────────────────────────────────
 
-    [Authorize(Roles = $"{Roles.ProjectLead},{Roles.Admin},{Roles.Dispatcher},{Roles.Auditor}")]
+    [Authorize(Roles = $"{Roles.ProjectLead},{Roles.Admin},{Roles.Dispatcher}")]
     [HttpGet]
     public async Task<IActionResult> Details(int id)
     {
@@ -67,7 +67,7 @@ public class VerificationController(
 
     // ── 核验列表 ──────────────────────────────────────────────────────────────
 
-    [Authorize(Roles = $"{Roles.Admin},{Roles.Auditor},{Roles.ProjectLead},{Roles.Dispatcher}")]
+    [Authorize(Roles = $"{Roles.Admin},{Roles.ProjectLead},{Roles.Dispatcher}")]
     [HttpGet]
     public async Task<IActionResult> List(int page = 1)
     {

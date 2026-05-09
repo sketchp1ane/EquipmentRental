@@ -52,9 +52,9 @@ public class DispatchController(
         return RedirectToAction(nameof(Orders));
     }
 
-    // ── 调度列表（调度员 / 管理员 / 审计员）─────────────────────────────────
+    // ── 调度列表（调度员 / 管理员）──────────────────────────────────────────
 
-    [Authorize(Roles = $"{Roles.Dispatcher},{Roles.Admin},{Roles.Auditor}")]
+    [Authorize(Roles = $"{Roles.Dispatcher},{Roles.Admin}")]
     [HttpGet]
     public async Task<IActionResult> Index(DispatchRequestStatus? status, int page = 1)
     {
@@ -64,7 +64,7 @@ public class DispatchController(
 
     // ── 调度单列表（所有相关角色）────────────────────────────────────────────
 
-    [Authorize(Roles = $"{Roles.Dispatcher},{Roles.Admin},{Roles.ProjectLead},{Roles.Auditor}")]
+    [Authorize(Roles = $"{Roles.Dispatcher},{Roles.Admin},{Roles.ProjectLead}")]
     [HttpGet]
     public async Task<IActionResult> Orders(DispatchOrderStatus? status, string? keyword, int page = 1)
     {
@@ -72,7 +72,6 @@ public class DispatchController(
         var restrictToRequesterId = User.IsInRole(Roles.ProjectLead)
             && !User.IsInRole(Roles.Admin)
             && !User.IsInRole(Roles.Dispatcher)
-            && !User.IsInRole(Roles.Auditor)
             ? CurrentUserId
             : null;
 
@@ -138,7 +137,7 @@ public class DispatchController(
 
     // ── 调度单详情 ────────────────────────────────────────────────────────────
 
-    [Authorize(Roles = $"{Roles.Dispatcher},{Roles.Admin},{Roles.ProjectLead},{Roles.Auditor}")]
+    [Authorize(Roles = $"{Roles.Dispatcher},{Roles.Admin},{Roles.ProjectLead}")]
     [HttpGet]
     public async Task<IActionResult> OrderDetails(int id)
     {

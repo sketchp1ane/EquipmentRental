@@ -7,8 +7,7 @@ public static class Roles
     public const string Dispatcher = "Dispatcher";
     public const string ProjectLead = "ProjectLead";
     public const string SafetyOfficer = "SafetyOfficer";
-    public const string Auditor = "Auditor";
 
     public static readonly string[] All =
-        [Admin, DeviceAdmin, Dispatcher, ProjectLead, SafetyOfficer, Auditor];
+        [Admin, DeviceAdmin, Dispatcher, ProjectLead, SafetyOfficer];
 }

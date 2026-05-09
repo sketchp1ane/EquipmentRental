@@ -17,7 +17,7 @@ public class ContractController(
     private string CurrentUserId => userManager.GetUserId(User)!;
 
     private const string AllViewRoles =
-        $"{Roles.Dispatcher},{Roles.ProjectLead},{Roles.Admin},{Roles.Auditor},{Roles.DeviceAdmin}";
+        $"{Roles.Dispatcher},{Roles.ProjectLead},{Roles.Admin},{Roles.DeviceAdmin}";
 
     // ── 合同详情 / 在线预览 ────────────────────────────────────────────────
 

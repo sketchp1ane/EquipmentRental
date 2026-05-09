@@ -20,10 +20,9 @@ public class ReturnController(
     [HttpGet]
     public async Task<IActionResult> Index(int page = 1)
     {
-        // ProjectLead (when not also Admin/DeviceAdmin/Auditor) only sees their own applications
+        // ProjectLead (when not also Admin/DeviceAdmin) only sees their own applications
         bool showAll = User.IsInRole(Roles.Admin)
                     || User.IsInRole(Roles.DeviceAdmin)
-                    || User.IsInRole(Roles.Auditor)
                     || User.IsInRole(Roles.Dispatcher)
                     || User.IsInRole(Roles.SafetyOfficer);
         string? restrictToUserId = showAll ? null : CurrentUserId;

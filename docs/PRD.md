@@ -66,26 +66,25 @@
 | **调度员** | 负责设备排期与派单 | 线上调度、合同生成、调度日历 |
 | **项目负责人** | 建筑工地甲方代表 | 提交用车申请、进场核验确认、退场申请 |
 | **安全员** | 现场安全管理人员 | 安全交底填写与签署、巡检记录、故障上报 |
-| **只读审计员** | 监管/审计人员 | 查看授权范围内的历史记录，无写权限 |
 
 ### 2.2 权限矩阵（CRUD，C=创建 R=查看 U=修改 D=删除）
 
-| 模块 | 系统管理员 | 设备管理员 | 调度员 | 项目负责人 | 安全员 | 审计员 |
-|---|:---:|:---:|:---:|:---:|:---:|:---:|
-| 用户管理 | CRUD | - | - | - | - | R |
-| 设备台账 | CRUD | CRUD | - | - | - | R |
-| 设备证件 | CRUD | CRUD | - | - | - | - |
-| 资质审核 | CRU | CRU | - | - | - | - |
-| 用车申请审批 | R | - | R | - | - | R |
-| 调度单 | R | - | CRUD | R | - | R |
-| 调度日历 | R | - | R | - | - | - |
-| 合同管理 | CRUD | R | CRUD | R | - | R |
-| 进场核验 | CRUD | - | R | CRU | - | R |
-| 安全交底 | CRUD | - | - | R/签署 | CRUD | - |
-| 巡检记录 | CRUD | R | - | R | CR | R |
-| 故障工单 | CRUD | 处理 | R | CR | CR | R |
-| 退场申请 | CRUD | R | R | CR | R | R |
-| 退场评价 | CRUD | CRU | R | R | R | R |
+| 模块 | 系统管理员 | 设备管理员 | 调度员 | 项目负责人 | 安全员 |
+|---|:---:|:---:|:---:|:---:|:---:|
+| 用户管理 | CRUD | - | - | - | - |
+| 设备台账 | CRUD | CRUD | - | - | - |
+| 设备证件 | CRUD | CRUD | - | - | - |
+| 资质审核 | CRU | CRU | - | - | - |
+| 用车申请审批 | R | - | R | - | - |
+| 调度单 | R | - | CRUD | R | - |
+| 调度日历 | R | - | R | - | - |
+| 合同管理 | CRUD | R | CRUD | R | - |
+| 进场核验 | CRUD | - | R | CRU | - |
+| 安全交底 | CRUD | - | - | R/签署 | CRUD |
+| 巡检记录 | CRUD | R | - | R | CR |
+| 故障工单 | CRUD | 处理 | R | CR | CR |
+| 退场申请 | CRUD | R | R | CR | R |
+| 退场评价 | CRUD | CRU | R | R | R |
 
 ---
 
@@ -401,7 +400,7 @@ SQL Server 2022（Docker：mcr.microsoft.com/mssql/server:2022-latest）
 | `Equipments` | Id, EquipmentNo(唯一), Name, CategoryId, BrandModel, ManufactureDate, Status(`PendingReview/Idle/InUse/Maintenance/Scrapped`), OwnedBy | 设备主表 |
 | `EquipmentImages` | Id, EquipmentId, FilePath, UploadedAt | 设备图片 |
 | `Qualifications` | Id, EquipmentId, Type, CertNo, IssuedBy, ValidFrom, ValidTo, FilePath | 设备证件 |
-| `AuditRecords` | Id, EquipmentId, AuditorId, Action(通过/驳回), Remark, AuditedAt | 资质审核记录 |
+| `AuditRecords` | Id, EquipmentId, AuditorId(审核人用户 Id，非角色), Action(通过/驳回), Remark, AuditedAt | 资质审核记录 |
 | `DispatchRequests` | Id, ProjectName, ProjectAddress, RequesterId, CategoryId, ExpectedStart, ExpectedEnd, Status | 用车申请 |
 | `DispatchOrders` | Id, RequestId, EquipmentId, DispatcherId, ActualStart, ActualEnd, UnitPrice, Deposit, Status, VerifyCode | 调度单 |
 | `Contracts` | Id, OrderId, ContractNo, Status, ScanPath | 租赁合同 |
@@ -436,26 +435,26 @@ SQL Server 2022（Docker：mcr.microsoft.com/mssql/server:2022-latest）
 | `/` | Home/Index | 已登录 | 首页看板 |
 | `/Account/Login` | Account/Login | 匿名 | 登录页 |
 | `/Account/Logout` | Account/Logout | 已登录 | 退出 |
-| `/Users` | Users/Index | 管理员/审计员 | 用户列表（审计员只读） |
+| `/Users` | Users/Index | 管理员 | 用户列表 |
 | `/Users/Create` | Users/Create | 管理员 | 新增用户 |
-| `/Equipment` | Equipment/Index | 管理员/设备管理员/审计员 | 设备台账列表 |
+| `/Equipment` | Equipment/Index | 管理员/设备管理员 | 设备台账列表 |
 | `/Equipment/Create` | Equipment/Create | 管理员/设备管理员 | 设备入库登记 |
-| `/Equipment/{id}` | Equipment/Details | 管理员/设备管理员/审计员 | 设备详情 |
+| `/Equipment/{id}` | Equipment/Details | 管理员/设备管理员 | 设备详情 |
 | `/Equipment/{id}/Edit` | Equipment/Edit | 管理员/设备管理员 | 编辑设备 |
 | `/Qualification?equipmentId={id}` | Qualification/Index | 管理员/设备管理员 | 证件管理 |
 | `/Audit` | Audit/Index | 管理员/设备管理员 | 待审核设备列表 |
 | `/Audit/Review?equipmentId={id}` | Audit/Review | 管理员/设备管理员 | 审核操作页 |
 | `/Dispatch/Request` | Dispatch/Request | 项目负责人/管理员 | 提交用车申请 |
-| `/Dispatch` | Dispatch/Index | 调度员/管理员/审计员 | 用车申请审批列表 |
-| `/Dispatch/Orders` | Dispatch/Orders | 调度员/项目负责人/审计员 | 调度单列表 |
+| `/Dispatch` | Dispatch/Index | 调度员/管理员 | 用车申请审批列表 |
+| `/Dispatch/Orders` | Dispatch/Orders | 调度员/项目负责人/管理员 | 调度单列表 |
 | `/Dispatch/Order?requestId={id}` | Dispatch/Order | 调度员/管理员 | 生成调度单 |
-| `/Dispatch/OrderDetails/{id}` | Dispatch/OrderDetails | 调度员/管理员/项目负责人/审计员 | 调度单详情 |
+| `/Dispatch/OrderDetails/{id}` | Dispatch/OrderDetails | 调度员/管理员/项目负责人 | 调度单详情 |
 | `/Dispatch/Calendar` | Dispatch/Calendar | 调度员/管理员 | 调度日历 |
-| `/Contract/Details/{id}` | Contract/Details | 调度员/项目负责人/审计员/管理员/设备管理员 | 合同详情 |
-| `/Contract/ExportPdf/{id}` | Contract/ExportPdf | 调度员/项目负责人/审计员/管理员/设备管理员 | 导出合同 PDF |
+| `/Contract/Details/{id}` | Contract/Details | 调度员/项目负责人/管理员/设备管理员 | 合同详情 |
+| `/Contract/ExportPdf/{id}` | Contract/ExportPdf | 调度员/项目负责人/管理员/设备管理员 | 导出合同 PDF |
 | `/Contract/UploadScan` | Contract/UploadScan | 调度员/管理员 | 上传签署扫描件（联动合同 Signed、订单 Signed、设备 InUse） |
 | `/Verification/Verify` | Verification/Verify | 项目负责人/管理员 | 进场核验操作 |
-| `/Verification/List` | Verification/List | 项目负责人/调度员/审计员/管理员 | 核验记录 |
+| `/Verification/List` | Verification/List | 项目负责人/调度员/管理员 | 核验记录 |
 | `/Safety/List` | Safety/List | 已登录 | 安全交底列表 |
 | `/Safety/Create?orderId={id}` | Safety/Create | 安全员/管理员 | 填写安全交底 |
 | `/Safety/Details/{id}` | Safety/Details | 已登录 | 交底详情/签署（签署操作限安全员/项目负责人/管理员） |

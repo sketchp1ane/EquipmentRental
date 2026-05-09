@@ -90,7 +90,6 @@ Default accounts:
   demo.dispatcher@equiprental.com / Demo@123456
   demo.projectlead@equiprental.com / Demo@123456
   demo.safetyofficer@equiprental.com / Demo@123456
-  demo.auditor@equiprental.com / Demo@123456
 
 Uploads/ was not cleaned. Start the app with:
   dotnet run

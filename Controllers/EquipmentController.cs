@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace EquipmentRental.Controllers;
 
-[Authorize(Roles = $"{Roles.Admin},{Roles.DeviceAdmin},{Roles.Auditor}")]
+[Authorize(Roles = $"{Roles.Admin},{Roles.DeviceAdmin}")]
 public class EquipmentController(
     EquipmentService equipmentService,
     UserManager<ApplicationUser> userManager) : Controller
@@ -126,7 +126,7 @@ public class EquipmentController(
 
     // ── Excel Export ──────────────────────────────────────────────────────────
 
-    [Authorize(Roles = $"{Roles.Admin},{Roles.DeviceAdmin},{Roles.Auditor}")]
+    [Authorize(Roles = $"{Roles.Admin},{Roles.DeviceAdmin}")]
     [HttpGet]
     public async Task<IActionResult> Export(
         int? categoryId, EquipmentStatus? status, string? keyword)

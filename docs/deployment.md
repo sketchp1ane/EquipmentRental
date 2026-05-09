@@ -75,7 +75,7 @@ dotnet ef database update
 ```
 
 迁移成功后，程序首次启动会自动执行种子数据：
-- 创建 6 个系统角色（Admin / DeviceAdmin / Dispatcher / ProjectLead / SafetyOfficer / Auditor）
+- 创建 5 个系统角色（Admin / DeviceAdmin / Dispatcher / ProjectLead / SafetyOfficer）
 - 创建默认管理员账号（`admin@equiprental.com` / `Admin@123456`）
 - 预置 8 大类 + 27 个二级设备分类
 

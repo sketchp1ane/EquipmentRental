@@ -2,7 +2,7 @@
 @{
     ViewData["Title"] = "设备台账";
     bool canWrite  = User.IsInRole(Roles.Admin) || User.IsInRole(Roles.DeviceAdmin);
-    bool canExport = canWrite || User.IsInRole(Roles.Auditor);
+    bool canExport = canWrite;
 
     (string Key, string Text) StatusVm(EquipmentStatus s) => s switch
     {

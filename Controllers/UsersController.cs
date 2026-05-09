@@ -8,15 +8,12 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace EquipmentRental.Controllers;
 
-[Authorize(Roles = $"{Roles.Admin},{Roles.Auditor}")]
+[Authorize(Roles = Roles.Admin)]
 public class UsersController(
     UserService userService,
     UserManager<ApplicationUser> userManager) : Controller
 {
     private string CurrentUserId => userManager.GetUserId(User)!;
-
-    private bool IsAuditorOnly =>
-        User.IsInRole(Roles.Auditor) && !User.IsInRole(Roles.Admin);
 
     // ── Index ─────────────────────────────────────────────────────────────────
 
@@ -25,7 +22,6 @@ public class UsersController(
         string? keyword, string? role, bool? isActive, int page = 1)
     {
         var vm = await userService.GetPagedUsersAsync(keyword, role, isActive, page);
-        ViewBag.IsReadOnly = IsAuditorOnly;
         return View(vm);
     }
 
