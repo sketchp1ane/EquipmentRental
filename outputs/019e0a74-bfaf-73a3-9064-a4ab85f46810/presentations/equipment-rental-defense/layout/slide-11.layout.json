@@ -1,0 +1,1199 @@
+{
+  "schema": "openai.presentation.layout/v4",
+  "unit": "px",
+  "slide": {
+    "aid": "sl/7fcc2q",
+    "id": "7fcc2q",
+    "slide": 11,
+    "layoutId": "2aaca6a8-b2f1-484b-bb4c-4ec7d518fc56",
+    "layoutName": "Title Slide",
+    "layoutType": "title",
+    "masterLayoutId": "c1fb9ec2-81ac-4514-99ff-e3ff279b8f85",
+    "masterLayoutName": "Master",
+    "frame": {
+      "left": 0,
+      "top": 0,
+      "width": 1280,
+      "height": 720
+    }
+  },
+  "theme": {
+    "colorSchemeName": "ChatGPT",
+    "colors": {
+      "accent1": "#156082",
+      "accent2": "#E97132",
+      "accent3": "#196B24",
+      "accent4": "#0F9ED5",
+      "accent5": "#A02B93",
+      "accent6": "#4EA72E",
+      "bg1": "#FFFFFF",
+      "bg2": "#000000",
+      "tx1": "#1F1F1F",
+      "tx2": "#FFFFFF",
+      "dk1": "#000000",
+      "lt1": "#FFFFFF",
+      "dk2": "#0E2841",
+      "lt2": "#E8E8E8",
+      "hlink": "#467886",
+      "folHlink": "#96607D"
+    },
+    "typefaces": [
+      "Aptos Mono",
+      "PingFang SC"
+    ]
+  },
+  "inheritedLayers": [
+    {
+      "scope": "layout",
+      "id": "2aaca6a8-b2f1-484b-bb4c-4ec7d518fc56",
+      "name": "Title Slide",
+      "type": "title",
+      "parentLayoutId": "c1fb9ec2-81ac-4514-99ff-e3ff279b8f85",
+      "elements": []
+    },
+    {
+      "scope": "master",
+      "id": "c1fb9ec2-81ac-4514-99ff-e3ff279b8f85",
+      "name": "Master",
+      "type": "master",
+      "elements": []
+    }
+  ],
+  "elements": [
+    {
+      "order": 1,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/87ed8bat",
+      "id": "1",
+      "bbox": [
+        0,
+        0,
+        1280,
+        720
+      ],
+      "geometry": "rect",
+      "fillColor": "#F6F8FB",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 2,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/fmlkjm1c",
+      "id": "2",
+      "bbox": [
+        0,
+        0,
+        1280,
+        8
+      ],
+      "geometry": "rect",
+      "fillColor": "#F2B705",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 3,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/q1orytsv",
+      "id": "3",
+      "bbox": [
+        64,
+        38,
+        500,
+        18
+      ],
+      "geometry": "rect",
+      "text": "FEATURE 04",
+      "textPreview": "FEATURE 04",
+      "resolvedFontSize": 9.51,
+      "resolvedTextStyle": {
+        "fontSize": 9.51,
+        "typeface": "PingFang SC",
+        "bold": true,
+        "alignment": "left"
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "FEATURE 04"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "FEATURE 04",
+          "runs": [
+            {
+              "index": 1,
+              "text": "FEATURE 04",
+              "fontSize": 9.51,
+              "typeface": "PingFang SC",
+              "color": "#F2B705",
+              "bold": true
+            }
+          ]
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 4,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/1gvy90je",
+      "id": "4",
+      "bbox": [
+        64,
+        66,
+        940,
+        74
+      ],
+      "geometry": "rect",
+      "text": "巡检故障与退场评价：把使用过程和押金结算纳入闭环",
+      "textPreview": "巡检故障与退场评价：把使用过程和押金结算纳入闭环",
+      "resolvedFontSize": 29,
+      "resolvedTextStyle": {
+        "fontSize": 29,
+        "typeface": "PingFang SC",
+        "bold": true,
+        "alignment": "left"
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "巡检故障与退场评价：把使用过程和押金结算纳入闭环"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "巡检故障与退场评价：把使用过程和押金结算纳入闭环",
+          "runs": [
+            {
+              "index": 1,
+              "text": "巡检故障与退场评价：把使用过程和押金结算纳入闭环",
+              "fontSize": 29,
+              "typeface": "PingFang SC",
+              "color": "#132033",
+              "bold": true
+            }
+          ]
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 5,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/8z25kb6x",
+      "id": "5",
+      "bbox": [
+        64,
+        148,
+        900,
+        30
+      ],
+      "geometry": "rect",
+      "text": "使用阶段的异常不是孤立记录，会影响设备状态、维修记录和退场评价。",
+      "textPreview": "使用阶段的异常不是孤立记录，会影响设备状态、维修记录和退场评价。",
+      "resolvedFontSize": 12.51,
+      "resolvedTextStyle": {
+        "fontSize": 12.51,
+        "typeface": "PingFang SC",
+        "alignment": "left"
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "使用阶段的异常不是孤立记录，会影响设备状态、维修记录和退场评价。"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "使用阶段的异常不是孤立记录，会影响设备状态、维修记录和退场评价。",
+          "runs": [
+            {
+              "index": 1,
+              "text": "使用阶段的异常不是孤立记录，会影响设备状态、维修记录和退场评价。",
+              "fontSize": 12.51,
+              "typeface": "PingFang SC",
+              "color": "#64748B"
+            }
+          ]
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 6,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/je9cvixc",
+      "id": "6",
+      "bbox": [
+        698,
+        182,
+        496,
+        314
+      ],
+      "geometry": "rect",
+      "fillColor": "#FFFFFF",
+      "lineColor": "#CBD5E1",
+      "lineWidth": 1
+    },
+    {
+      "order": 7,
+      "kind": "image",
+      "scope": "slide",
+      "aid": "im/vahoza1g",
+      "id": "7",
+      "bbox": [
+        702,
+        186,
+        488,
+        306
+      ],
+      "alt": "真实页面：退场申请列表",
+      "contentType": "image/png",
+      "asset": {
+        "assetId": "8d1fe7ee-874f-44dd-94d0-616fd8de8074",
+        "contentType": "image/png",
+        "byteLength": 83593
+      }
+    },
+    {
+      "order": 8,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/xczed8v6",
+      "id": "8",
+      "bbox": [
+        702,
+        462,
+        488,
+        30
+      ],
+      "geometry": "rect",
+      "fillColor": "rgba(20, 33, 61, 0.93333)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 9,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/8v6psfil",
+      "id": "9",
+      "bbox": [
+        716,
+        470,
+        460,
+        16
+      ],
+      "geometry": "rect",
+      "text": "真实页面：退场申请列表",
+      "textPreview": "真实页面：退场申请列表",
+      "resolvedFontSize": 9.51,
+      "resolvedTextStyle": {
+        "fontSize": 9.51,
+        "typeface": "PingFang SC",
+        "bold": true,
+        "alignment": "left"
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "真实页面：退场申请列表"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "真实页面：退场申请列表",
+          "runs": [
+            {
+              "index": 1,
+              "text": "真实页面：退场申请列表",
+              "fontSize": 9.51,
+              "typeface": "PingFang SC",
+              "color": "#FFFFFF",
+              "bold": true
+            }
+          ]
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 10,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/yhgn29gr",
+      "id": "10",
+      "bbox": [
+        84,
+        190,
+        210,
+        116
+      ],
+      "geometry": "rect",
+      "fillColor": "#FFFFFF",
+      "lineColor": "#D9E2EC",
+      "lineWidth": 1
+    },
+    {
+      "order": 11,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/n29gr2p8",
+      "id": "11",
+      "bbox": [
+        84,
+        190,
+        210,
+        5
+      ],
+      "geometry": "rect",
+      "fillColor": "#2563EB",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 12,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/gn29gr2p",
+      "id": "12",
+      "bbox": [
+        102,
+        210,
+        174,
+        28
+      ],
+      "geometry": "rect",
+      "text": "日常巡检",
+      "textPreview": "日常巡检",
+      "resolvedFontSize": 15,
+      "resolvedTextStyle": {
+        "fontSize": 15,
+        "typeface": "PingFang SC",
+        "bold": true,
+        "alignment": "left"
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "日常巡检"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "日常巡检",
+          "runs": [
+            {
+              "index": 1,
+              "text": "日常巡检",
+              "fontSize": 15,
+              "typeface": "PingFang SC",
+              "color": "#2563EB",
+              "bold": true
+            }
+          ]
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 13,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/58z25kb6",
+      "id": "13",
+      "bbox": [
+        102,
+        248,
+        174,
+        46
+      ],
+      "geometry": "rect",
+      "text": "8 项固定清单\n异常自动标红",
+      "textPreview": "8 项固定清单 | 异常自动标红",
+      "resolvedFontSize": 10.51,
+      "resolvedTextStyle": {
+        "fontSize": 10.51,
+        "typeface": "PingFang SC",
+        "alignment": "left"
+      },
+      "textLayout": {
+        "lineCount": 2,
+        "lines": [
+          {
+            "index": 1,
+            "text": "8 项固定清单"
+          },
+          {
+            "index": 2,
+            "text": "异常自动标红"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "8 项固定清单",
+          "runs": [
+            {
+              "index": 1,
+              "text": "8 项固定清单",
+              "fontSize": 10.51,
+              "typeface": "PingFang SC",
+              "color": "#64748B"
+            }
+          ]
+        },
+        {
+          "index": 2,
+          "text": "异常自动标红",
+          "runs": [
+            {
+              "index": 1,
+              "text": "异常自动标红",
+              "fontSize": 10.51,
+              "typeface": "PingFang SC",
+              "color": "#64748B"
+            }
+          ]
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 14,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/y90je9cv",
+      "id": "14",
+      "bbox": [
+        334,
+        190,
+        210,
+        116
+      ],
+      "geometry": "rect",
+      "fillColor": "#FFFFFF",
+      "lineColor": "#D9E2EC",
+      "lineWidth": 1
+    },
+    {
+      "order": 15,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/nuxc3ylc",
+      "id": "15",
+      "bbox": [
+        334,
+        190,
+        210,
+        5
+      ],
+      "geometry": "rect",
+      "fillColor": "#C2410C",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 16,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/gbq1oryt",
+      "id": "16",
+      "bbox": [
+        352,
+        210,
+        174,
+        28
+      ],
+      "geometry": "rect",
+      "text": "故障上报",
+      "textPreview": "故障上报",
+      "resolvedFontSize": 15,
+      "resolvedTextStyle": {
+        "fontSize": 15,
+        "typeface": "PingFang SC",
+        "bold": true,
+        "alignment": "left"
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "故障上报"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "故障上报",
+          "runs": [
+            {
+              "index": 1,
+              "text": "故障上报",
+              "fontSize": 15,
+              "typeface": "PingFang SC",
+              "color": "#C2410C",
+              "bold": true
+            }
+          ]
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 17,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/5wjudg7a",
+      "id": "17",
+      "bbox": [
+        352,
+        248,
+        174,
+        46
+      ],
+      "geometry": "rect",
+      "text": "InUse → Maintenance\n工单受理与关闭",
+      "textPreview": "InUse → Maintenance | 工单受理与关闭",
+      "resolvedFontSize": 10.51,
+      "resolvedTextStyle": {
+        "fontSize": 10.51,
+        "typeface": "PingFang SC",
+        "alignment": "left"
+      },
+      "textLayout": {
+        "lineCount": 2,
+        "lines": [
+          {
+            "index": 1,
+            "text": "InUse → Maintenance"
+          },
+          {
+            "index": 2,
+            "text": "工单受理与关闭"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "InUse → Maintenance",
+          "runs": [
+            {
+              "index": 1,
+              "text": "InUse → Maintenance",
+              "fontSize": 10.51,
+              "typeface": "PingFang SC",
+              "color": "#64748B"
+            }
+          ]
+        },
+        {
+          "index": 2,
+          "text": "工单受理与关闭",
+          "runs": [
+            {
+              "index": 1,
+              "text": "工单受理与关闭",
+              "fontSize": 10.51,
+              "typeface": "PingFang SC",
+              "color": "#64748B"
+            }
+          ]
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 18,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/u54zidon",
+      "id": "18",
+      "bbox": [
+        84,
+        346,
+        210,
+        116
+      ],
+      "geometry": "rect",
+      "fillColor": "#FFFFFF",
+      "lineColor": "#D9E2EC",
+      "lineWidth": 1
+    },
+    {
+      "order": 19,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/nqxs72x4",
+      "id": "19",
+      "bbox": [
+        84,
+        346,
+        210,
+        5
+      ],
+      "geometry": "rect",
+      "fillColor": "#F2B705",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 20,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/je9cvixc",
+      "id": "20",
+      "bbox": [
+        102,
+        366,
+        174,
+        28
+      ],
+      "geometry": "rect",
+      "text": "退场申请",
+      "textPreview": "退场申请",
+      "resolvedFontSize": 15,
+      "resolvedTextStyle": {
+        "fontSize": 15,
+        "typeface": "PingFang SC",
+        "bold": true,
+        "alignment": "left"
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "退场申请"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "退场申请",
+          "runs": [
+            {
+              "index": 1,
+              "text": "退场申请",
+              "fontSize": 15,
+              "typeface": "PingFang SC",
+              "color": "#F2B705",
+              "bold": true
+            }
+          ]
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 21,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/qtcj6tov",
+      "id": "21",
+      "bbox": [
+        102,
+        404,
+        174,
+        46
+      ],
+      "geometry": "rect",
+      "text": "项目结束后提交\n等待设备管理员评价",
+      "textPreview": "项目结束后提交 | 等待设备管理员评价",
+      "resolvedFontSize": 10.51,
+      "resolvedTextStyle": {
+        "fontSize": 10.51,
+        "typeface": "PingFang SC",
+        "alignment": "left"
+      },
+      "textLayout": {
+        "lineCount": 2,
+        "lines": [
+          {
+            "index": 1,
+            "text": "项目结束后提交"
+          },
+          {
+            "index": 2,
+            "text": "等待设备管理员评价"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "项目结束后提交",
+          "runs": [
+            {
+              "index": 1,
+              "text": "项目结束后提交",
+              "fontSize": 10.51,
+              "typeface": "PingFang SC",
+              "color": "#64748B"
+            }
+          ]
+        },
+        {
+          "index": 2,
+          "text": "等待设备管理员评价",
+          "runs": [
+            {
+              "index": 1,
+              "text": "等待设备管理员评价",
+              "fontSize": 10.51,
+              "typeface": "PingFang SC",
+              "color": "#64748B"
+            }
+          ]
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 22,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/1gvy90je",
+      "id": "22",
+      "bbox": [
+        334,
+        346,
+        210,
+        116
+      ],
+      "geometry": "rect",
+      "fillColor": "#FFFFFF",
+      "lineColor": "#D9E2EC",
+      "lineWidth": 1
+    },
+    {
+      "order": 23,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/8z25kb6x",
+      "id": "23",
+      "bbox": [
+        334,
+        346,
+        210,
+        5
+      ],
+      "geometry": "rect",
+      "fillColor": "#15A46E",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 24,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/fmlkjm1c",
+      "id": "24",
+      "bbox": [
+        352,
+        366,
+        174,
+        28
+      ],
+      "geometry": "rect",
+      "text": "押金核算",
+      "textPreview": "押金核算",
+      "resolvedFontSize": 15,
+      "resolvedTextStyle": {
+        "fontSize": 15,
+        "typeface": "PingFang SC",
+        "bold": true,
+        "alignment": "left"
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "押金核算"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "押金核算",
+          "runs": [
+            {
+              "index": 1,
+              "text": "押金核算",
+              "fontSize": 15,
+              "typeface": "PingFang SC",
+              "color": "#15A46E",
+              "bold": true
+            }
+          ]
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 25,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/q1orytsv",
+      "id": "25",
+      "bbox": [
+        352,
+        404,
+        174,
+        46
+      ],
+      "geometry": "rect",
+      "text": "扣款服务端校验\n退款金额自动计算",
+      "textPreview": "扣款服务端校验 | 退款金额自动计算",
+      "resolvedFontSize": 10.51,
+      "resolvedTextStyle": {
+        "fontSize": 10.51,
+        "typeface": "PingFang SC",
+        "alignment": "left"
+      },
+      "textLayout": {
+        "lineCount": 2,
+        "lines": [
+          {
+            "index": 1,
+            "text": "扣款服务端校验"
+          },
+          {
+            "index": 2,
+            "text": "退款金额自动计算"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "扣款服务端校验",
+          "runs": [
+            {
+              "index": 1,
+              "text": "扣款服务端校验",
+              "fontSize": 10.51,
+              "typeface": "PingFang SC",
+              "color": "#64748B"
+            }
+          ]
+        },
+        {
+          "index": 2,
+          "text": "退款金额自动计算",
+          "runs": [
+            {
+              "index": 1,
+              "text": "退款金额自动计算",
+              "fontSize": 10.51,
+              "typeface": "PingFang SC",
+              "color": "#64748B"
+            }
+          ]
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 26,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/xs72x4na",
+      "id": "26",
+      "bbox": [
+        100,
+        536,
+        480,
+        56
+      ],
+      "geometry": "rect",
+      "fillColor": "#FFFFFF",
+      "lineColor": "#D9E2EC",
+      "lineWidth": 1
+    },
+    {
+      "order": 27,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/87ed8bat",
+      "id": "27",
+      "bbox": [
+        124,
+        553,
+        80,
+        18
+      ],
+      "geometry": "rect",
+      "text": "状态回写",
+      "textPreview": "状态回写",
+      "resolvedFontSize": 10,
+      "resolvedTextStyle": {
+        "fontSize": 10,
+        "typeface": "PingFang SC",
+        "bold": true,
+        "alignment": "left"
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "状态回写"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "状态回写",
+          "runs": [
+            {
+              "index": 1,
+              "text": "状态回写",
+              "fontSize": 10,
+              "typeface": "PingFang SC",
+              "color": "#F2B705",
+              "bold": true
+            }
+          ]
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 28,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/fyxobm58",
+      "id": "28",
+      "bbox": [
+        212,
+        548,
+        326,
+        24
+      ],
+      "geometry": "rect",
+      "text": "退场评价后订单 Complete，设备回到空闲、维修或报废。",
+      "textPreview": "退场评价后订单 Complete，设备回到空闲、维修或报废。",
+      "resolvedFontSize": 13.51,
+      "resolvedTextStyle": {
+        "fontSize": 13.51,
+        "typeface": "PingFang SC",
+        "bold": true,
+        "alignment": "left"
+      },
+      "textLayout": {
+        "lineCount": 2,
+        "lines": [
+          {
+            "index": 1,
+            "text": "退场评价后订单"
+          },
+          {
+            "index": 2,
+            "text": "Complete，设备回到空闲、维修或报废。"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "退场评价后订单 Complete，设备回到空闲、维修或报废。",
+          "runs": [
+            {
+              "index": 1,
+              "text": "退场评价后订单 Complete，设备回到空闲、维修或报废。",
+              "fontSize": 13.51,
+              "typeface": "PingFang SC",
+              "color": "#132033",
+              "bold": true
+            }
+          ]
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 29,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/qd4vmtwr",
+      "id": "29",
+      "bbox": [
+        64,
+        674,
+        1152,
+        1
+      ],
+      "geometry": "rect",
+      "fillColor": "#D9E2EC",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 30,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/wjudg7ad",
+      "id": "30",
+      "bbox": [
+        64,
+        686,
+        940,
+        16
+      ],
+      "geometry": "rect",
+      "text": "讲稿提示：说明系统不是只管租前，也覆盖租中监管和租后结算。",
+      "textPreview": "讲稿提示：说明系统不是只管租前，也覆盖租中监管和租后结算。",
+      "resolvedFontSize": 8.51,
+      "resolvedTextStyle": {
+        "fontSize": 8.51,
+        "typeface": "PingFang SC",
+        "alignment": "left"
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "讲稿提示：说明系统不是只管租前，也覆盖租中监管和租后结算。"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "讲稿提示：说明系统不是只管租前，也覆盖租中监管和租后结算。",
+          "runs": [
+            {
+              "index": 1,
+              "text": "讲稿提示：说明系统不是只管租前，也覆盖租中监管和租后结算。",
+              "fontSize": 8.51,
+              "typeface": "PingFang SC",
+              "color": "#64748B"
+            }
+          ]
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 31,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/p4r65wju",
+      "id": "31",
+      "bbox": [
+        1170,
+        682,
+        46,
+        22
+      ],
+      "geometry": "rect",
+      "text": "11",
+      "textPreview": "11",
+      "resolvedFontSize": 12,
+      "resolvedTextStyle": {
+        "fontSize": 12,
+        "typeface": "Aptos Mono",
+        "bold": true,
+        "alignment": "right"
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "11"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "11",
+          "runs": [
+            {
+              "index": 1,
+              "text": "11",
+              "fontSize": 12,
+              "typeface": "Aptos Mono",
+              "color": "#64748B",
+              "bold": true
+            }
+          ]
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    }
+  ],
+  "composeRuns": []
+}

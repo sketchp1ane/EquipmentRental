@@ -1,0 +1,1158 @@
+{
+  "schema": "openai.presentation.layout/v4",
+  "unit": "px",
+  "slide": {
+    "aid": "sl/inue6c",
+    "id": "inue6c",
+    "slide": 6,
+    "layoutId": "2aaca6a8-b2f1-484b-bb4c-4ec7d518fc56",
+    "layoutName": "Title Slide",
+    "layoutType": "title",
+    "masterLayoutId": "c1fb9ec2-81ac-4514-99ff-e3ff279b8f85",
+    "masterLayoutName": "Master",
+    "frame": {
+      "left": 0,
+      "top": 0,
+      "width": 1280,
+      "height": 720
+    }
+  },
+  "theme": {
+    "colorSchemeName": "ChatGPT",
+    "colors": {
+      "accent1": "#156082",
+      "accent2": "#E97132",
+      "accent3": "#196B24",
+      "accent4": "#0F9ED5",
+      "accent5": "#A02B93",
+      "accent6": "#4EA72E",
+      "bg1": "#FFFFFF",
+      "bg2": "#000000",
+      "tx1": "#1F1F1F",
+      "tx2": "#FFFFFF",
+      "dk1": "#000000",
+      "lt1": "#FFFFFF",
+      "dk2": "#0E2841",
+      "lt2": "#E8E8E8",
+      "hlink": "#467886",
+      "folHlink": "#96607D"
+    },
+    "typefaces": [
+      "Aptos Mono",
+      "PingFang SC"
+    ]
+  },
+  "inheritedLayers": [
+    {
+      "scope": "layout",
+      "id": "2aaca6a8-b2f1-484b-bb4c-4ec7d518fc56",
+      "name": "Title Slide",
+      "type": "title",
+      "parentLayoutId": "c1fb9ec2-81ac-4514-99ff-e3ff279b8f85",
+      "elements": []
+    },
+    {
+      "scope": "master",
+      "id": "c1fb9ec2-81ac-4514-99ff-e3ff279b8f85",
+      "name": "Master",
+      "type": "master",
+      "elements": []
+    }
+  ],
+  "elements": [
+    {
+      "order": 1,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/0fepkzup",
+      "id": "1",
+      "bbox": [
+        0,
+        0,
+        1280,
+        720
+      ],
+      "geometry": "rect",
+      "fillColor": "#F6F8FB",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 2,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/bulwval8",
+      "id": "2",
+      "bbox": [
+        0,
+        0,
+        1280,
+        8
+      ],
+      "geometry": "rect",
+      "fillColor": "#F2B705",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 3,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/i9s36hcr",
+      "id": "3",
+      "bbox": [
+        64,
+        38,
+        500,
+        18
+      ],
+      "geometry": "rect",
+      "text": "ARCHITECTURE",
+      "textPreview": "ARCHITECTURE",
+      "resolvedFontSize": 9.51,
+      "resolvedTextStyle": {
+        "fontSize": 9.51,
+        "typeface": "PingFang SC",
+        "bold": true,
+        "alignment": "left"
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "ARCHITECTURE"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "ARCHITECTURE",
+          "runs": [
+            {
+              "index": 1,
+              "text": "ARCHITECTURE",
+              "fontSize": 9.51,
+              "typeface": "PingFang SC",
+              "color": "#F2B705",
+              "bold": true
+            }
+          ]
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 4,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/tovahoza",
+      "id": "4",
+      "bbox": [
+        64,
+        66,
+        940,
+        74
+      ],
+      "geometry": "rect",
+      "text": "系统总体架构：ASP.NET Core MVC 分层 + Service 承载业务规则",
+      "textPreview": "系统总体架构：ASP.NET Core MVC 分层 + Service 承载业务规则",
+      "resolvedFontSize": 29,
+      "resolvedTextStyle": {
+        "fontSize": 29,
+        "typeface": "PingFang SC",
+        "bold": true,
+        "alignment": "left"
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "系统总体架构：ASP.NET Core MVC 分层 + Service 承载业务规则"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "系统总体架构：ASP.NET Core MVC 分层 + Service 承载业务规则",
+          "runs": [
+            {
+              "index": 1,
+              "text": "系统总体架构：ASP.NET Core MVC 分层 + Service 承载业务规则",
+              "fontSize": 29,
+              "typeface": "PingFang SC",
+              "color": "#132033",
+              "bold": true
+            }
+          ]
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 5,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/032lszqt",
+      "id": "5",
+      "bbox": [
+        64,
+        148,
+        900,
+        30
+      ],
+      "geometry": "rect",
+      "text": "控制器保持薄层，复杂状态机和事务边界集中在服务层。",
+      "textPreview": "控制器保持薄层，复杂状态机和事务边界集中在服务层。",
+      "resolvedFontSize": 12.51,
+      "resolvedTextStyle": {
+        "fontSize": 12.51,
+        "typeface": "PingFang SC",
+        "alignment": "left"
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "控制器保持薄层，复杂状态机和事务边界集中在服务层。"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "控制器保持薄层，复杂状态机和事务边界集中在服务层。",
+          "runs": [
+            {
+              "index": 1,
+              "text": "控制器保持薄层，复杂状态机和事务边界集中在服务层。",
+              "fontSize": 12.51,
+              "typeface": "PingFang SC",
+              "color": "#64748B"
+            }
+          ]
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 6,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/bi9s36hc",
+      "id": "6",
+      "bbox": [
+        94,
+        188,
+        1090,
+        78
+      ],
+      "geometry": "rect",
+      "fillColor": "#FFFFFF",
+      "lineColor": "#D9E2EC",
+      "lineWidth": 1
+    },
+    {
+      "order": 7,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/ixczed8v",
+      "id": "7",
+      "bbox": [
+        94,
+        188,
+        6,
+        78
+      ],
+      "geometry": "rect",
+      "fillColor": "#2563EB",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 8,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/tcj6tova",
+      "id": "8",
+      "bbox": [
+        116,
+        202,
+        1046,
+        22
+      ],
+      "geometry": "rect",
+      "text": "表现层 Views",
+      "textPreview": "表现层 Views",
+      "resolvedFontSize": 15,
+      "resolvedTextStyle": {
+        "fontSize": 15,
+        "typeface": "PingFang SC",
+        "bold": true,
+        "alignment": "left"
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "表现层 Views"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "表现层 Views",
+          "runs": [
+            {
+              "index": 1,
+              "text": "表现层 Views",
+              "fontSize": 15,
+              "typeface": "PingFang SC",
+              "color": "#132033",
+              "bold": true
+            }
+          ]
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 9,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/0rqd4vmt",
+      "id": "9",
+      "bbox": [
+        116,
+        230,
+        1046,
+        28
+      ],
+      "geometry": "rect",
+      "text": "Razor Views、Bootstrap 5、jQuery、Chart.js、Summernote\n负责页面渲染、表单交互和看板图表。",
+      "textPreview": "Razor Views、Bootstrap 5、jQuery、Chart.js、Summernote | 负责页面渲染、表单交互和看板图表。",
+      "resolvedFontSize": 10.51,
+      "resolvedTextStyle": {
+        "fontSize": 10.51,
+        "typeface": "PingFang SC",
+        "alignment": "left"
+      },
+      "textLayout": {
+        "lineCount": 2,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Razor Views、Bootstrap 5、jQuery、Chart.js、Summernote"
+          },
+          {
+            "index": 2,
+            "text": "负责页面渲染、表单交互和看板图表。"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Razor Views、Bootstrap 5、jQuery、Chart.js、Summernote",
+          "runs": [
+            {
+              "index": 1,
+              "text": "Razor Views、Bootstrap 5、jQuery、Chart.js、Summernote",
+              "fontSize": 10.51,
+              "typeface": "PingFang SC",
+              "color": "#64748B"
+            }
+          ]
+        },
+        {
+          "index": 2,
+          "text": "负责页面渲染、表单交互和看板图表。",
+          "runs": [
+            {
+              "index": 1,
+              "text": "负责页面渲染、表单交互和看板图表。",
+              "fontSize": 10.51,
+              "typeface": "PingFang SC",
+              "color": "#64748B"
+            }
+          ]
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 10,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/i9s36hcr",
+      "id": "10",
+      "bbox": [
+        94,
+        294,
+        1090,
+        82
+      ],
+      "geometry": "rect",
+      "fillColor": "#FFFFFF",
+      "lineColor": "#D9E2EC",
+      "lineWidth": 1
+    },
+    {
+      "order": 11,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/bulwval8",
+      "id": "11",
+      "bbox": [
+        94,
+        294,
+        6,
+        82
+      ],
+      "geometry": "rect",
+      "fillColor": "#F2B705",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 12,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/0fepkzup",
+      "id": "12",
+      "bbox": [
+        116,
+        308,
+        1046,
+        22
+      ],
+      "geometry": "rect",
+      "text": "Web 层 Controllers",
+      "textPreview": "Web 层 Controllers",
+      "resolvedFontSize": 15,
+      "resolvedTextStyle": {
+        "fontSize": 15,
+        "typeface": "PingFang SC",
+        "bold": true,
+        "alignment": "left"
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Web 层 Controllers"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Web 层 Controllers",
+          "runs": [
+            {
+              "index": 1,
+              "text": "Web 层 Controllers",
+              "fontSize": 15,
+              "typeface": "PingFang SC",
+              "color": "#132033",
+              "bold": true
+            }
+          ]
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 13,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/p0bi9s36",
+      "id": "13",
+      "bbox": [
+        116,
+        336,
+        1046,
+        32
+      ],
+      "geometry": "rect",
+      "text": "Account / Equipment / Dispatch / Contract / Verification / Safety / Inspection / Fault / Return\n接收请求、调用服务、返回 View 或 JSON。",
+      "textPreview": "Account / Equipment / Dispatch / Contract / Verification / Safety / Inspection / Fault / Return | 接收请求、调用服务、返回 View 或 JSON。",
+      "resolvedFontSize": 10.51,
+      "resolvedTextStyle": {
+        "fontSize": 10.51,
+        "typeface": "PingFang SC",
+        "alignment": "left"
+      },
+      "textLayout": {
+        "lineCount": 2,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Account / Equipment / Dispatch / Contract / Verification / Safety / Inspection / Fault / Return"
+          },
+          {
+            "index": 2,
+            "text": "接收请求、调用服务、返回 View 或 JSON。"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Account / Equipment / Dispatch / Contract / Verification / Safety / Inspection / Fault / Return",
+          "runs": [
+            {
+              "index": 1,
+              "text": "Account / Equipment / Dispatch / Contract / Verification / Safety / Inspection / Fault / Return",
+              "fontSize": 10.51,
+              "typeface": "PingFang SC",
+              "color": "#64748B"
+            }
+          ]
+        },
+        {
+          "index": 2,
+          "text": "接收请求、调用服务、返回 View 或 JSON。",
+          "runs": [
+            {
+              "index": 1,
+              "text": "接收请求、调用服务、返回 View 或 JSON。",
+              "fontSize": 10.51,
+              "typeface": "PingFang SC",
+              "color": "#64748B"
+            }
+          ]
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 14,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/ixczed8v",
+      "id": "14",
+      "bbox": [
+        94,
+        404,
+        1090,
+        88
+      ],
+      "geometry": "rect",
+      "fillColor": "#FFFFFF",
+      "lineColor": "#D9E2EC",
+      "lineWidth": 1
+    },
+    {
+      "order": 15,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/bi9s36hc",
+      "id": "15",
+      "bbox": [
+        94,
+        404,
+        6,
+        88
+      ],
+      "geometry": "rect",
+      "fillColor": "#15A46E",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 16,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/032lszqt",
+      "id": "16",
+      "bbox": [
+        116,
+        418,
+        1046,
+        22
+      ],
+      "geometry": "rect",
+      "text": "业务层 Services",
+      "textPreview": "业务层 Services",
+      "resolvedFontSize": 15,
+      "resolvedTextStyle": {
+        "fontSize": 15,
+        "typeface": "PingFang SC",
+        "bold": true,
+        "alignment": "left"
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "业务层 Services"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "业务层 Services",
+          "runs": [
+            {
+              "index": 1,
+              "text": "业务层 Services",
+              "fontSize": 15,
+              "typeface": "PingFang SC",
+              "color": "#132033",
+              "bold": true
+            }
+          ]
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 17,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/tovahoza",
+      "id": "17",
+      "bbox": [
+        116,
+        446,
+        1046,
+        38
+      ],
+      "geometry": "rect",
+      "text": "EquipmentService、DispatchService、VerificationService、SafetyService、FaultService、ReturnService 等\n封装业务规则、状态流转和事务。",
+      "textPreview": "EquipmentService、DispatchService、VerificationService、SafetyService、FaultService、ReturnService 等 | 封装业务规则、状态流转和事务。",
+      "resolvedFontSize": 10.51,
+      "resolvedTextStyle": {
+        "fontSize": 10.51,
+        "typeface": "PingFang SC",
+        "alignment": "left"
+      },
+      "textLayout": {
+        "lineCount": 2,
+        "lines": [
+          {
+            "index": 1,
+            "text": "EquipmentService、DispatchService、VerificationService、SafetyService、FaultService、ReturnService 等"
+          },
+          {
+            "index": 2,
+            "text": "封装业务规则、状态流转和事务。"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "EquipmentService、DispatchService、VerificationService、SafetyService、FaultService、ReturnService 等",
+          "runs": [
+            {
+              "index": 1,
+              "text": "EquipmentService、DispatchService、VerificationService、SafetyService、FaultService、ReturnService 等",
+              "fontSize": 10.51,
+              "typeface": "PingFang SC",
+              "color": "#64748B"
+            }
+          ]
+        },
+        {
+          "index": 2,
+          "text": "封装业务规则、状态流转和事务。",
+          "runs": [
+            {
+              "index": 1,
+              "text": "封装业务规则、状态流转和事务。",
+              "fontSize": 10.51,
+              "typeface": "PingFang SC",
+              "color": "#64748B"
+            }
+          ]
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 18,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/il0rqd4v",
+      "id": "18",
+      "bbox": [
+        94,
+        522,
+        1090,
+        76
+      ],
+      "geometry": "rect",
+      "fillColor": "#FFFFFF",
+      "lineColor": "#D9E2EC",
+      "lineWidth": 1
+    },
+    {
+      "order": 19,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/b6xkf6dc",
+      "id": "19",
+      "bbox": [
+        94,
+        522,
+        6,
+        76
+      ],
+      "geometry": "rect",
+      "fillColor": "#C2410C",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 20,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/32lszqtc",
+      "id": "20",
+      "bbox": [
+        116,
+        536,
+        1046,
+        22
+      ],
+      "geometry": "rect",
+      "text": "数据与基础设施",
+      "textPreview": "数据与基础设施",
+      "resolvedFontSize": 15,
+      "resolvedTextStyle": {
+        "fontSize": 15,
+        "typeface": "PingFang SC",
+        "bold": true,
+        "alignment": "left"
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "数据与基础设施"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "数据与基础设施",
+          "runs": [
+            {
+              "index": 1,
+              "text": "数据与基础设施",
+              "fontSize": 15,
+              "typeface": "PingFang SC",
+              "color": "#132033",
+              "bold": true
+            }
+          ]
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 21,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/ahoza1gv",
+      "id": "21",
+      "bbox": [
+        116,
+        564,
+        1046,
+        26
+      ],
+      "geometry": "rect",
+      "text": "EF Core 10 + SQL Server 2022、ASP.NET Core Identity、BCrypt、Uploads 受控文件存储、QuestPDF、EPPlus。",
+      "textPreview": "EF Core 10 + SQL Server 2022、ASP.NET Core Identity、BCrypt、Uploads 受控文件存储、QuestPDF、EPPlus。",
+      "resolvedFontSize": 10.51,
+      "resolvedTextStyle": {
+        "fontSize": 10.51,
+        "typeface": "PingFang SC",
+        "alignment": "left"
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "EF Core 10 + SQL Server 2022、ASP.NET Core Identity、BCrypt、Uploads 受控文件存储、QuestPDF、EPPlus。"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "EF Core 10 + SQL Server 2022、ASP.NET Core Identity、BCrypt、Uploads 受控文件存储、QuestPDF、EPPlus。",
+          "runs": [
+            {
+              "index": 1,
+              "text": "EF Core 10 + SQL Server 2022、ASP.NET Core Identity、BCrypt、Uploads 受控文件存储、QuestPDF、EPPlus。",
+              "fontSize": 10.51,
+              "typeface": "PingFang SC",
+              "color": "#64748B"
+            }
+          ]
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 22,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/l87ed8ba",
+      "id": "22",
+      "bbox": [
+        618,
+        272,
+        40,
+        2
+      ],
+      "geometry": "rect",
+      "fillColor": "#CBD5E1",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 23,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/sneloj2t",
+      "id": "23",
+      "bbox": [
+        652,
+        257,
+        20,
+        28
+      ],
+      "geometry": "rect",
+      "text": "›",
+      "textPreview": "›",
+      "resolvedFontSize": 24,
+      "resolvedTextStyle": {
+        "fontSize": 24,
+        "typeface": "PingFang SC",
+        "bold": true,
+        "alignment": "center"
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "›"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "›",
+          "runs": [
+            {
+              "index": 1,
+              "text": "›",
+              "fontSize": 24,
+              "typeface": "PingFang SC",
+              "color": "#CBD5E1",
+              "bold": true
+            }
+          ]
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 24,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/3ex0nuxc",
+      "id": "24",
+      "bbox": [
+        618,
+        382,
+        40,
+        2
+      ],
+      "geometry": "rect",
+      "fillColor": "#CBD5E1",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 25,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/at47y1kr",
+      "id": "25",
+      "bbox": [
+        652,
+        367,
+        20,
+        28
+      ],
+      "geometry": "rect",
+      "text": "›",
+      "textPreview": "›",
+      "resolvedFontSize": 24,
+      "resolvedTextStyle": {
+        "fontSize": 24,
+        "typeface": "PingFang SC",
+        "bold": true,
+        "alignment": "center"
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "›"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "›",
+          "runs": [
+            {
+              "index": 1,
+              "text": "›",
+              "fontSize": 24,
+              "typeface": "PingFang SC",
+              "color": "#CBD5E1",
+              "bold": true
+            }
+          ]
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 26,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/lkjm1cfa",
+      "id": "26",
+      "bbox": [
+        618,
+        498,
+        40,
+        2
+      ],
+      "geometry": "rect",
+      "fillColor": "#CBD5E1",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 27,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/szqtcj6t",
+      "id": "27",
+      "bbox": [
+        652,
+        483,
+        20,
+        28
+      ],
+      "geometry": "rect",
+      "text": "›",
+      "textPreview": "›",
+      "resolvedFontSize": 24,
+      "resolvedTextStyle": {
+        "fontSize": 24,
+        "typeface": "PingFang SC",
+        "bold": true,
+        "alignment": "center"
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "›"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "›",
+          "runs": [
+            {
+              "index": 1,
+              "text": "›",
+              "fontSize": 24,
+              "typeface": "PingFang SC",
+              "color": "#CBD5E1",
+              "bold": true
+            }
+          ]
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 28,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/3itgfmlk",
+      "id": "28",
+      "bbox": [
+        64,
+        674,
+        1152,
+        1
+      ],
+      "geometry": "rect",
+      "fillColor": "#D9E2EC",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 29,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/ex0nuxc3",
+      "id": "29",
+      "bbox": [
+        64,
+        686,
+        940,
+        16
+      ],
+      "geometry": "rect",
+      "text": "讲稿提示：说明 MVC 不是简单目录结构，而是把业务复杂度压到 Service 层。",
+      "textPreview": "讲稿提示：说明 MVC 不是简单目录结构，而是把业务复杂度压到 Service 层。",
+      "resolvedFontSize": 8.51,
+      "resolvedTextStyle": {
+        "fontSize": 8.51,
+        "typeface": "PingFang SC",
+        "alignment": "left"
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "讲稿提示：说明 MVC 不是简单目录结构，而是把业务复杂度压到 Service 层。"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "讲稿提示：说明 MVC 不是简单目录结构，而是把业务复杂度压到 Service 层。",
+          "runs": [
+            {
+              "index": 1,
+              "text": "讲稿提示：说明 MVC 不是简单目录结构，而是把业务复杂度压到 Service 层。",
+              "fontSize": 8.51,
+              "typeface": "PingFang SC",
+              "color": "#64748B"
+            }
+          ]
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 30,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/ovahoza1",
+      "id": "30",
+      "bbox": [
+        1170,
+        682,
+        46,
+        22
+      ],
+      "geometry": "rect",
+      "text": "06",
+      "textPreview": "06",
+      "resolvedFontSize": 12,
+      "resolvedTextStyle": {
+        "fontSize": 12,
+        "typeface": "Aptos Mono",
+        "bold": true,
+        "alignment": "right"
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "06"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "06",
+          "runs": [
+            {
+              "index": 1,
+              "text": "06",
+              "fontSize": 12,
+              "typeface": "Aptos Mono",
+              "color": "#64748B",
+              "bold": true
+            }
+          ]
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    }
+  ],
+  "composeRuns": []
+}

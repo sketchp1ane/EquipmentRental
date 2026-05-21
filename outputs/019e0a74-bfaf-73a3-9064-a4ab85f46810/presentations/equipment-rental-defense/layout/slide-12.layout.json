@@ -1,0 +1,1251 @@
+{
+  "schema": "openai.presentation.layout/v4",
+  "unit": "px",
+  "slide": {
+    "aid": "sl/l9n411",
+    "id": "l9n411",
+    "slide": 12,
+    "layoutId": "2aaca6a8-b2f1-484b-bb4c-4ec7d518fc56",
+    "layoutName": "Title Slide",
+    "layoutType": "title",
+    "masterLayoutId": "c1fb9ec2-81ac-4514-99ff-e3ff279b8f85",
+    "masterLayoutName": "Master",
+    "frame": {
+      "left": 0,
+      "top": 0,
+      "width": 1280,
+      "height": 720
+    }
+  },
+  "theme": {
+    "colorSchemeName": "ChatGPT",
+    "colors": {
+      "accent1": "#156082",
+      "accent2": "#E97132",
+      "accent3": "#196B24",
+      "accent4": "#0F9ED5",
+      "accent5": "#A02B93",
+      "accent6": "#4EA72E",
+      "bg1": "#FFFFFF",
+      "bg2": "#000000",
+      "tx1": "#1F1F1F",
+      "tx2": "#FFFFFF",
+      "dk1": "#000000",
+      "lt1": "#FFFFFF",
+      "dk2": "#0E2841",
+      "lt2": "#E8E8E8",
+      "hlink": "#467886",
+      "folHlink": "#96607D"
+    },
+    "typefaces": [
+      "Aptos Mono",
+      "PingFang SC"
+    ]
+  },
+  "inheritedLayers": [
+    {
+      "scope": "layout",
+      "id": "2aaca6a8-b2f1-484b-bb4c-4ec7d518fc56",
+      "name": "Title Slide",
+      "type": "title",
+      "parentLayoutId": "c1fb9ec2-81ac-4514-99ff-e3ff279b8f85",
+      "elements": []
+    },
+    {
+      "scope": "master",
+      "id": "c1fb9ec2-81ac-4514-99ff-e3ff279b8f85",
+      "name": "Master",
+      "type": "master",
+      "elements": []
+    }
+  ],
+  "elements": [
+    {
+      "order": 1,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/fyxobm58",
+      "id": "1",
+      "bbox": [
+        0,
+        0,
+        1280,
+        720
+      ],
+      "geometry": "rect",
+      "fillColor": "#F6F8FB",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 2,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/8jqh0fep",
+      "id": "2",
+      "bbox": [
+        0,
+        0,
+        1280,
+        8
+      ],
+      "geometry": "rect",
+      "fillColor": "#F2B705",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 3,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/x4nap4r6",
+      "id": "3",
+      "bbox": [
+        64,
+        38,
+        500,
+        18
+      ],
+      "geometry": "rect",
+      "text": "SECURITY",
+      "textPreview": "SECURITY",
+      "resolvedFontSize": 9.51,
+      "resolvedTextStyle": {
+        "fontSize": 9.51,
+        "typeface": "PingFang SC",
+        "bold": true,
+        "alignment": "left"
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "SECURITY"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "SECURITY",
+          "runs": [
+            {
+              "index": 1,
+              "text": "SECURITY",
+              "fontSize": 9.51,
+              "typeface": "PingFang SC",
+              "color": "#F2B705",
+              "bold": true
+            }
+          ]
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 4,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/qpg3ex0n",
+      "id": "4",
+      "bbox": [
+        64,
+        66,
+        940,
+        74
+      ],
+      "geometry": "rect",
+      "text": "安全与可靠性设计：权限、输入、文件和审计四道边界",
+      "textPreview": "安全与可靠性设计：权限、输入、文件和审计四道边界",
+      "resolvedFontSize": 29,
+      "resolvedTextStyle": {
+        "fontSize": 29,
+        "typeface": "PingFang SC",
+        "bold": true,
+        "alignment": "left"
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "安全与可靠性设计：权限、输入、文件和审计四道边界"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "安全与可靠性设计：权限、输入、文件和审计四道边界",
+          "runs": [
+            {
+              "index": 1,
+              "text": "安全与可靠性设计：权限、输入、文件和审计四道边界",
+              "fontSize": 29,
+              "typeface": "PingFang SC",
+              "color": "#132033",
+              "bold": true
+            }
+          ]
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 5,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/fa9w3m94",
+      "id": "5",
+      "bbox": [
+        64,
+        148,
+        900,
+        30
+      ],
+      "geometry": "rect",
+      "text": "安全设计贯穿登录、表单、富文本、文件下载和业务状态变更。",
+      "textPreview": "安全设计贯穿登录、表单、富文本、文件下载和业务状态变更。",
+      "resolvedFontSize": 12.51,
+      "resolvedTextStyle": {
+        "fontSize": 12.51,
+        "typeface": "PingFang SC",
+        "alignment": "left"
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "安全设计贯穿登录、表单、富文本、文件下载和业务状态变更。"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "安全设计贯穿登录、表单、富文本、文件下载和业务状态变更。",
+          "runs": [
+            {
+              "index": 1,
+              "text": "安全设计贯穿登录、表单、富文本、文件下载和业务状态变更。",
+              "fontSize": 12.51,
+              "typeface": "PingFang SC",
+              "color": "#64748B"
+            }
+          ]
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 6,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/8v6psfil",
+      "id": "6",
+      "bbox": [
+        82,
+        194,
+        318,
+        120
+      ],
+      "geometry": "rect",
+      "fillColor": "#FFFFFF",
+      "lineColor": "#D9E2EC",
+      "lineWidth": 1
+    },
+    {
+      "order": 7,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/xczed8v6",
+      "id": "7",
+      "bbox": [
+        82,
+        194,
+        318,
+        5
+      ],
+      "geometry": "rect",
+      "fillColor": "#2563EB",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 8,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/qtcj6tov",
+      "id": "8",
+      "bbox": [
+        100,
+        214,
+        282,
+        28
+      ],
+      "geometry": "rect",
+      "text": "身份认证",
+      "textPreview": "身份认证",
+      "resolvedFontSize": 15,
+      "resolvedTextStyle": {
+        "fontSize": 15,
+        "typeface": "PingFang SC",
+        "bold": true,
+        "alignment": "left"
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "身份认证"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "身份认证",
+          "runs": [
+            {
+              "index": 1,
+              "text": "身份认证",
+              "fontSize": 15,
+              "typeface": "PingFang SC",
+              "color": "#2563EB",
+              "bold": true
+            }
+          ]
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 9,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/je9cvixc",
+      "id": "9",
+      "bbox": [
+        100,
+        252,
+        282,
+        50
+      ],
+      "geometry": "rect",
+      "text": "ASP.NET Core Identity + BCrypt 密码哈希，登录失败锁定。",
+      "textPreview": "ASP.NET Core Identity + BCrypt 密码哈希，登录失败锁定。",
+      "resolvedFontSize": 10.51,
+      "resolvedTextStyle": {
+        "fontSize": 10.51,
+        "typeface": "PingFang SC",
+        "alignment": "left"
+      },
+      "textLayout": {
+        "lineCount": 2,
+        "lines": [
+          {
+            "index": 1,
+            "text": "ASP.NET Core Identity + BCrypt"
+          },
+          {
+            "index": 2,
+            "text": "密码哈希，登录失败锁定。"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "ASP.NET Core Identity + BCrypt 密码哈希，登录失败锁定。",
+          "runs": [
+            {
+              "index": 1,
+              "text": "ASP.NET Core Identity + BCrypt 密码哈希，登录失败锁定。",
+              "fontSize": 10.51,
+              "typeface": "PingFang SC",
+              "color": "#64748B"
+            }
+          ]
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 10,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/nih4byhg",
+      "id": "10",
+      "bbox": [
+        452,
+        194,
+        318,
+        120
+      ],
+      "geometry": "rect",
+      "fillColor": "#FFFFFF",
+      "lineColor": "#D9E2EC",
+      "lineWidth": 1
+    },
+    {
+      "order": 11,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/yxobm58z",
+      "id": "11",
+      "bbox": [
+        452,
+        194,
+        318,
+        5
+      ],
+      "geometry": "rect",
+      "fillColor": "#F2B705",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 12,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/5o7qpg3e",
+      "id": "12",
+      "bbox": [
+        470,
+        214,
+        282,
+        28
+      ],
+      "geometry": "rect",
+      "text": "访问控制",
+      "textPreview": "访问控制",
+      "resolvedFontSize": 15,
+      "resolvedTextStyle": {
+        "fontSize": 15,
+        "typeface": "PingFang SC",
+        "bold": true,
+        "alignment": "left"
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "访问控制"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "访问控制",
+          "runs": [
+            {
+              "index": 1,
+              "text": "访问控制",
+              "fontSize": 15,
+              "typeface": "PingFang SC",
+              "color": "#F2B705",
+              "bold": true
+            }
+          ]
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 13,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/g3ex0nux",
+      "id": "13",
+      "bbox": [
+        470,
+        252,
+        282,
+        50
+      ],
+      "geometry": "rect",
+      "text": "受保护页面显式 Authorize，角色常量集中管理。",
+      "textPreview": "受保护页面显式 Authorize，角色常量集中管理。",
+      "resolvedFontSize": 10.51,
+      "resolvedTextStyle": {
+        "fontSize": 10.51,
+        "typeface": "PingFang SC",
+        "alignment": "left"
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "受保护页面显式 Authorize，角色常量集中管理。"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "受保护页面显式 Authorize，角色常量集中管理。",
+          "runs": [
+            {
+              "index": 1,
+              "text": "受保护页面显式 Authorize，角色常量集中管理。",
+              "fontSize": 10.51,
+              "typeface": "PingFang SC",
+              "color": "#64748B"
+            }
+          ]
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 14,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/r65wjudg",
+      "id": "14",
+      "bbox": [
+        822,
+        194,
+        318,
+        120
+      ],
+      "geometry": "rect",
+      "fillColor": "#FFFFFF",
+      "lineColor": "#D9E2EC",
+      "lineWidth": 1
+    },
+    {
+      "order": 15,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/ylc7u54z",
+      "id": "15",
+      "bbox": [
+        822,
+        194,
+        318,
+        5
+      ],
+      "geometry": "rect",
+      "fillColor": "#15A46E",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 16,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/9cvixcze",
+      "id": "16",
+      "bbox": [
+        840,
+        214,
+        282,
+        28
+      ],
+      "geometry": "rect",
+      "text": "CSRF 防护",
+      "textPreview": "CSRF 防护",
+      "resolvedFontSize": 15,
+      "resolvedTextStyle": {
+        "fontSize": 15,
+        "typeface": "PingFang SC",
+        "bold": true,
+        "alignment": "left"
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "CSRF 防护"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "CSRF 防护",
+          "runs": [
+            {
+              "index": 1,
+              "text": "CSRF 防护",
+              "fontSize": 15,
+              "typeface": "PingFang SC",
+              "color": "#15A46E",
+              "bold": true
+            }
+          ]
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 17,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/gr2p8nqx",
+      "id": "17",
+      "bbox": [
+        840,
+        252,
+        282,
+        50
+      ],
+      "geometry": "rect",
+      "text": "全局 AutoValidateAntiforgeryTokenAttribute，AJAX POST 带 token。",
+      "textPreview": "全局 AutoValidateAntiforgeryTokenAttribute，AJAX POST 带 token。",
+      "resolvedFontSize": 10.51,
+      "resolvedTextStyle": {
+        "fontSize": 10.51,
+        "typeface": "PingFang SC",
+        "alignment": "left"
+      },
+      "textLayout": {
+        "lineCount": 2,
+        "lines": [
+          {
+            "index": 1,
+            "text": "全局 AutoValidateAntiforgeryTokenAttribute，AJAX POST"
+          },
+          {
+            "index": 2,
+            "text": "带 token。"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "全局 AutoValidateAntiforgeryTokenAttribute，AJAX POST 带 token。",
+          "runs": [
+            {
+              "index": 1,
+              "text": "全局 AutoValidateAntiforgeryTokenAttribute，AJAX POST 带 token。",
+              "fontSize": 10.51,
+              "typeface": "PingFang SC",
+              "color": "#64748B"
+            }
+          ]
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 18,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/rytsvu9k",
+      "id": "18",
+      "bbox": [
+        82,
+        364,
+        318,
+        120
+      ],
+      "geometry": "rect",
+      "fillColor": "#FFFFFF",
+      "lineColor": "#D9E2EC",
+      "lineWidth": 1
+    },
+    {
+      "order": 19,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/yd0z6103",
+      "id": "19",
+      "bbox": [
+        82,
+        364,
+        318,
+        5
+      ],
+      "geometry": "rect",
+      "fillColor": "#C2410C",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 20,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/a9w3m94f",
+      "id": "20",
+      "bbox": [
+        100,
+        384,
+        282,
+        28
+      ],
+      "geometry": "rect",
+      "text": "上传安全",
+      "textPreview": "上传安全",
+      "resolvedFontSize": 15,
+      "resolvedTextStyle": {
+        "fontSize": 15,
+        "typeface": "PingFang SC",
+        "bold": true,
+        "alignment": "left"
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "上传安全"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "上传安全",
+          "runs": [
+            {
+              "index": 1,
+              "text": "上传安全",
+              "fontSize": 15,
+              "typeface": "PingFang SC",
+              "color": "#C2410C",
+              "bold": true
+            }
+          ]
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 21,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/zupwb2hw",
+      "id": "21",
+      "bbox": [
+        100,
+        422,
+        282,
+        50
+      ],
+      "geometry": "rect",
+      "text": "JPG/JPEG/PNG/PDF，10 MB，扩展名 + MIME + 文件魔数 + GUID 重命名。",
+      "textPreview": "JPG/JPEG/PNG/PDF，10 MB，扩展名 + MIME + 文件魔数 + GUID 重命名。",
+      "resolvedFontSize": 10.51,
+      "resolvedTextStyle": {
+        "fontSize": 10.51,
+        "typeface": "PingFang SC",
+        "alignment": "left"
+      },
+      "textLayout": {
+        "lineCount": 2,
+        "lines": [
+          {
+            "index": 1,
+            "text": "JPG/JPEG/PNG/PDF，10 MB，扩展名 + MIME +"
+          },
+          {
+            "index": 2,
+            "text": "文件魔数 + GUID 重命名。"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "JPG/JPEG/PNG/PDF，10 MB，扩展名 + MIME + 文件魔数 + GUID 重命名。",
+          "runs": [
+            {
+              "index": 1,
+              "text": "JPG/JPEG/PNG/PDF，10 MB，扩展名 + MIME + 文件魔数 + GUID 重命名。",
+              "fontSize": 10.51,
+              "typeface": "PingFang SC",
+              "color": "#64748B"
+            }
+          ]
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 22,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/sfil0rqd",
+      "id": "22",
+      "bbox": [
+        452,
+        364,
+        318,
+        120
+      ],
+      "geometry": "rect",
+      "fillColor": "#FFFFFF",
+      "lineColor": "#D9E2EC",
+      "lineWidth": 1
+    },
+    {
+      "order": 23,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/h0fepkzu",
+      "id": "23",
+      "bbox": [
+        452,
+        364,
+        318,
+        5
+      ],
+      "geometry": "rect",
+      "fillColor": "#14213D",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 24,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/al87ed8b",
+      "id": "24",
+      "bbox": [
+        470,
+        384,
+        282,
+        28
+      ],
+      "geometry": "rect",
+      "text": "富文本过滤",
+      "textPreview": "富文本过滤",
+      "resolvedFontSize": 15,
+      "resolvedTextStyle": {
+        "fontSize": 15,
+        "typeface": "PingFang SC",
+        "bold": true,
+        "alignment": "left"
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "富文本过滤"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "富文本过滤",
+          "runs": [
+            {
+              "index": 1,
+              "text": "富文本过滤",
+              "fontSize": 15,
+              "typeface": "PingFang SC",
+              "color": "#14213D",
+              "bold": true
+            }
+          ]
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 25,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/z61032ls",
+      "id": "25",
+      "bbox": [
+        470,
+        422,
+        282,
+        50
+      ],
+      "geometry": "rect",
+      "text": "HtmlSanitizer 入库前清洗安全交底内容。",
+      "textPreview": "HtmlSanitizer 入库前清洗安全交底内容。",
+      "resolvedFontSize": 10.51,
+      "resolvedTextStyle": {
+        "fontSize": 10.51,
+        "typeface": "PingFang SC",
+        "alignment": "left"
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "HtmlSanitizer 入库前清洗安全交底内容。"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "HtmlSanitizer 入库前清洗安全交底内容。",
+          "runs": [
+            {
+              "index": 1,
+              "text": "HtmlSanitizer 入库前清洗安全交底内容。",
+              "fontSize": 10.51,
+              "typeface": "PingFang SC",
+              "color": "#64748B"
+            }
+          ]
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 26,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/orytsvu9",
+      "id": "26",
+      "bbox": [
+        822,
+        364,
+        318,
+        120
+      ],
+      "geometry": "rect",
+      "fillColor": "#FFFFFF",
+      "lineColor": "#D9E2EC",
+      "lineWidth": 1
+    },
+    {
+      "order": 27,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/hcrmhk3q",
+      "id": "27",
+      "bbox": [
+        822,
+        364,
+        318,
+        5
+      ],
+      "geometry": "rect",
+      "fillColor": "#64748B",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 28,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/6xkf6dcb",
+      "id": "28",
+      "bbox": [
+        840,
+        384,
+        282,
+        28
+      ],
+      "geometry": "rect",
+      "text": "审计留痕",
+      "textPreview": "审计留痕",
+      "resolvedFontSize": 15,
+      "resolvedTextStyle": {
+        "fontSize": 15,
+        "typeface": "PingFang SC",
+        "bold": true,
+        "alignment": "left"
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "审计留痕"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "审计留痕",
+          "runs": [
+            {
+              "index": 1,
+              "text": "审计留痕",
+              "fontSize": 15,
+              "typeface": "PingFang SC",
+              "color": "#64748B",
+              "bold": true
+            }
+          ]
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 29,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/zed8v6ps",
+      "id": "29",
+      "bbox": [
+        840,
+        422,
+        282,
+        50
+      ],
+      "geometry": "rect",
+      "text": "OperationLogs 记录关键增删改与状态流转。",
+      "textPreview": "OperationLogs 记录关键增删改与状态流转。",
+      "resolvedFontSize": 10.51,
+      "resolvedTextStyle": {
+        "fontSize": 10.51,
+        "typeface": "PingFang SC",
+        "alignment": "left"
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "OperationLogs 记录关键增删改与状态流转。"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "OperationLogs 记录关键增删改与状态流转。",
+          "runs": [
+            {
+              "index": 1,
+              "text": "OperationLogs 记录关键增删改与状态流转。",
+              "fontSize": 10.51,
+              "typeface": "PingFang SC",
+              "color": "#64748B"
+            }
+          ]
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 30,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/pg3ex0nu",
+      "id": "30",
+      "bbox": [
+        212,
+        558,
+        856,
+        44
+      ],
+      "geometry": "rect",
+      "fillColor": "#FFFFFF",
+      "lineColor": "#D9E2EC",
+      "lineWidth": 1
+    },
+    {
+      "order": 31,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/wval87ed",
+      "id": "31",
+      "bbox": [
+        248,
+        571,
+        784,
+        16
+      ],
+      "geometry": "rect",
+      "text": "Uploads 不放在 wwwroot，文件通过 FilesController 鉴权下发，避免绕过权限直接访问。",
+      "textPreview": "Uploads 不放在 wwwroot，文件通过 FilesController 鉴权下发，避免绕过权限直接访问。",
+      "resolvedFontSize": 12.51,
+      "resolvedTextStyle": {
+        "fontSize": 12.51,
+        "typeface": "PingFang SC",
+        "bold": true,
+        "alignment": "left"
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Uploads 不放在 wwwroot，文件通过 FilesController 鉴权下发，避免绕过权限直接访问。"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Uploads 不放在 wwwroot，文件通过 FilesController 鉴权下发，避免绕过权限直接访问。",
+          "runs": [
+            {
+              "index": 1,
+              "text": "Uploads 不放在 wwwroot，文件通过 FilesController 鉴权下发，避免绕过权限直接访问。",
+              "fontSize": 12.51,
+              "typeface": "PingFang SC",
+              "color": "#132033",
+              "bold": true
+            }
+          ]
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 32,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/7adsji5s",
+      "id": "32",
+      "bbox": [
+        64,
+        674,
+        1152,
+        1
+      ],
+      "geometry": "rect",
+      "fillColor": "#D9E2EC",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 33,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/epkzupwb",
+      "id": "33",
+      "bbox": [
+        64,
+        686,
+        940,
+        16
+      ],
+      "geometry": "rect",
+      "text": "讲稿提示：不要只说“做了登录”，要按攻击面解释每道边界。",
+      "textPreview": "讲稿提示：不要只说“做了登录”，要按攻击面解释每道边界。",
+      "resolvedFontSize": 8.51,
+      "resolvedTextStyle": {
+        "fontSize": 8.51,
+        "typeface": "PingFang SC",
+        "alignment": "left"
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "讲稿提示：不要只说“做了登录”，要按攻击面解释每道边界。"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "讲稿提示：不要只说“做了登录”，要按攻击面解释每道边界。",
+          "runs": [
+            {
+              "index": 1,
+              "text": "讲稿提示：不要只说“做了登录”，要按攻击面解释每道边界。",
+              "fontSize": 8.51,
+              "typeface": "PingFang SC",
+              "color": "#64748B"
+            }
+          ]
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 34,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/psfil0rq",
+      "id": "34",
+      "bbox": [
+        1170,
+        682,
+        46,
+        22
+      ],
+      "geometry": "rect",
+      "text": "12",
+      "textPreview": "12",
+      "resolvedFontSize": 12,
+      "resolvedTextStyle": {
+        "fontSize": 12,
+        "typeface": "Aptos Mono",
+        "bold": true,
+        "alignment": "right"
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "12"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "12",
+          "runs": [
+            {
+              "index": 1,
+              "text": "12",
+              "fontSize": 12,
+              "typeface": "Aptos Mono",
+              "color": "#64748B",
+              "bold": true
+            }
+          ]
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    }
+  ],
+  "composeRuns": []
+}

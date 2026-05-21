@@ -5,7 +5,7 @@
 | 第 1 章 绪论 | 建筑设备租赁管理存在台账分散、资质跟踪、合同流转、现场核验与安全追溯问题 | `docs/PRD.md` 第 1 节项目背景；第 3 节核心业务流程 | 背景论述可结合行业规范与本系统业务痛点，不把系统描述成已商用平台。 |
 | 第 2 章 相关技术介绍 | 系统采用 B/S 架构与 MVC 分层思想 | `docs/architecture.md` 目录结构与分层职责；`Controllers/`、`Services/`、`Views/`、`Models/` | 强调 Controller、Service、Entity、ViewModel、Razor View 的职责划分。 |
 | 第 2 章 相关技术介绍 | EF Core + SQL Server 适合本系统关系型业务数据持久化 | `docs/database.md`；`Data/AppDbContext.cs`；`Data/Migrations/` | 数据库章节引用实体关系与状态枚举，技术章节只写 ORM 与 Code First 的作用。 |
-| 第 2 章 相关技术介绍 | Identity + RBAC 支撑认证与角色权限隔离 | `docs/PRD.md` 角色矩阵；`Constants/Roles.cs`；`Controllers/*Controller.cs` 授权标注；`Infrastructure/BCryptPasswordHasher.cs` | 避免泛泛写权限，具体落到管理员、设备管理员、调度员、项目负责人、安全员、审计员。 |
+| 第 2 章 相关技术介绍 | Identity + RBAC 支撑认证与角色权限隔离 | `docs/PRD.md` 角色矩阵；`Constants/Roles.cs`；`Controllers/*Controller.cs` 授权标注；`Infrastructure/BCryptPasswordHasher.cs` | 避免泛泛写权限，具体落到系统管理员、设备管理员、调度员、项目负责人和安全员。 |
 | 第 3 章 需求分析 | 系统核心角色和权限来自业务流程分工 | `docs/PRD.md` 用户角色与权限；`Constants/Roles.cs` | 权限矩阵以 PRD 和角色常量为事实来源。 |
 | 第 3 章 需求分析 | 功能需求覆盖设备台账、资质审核、调度合同、进场核验、安全交底、巡检故障、退场评价 | `docs/PRD.md` 功能模块需求；`docs/progress.md` 完成项 | 可用 progress 证明模块已实现，用 PRD 证明需求来源。 |
 | 第 4 章 总体设计 | 系统以服务层承载业务规则、状态流转和事务边界 | `docs/architecture.md` 分层职责和模块依赖；`Services/DispatchService.cs`、`Services/VerificationService.cs`、`Services/ReturnService.cs` | 写设计时突出“控制器薄、服务层厚”的实现约定。 |

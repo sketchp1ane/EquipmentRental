@@ -3,7 +3,7 @@
 ## 来源与边界
 
 - 原始论文初稿：`/Users/sketchplane/Downloads/建筑租赁设备全生命周期管理平台论文初稿 (1).md`
-- 当前修订稿来源：`/Users/sketchplane/Downloads/论文修订版.md`
+- 当前修订稿来源：`/Users/sketchplane/Downloads/论文修订版_五角色权限校准.md`
 - 仓库根目录：`/Users/sketchplane/EquipmentRental`
 - 本工作区：`thesis-writing/`
 - 拆分策略：修订稿按一级标题拆分，源论文文件不移动、不删除、不修改。

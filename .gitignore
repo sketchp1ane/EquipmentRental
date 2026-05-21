@@ -26,6 +26,12 @@ Uploads/
 *.nupkg
 .nuget/
 
+# Frontend/generated dependency folders
+node_modules/
+
+# Office temporary lock files
+~$*
+
 # Logs
 *.log
 logs/
